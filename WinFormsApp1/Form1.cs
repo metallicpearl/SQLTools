@@ -2896,10 +2896,7 @@ LIKE '%";
             string wrd = richTextBox1.SelectedText.ToString();
 
 
-            //if (beforetext.Contains("\n"))
-            //{
-            //    containsreturn = true;
-            //}
+  
 
             if (!beforetext.Contains("\n"))
             {
@@ -2907,30 +2904,7 @@ LIKE '%";
             }
 
 
-            //lastspacebeforetext = beforetext.LastIndexOf(' ');
 
-            //lineIndex = richTextBox1.GetLineFromCharIndex(caretposition);
-
-            //splitint = beforetext.LastIndexOf(" ");
-
-            //if (splitint > 0)
-            //{
-
-            //    string[] split = beforetext.Split(' ');
-
-            //    int splitcount = split.Count();
-
-            //    if (splitcount <= 2)
-            //    {
-            //        holds = split.ToArray();
-            //    }
-
-            //   if (splitcount > 2 && caretposition > lastspacebeforetext)
-            //   {
-            //        holds = split.Reverse().ToArray();
-            //        splits = 0;
-
-            //    }
             currentword = wrd.Replace('\n', ' ');
 
             if (lb.Visible == true)
@@ -2951,16 +2925,6 @@ LIKE '%";
 
 
 
-            //this.tablelist = new List<string>();
-            //this.columnlist = new List<string>();
-
-
-            //if (Keys.Control != 0 && e.KeyData == Keys.OemPeriod)
-
-            //if (richTextBox1.SelectionStart >= 0 && richTextBox1.Text.LastIndexOf(' ') >= 0)
-            //{
-
-            //string lastWord = richTextBox1.Text.TrimEnd().Substring(richTextBox1.Text.TrimEnd().LastIndexOf(' ')).Trim();
 
             //TABLES
 
@@ -2985,17 +2949,7 @@ LIKE '%";
             adapter.Fill(ds);
 
 
-            //foreach (DataRow dr in ds.Rows)
-            //{
-            //    BeginInvoke((MethodInvoker)delegate
-            //    {
 
-            //        string l = dr[0].ToString();
-            //        tablelist.Add(l);
-
-            //    });
-
-            //}
             //COLUMNS
 
             Form1 connectionstring2 = new Form1("Server=", "; Database=", "; username=", "; password=", ";Trusted_Connection=True;");
@@ -3117,17 +3071,7 @@ LIKE '%";
 
             }
 
-            //if 
-            //(
-            //    e.KeyData != Keys.Enter || e.KeyCode != Keys.Tab || 
-            //    e.KeyCode != Keys.Up || e.KeyCode != Keys.Down)
-            //{
-
-            //    if (lb.Visible == true)
-            //    {
-            //        lb.Visible = false;
-            //    }
-            //}
+    
 
 
             if (e.KeyData == Keys.Enter)
@@ -3191,44 +3135,11 @@ LIKE '%";
 
 
 
-                //if (lb.Visible == true)
-                //{
-
-
-
-                //    richTextBox1.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
-
-                //    richTextBox1.SelectedText = lb.SelectedItem.ToString() + " ";
-
-                //    autocomplete = false;
-
-                //    richTextBox1.Focus();
-
-
-
-                //}
 
 
 
                 if (lb.Visible == true)
                 {
-                    //richTextBox1.Select(lastspace, currentlen + 2);
-
-                    //richTextBox1.SelectedText = "";
-
-                    //string appendageleft = lb.SelectedItem.ToString().Split('.')[0];
-
-                    //richTextBox1.AppendText(" " + appendageleft);
-
-                    //lb.Hide();
-
-                    //int sellength = lb.SelectedItem.ToString().Length;
-
-                    //autocomplete = false;
-
-                    //richTextBox1.Focus();
-
-                    //richTextBox1.SelectionStart = lastspace + sellength + 1;
 
 
                     richTextBox1.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
@@ -3278,44 +3189,11 @@ LIKE '%";
                 }
 
 
-                //if (lb.Visible == true)
-                //{
-
-
-
-                //    richTextBox1.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
-
-                //    richTextBox1.SelectedText = lb.SelectedItem.ToString() + " ";
-
-                //    autocomplete = false;
-
-                //    richTextBox1.Focus();
-
-
-
-                //}
 
 
 
                 if (lb.Visible == true)
                 {
-                    //richTextBox1.Select(lastspace, currentlen + 2);
-
-                    //richTextBox1.SelectedText = "";
-
-                    //string appendageleft = lb.SelectedItem.ToString().Split('.')[0];
-
-                    //richTextBox1.AppendText(" " + appendageleft);
-
-                    //lb.Hide();
-
-                    //int sellength = lb.SelectedItem.ToString().Length;
-
-                    //autocomplete = false;
-
-                    //richTextBox1.Focus();
-
-                    //richTextBox1.SelectionStart = lastspace + sellength + 1;
 
 
                     richTextBox1.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
@@ -3362,25 +3240,6 @@ LIKE '%";
 
         }
 
-        private void lbclick(object sender, EventArgs e)
-        {
-
-        }
-
-        private void insertspace(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label17_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label16_Click(object sender, EventArgs e)
-        {
-
-        }
 
 
 
@@ -4439,30 +4298,7 @@ LIKE '%";
             }
 
 
-            //lastspacebeforetext = beforetext.LastIndexOf(' ');
 
-            //lineIndex = richTextBox2.GetLineFromCharIndex(caretposition);
-
-            //splitint = beforetext.LastIndexOf(" ");
-
-            //if (splitint > 0)
-            //{
-
-            //    string[] split = beforetext.Split(' ');
-
-            //    int splitcount = split.Count();
-
-            //    if (splitcount <= 2)
-            //    {
-            //        holds = split.ToArray();
-            //    }
-
-            //   if (splitcount > 2 && caretposition > lastspacebeforetext)
-            //   {
-            //        holds = split.Reverse().ToArray();
-            //        splits = 0;
-
-            //    }
             currentword = wrd.Replace('\n', ' ');
 
             if (listBox1.Visible == true)
@@ -4483,16 +4319,6 @@ LIKE '%";
 
 
 
-            //this.tablelist = new List<string>();
-            //this.columnlist = new List<string>();
-
-
-            //if (Keys.Control != 0 && e.KeyData == Keys.OemPeriod)
-
-            //if (richTextBox2.SelectionStart >= 0 && richTextBox2.Text.LastIndexOf(' ') >= 0)
-            //{
-
-            //string lastWord = richTextBox2.Text.TrimEnd().Substring(richTextBox2.Text.TrimEnd().LastIndexOf(' ')).Trim();
 
             //TABLES
 
@@ -4517,17 +4343,7 @@ LIKE '%";
             adapter.Fill(ds);
 
 
-            //foreach (DataRow dr in ds.Rows)
-            //{
-            //    BeginInvoke((MethodInvoker)delegate
-            //    {
 
-            //        string l = dr[0].ToString();
-            //        tablelist.Add(l);
-
-            //    });
-
-            //}
             //COLUMNS
 
             Form1 connectionstring2 = new Form1("Server=", "; Database=", "; username=", "; password=", ";Trusted_Connection=True;");
@@ -4645,17 +4461,6 @@ LIKE '%";
 
             }
 
-            //if 
-            //(
-            //    e.KeyData != Keys.Enter || e.KeyCode != Keys.Tab || 
-            //    e.KeyCode != Keys.Up || e.KeyCode != Keys.Down)
-            //{
-
-            //    if (listBox1.Visible == true)
-            //    {
-            //        listBox1.Visible = false;
-            //    }
-            //}
 
 
             if (e.KeyData == Keys.Enter)
@@ -4719,44 +4524,12 @@ LIKE '%";
 
 
 
-                //if (listBox1.Visible == true)
-                //{
-
-
-
-                //    richTextBox2.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
-
-                //    richTextBox2.SelectedText = listBox1.SelectedItem.ToString() + " ";
-
-                //    autocomplete = false;
-
-                //    richTextBox2.Focus();
-
-
-
-                //}
 
 
 
                 if (listBox1.Visible == true)
                 {
-                    //richTextBox2.Select(lastspace, currentlen + 2);
 
-                    //richTextBox2.SelectedText = "";
-
-                    //string appendageleft = listBox1.SelectedItem.ToString().Split('.')[0];
-
-                    //richTextBox2.AppendText(" " + appendageleft);
-
-                    //listBox1.Hide();
-
-                    //int sellength = listBox1.SelectedItem.ToString().Length;
-
-                    //autocomplete = false;
-
-                    //richTextBox2.Focus();
-
-                    //richTextBox2.SelectionStart = lastspace + sellength + 1;
 
 
                     richTextBox2.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
@@ -4806,44 +4579,12 @@ LIKE '%";
                 }
 
 
-                //if (listBox1.Visible == true)
-                //{
 
-
-
-                //    richTextBox2.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
-
-                //    richTextBox2.SelectedText = listBox1.SelectedItem.ToString() + " ";
-
-                //    autocomplete = false;
-
-                //    richTextBox2.Focus();
-
-
-
-                //}
 
 
 
                 if (listBox1.Visible == true)
                 {
-                    //richTextBox2.Select(lastspace, currentlen + 2);
-
-                    //richTextBox2.SelectedText = "";
-
-                    //string appendageleft = listBox1.SelectedItem.ToString().Split('.')[0];
-
-                    //richTextBox2.AppendText(" " + appendageleft);
-
-                    //listBox1.Hide();
-
-                    //int sellength = listBox1.SelectedItem.ToString().Length;
-
-                    //autocomplete = false;
-
-                    //richTextBox2.Focus();
-
-                    //richTextBox2.SelectionStart = lastspace + sellength + 1;
 
 
                     richTextBox2.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
@@ -5699,17 +5440,7 @@ LIKE '%";
 
                                 errormessage = ex.Message;
 
-                                //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
-                                //dataGridView6.Rows.Clear();
-                                //dataGridView7.Rows.Clear();
-                                //textBox9.Visible = true;
-                                //errormessage = msg;
-                                //groupBox11.Text = "Error";
-                                //groupBox12.Text = "Error";
-                                //label24.Visible = false;
-                                //label25.Visible = false;
-                                //label30.Visible = false;
-                                //label31.Visible = false;
+
                                 datacleared = false;
                             }
 
@@ -5898,20 +5629,7 @@ LIKE '%";
 
                                 datacleared = false;
                             }
-                            //BeginInvoke((MethodInvoker)delegate
-                            //{
-                            //    //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
-                            //    dataGridView6.Rows.Clear();
-                            //    dataGridView7.Rows.Clear();
-                            //    textBox10.Visible = true;
-                            //    errormessage += msg2;
-                            //    groupBox11.Text = "Error";
-                            //    groupBox12.Text = "Error";
-                            //    label24.Visible = false;
-                            //    label25.Visible = false;
-                            //    label30.Visible = false;
-                            //    label31.Visible = false;
-                            //});
+
 
                             safesqlexceptionhandler(sender, e);
 
@@ -6068,26 +5786,15 @@ LIKE '%";
                         string msg2 = ex2.Message;
                         BeginInvoke((MethodInvoker)delegate
                         {
-                            //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
 
                             if (msg2 != errormessage)
                             {
                                 errormessage += Environment.NewLine + msg2;
                             }
-                            //dataGridView6.Rows.Clear();
-                            //dataGridView7.Rows.Clear();
+
 
                             safesqlexceptionhandler(sender, e);
 
-                            //dataGridView6.Rows.Clear();
-                            //dataGridView7.Rows.Clear();
-                            //textBox9.Visible = true;
-                            //groupBox11.Text = "Error";
-                            //groupBox12.Text = "Error";
-                            //label24.Visible = false;
-                            //label25.Visible = false;
-                            //label30.Visible = false;
-                            //label31.Visible = false;
 
                         });
 
@@ -6243,7 +5950,6 @@ LIKE '%";
                             button3.Enabled = false;
                             textBox9.Visible = false;
                             textBox10.Visible = false;
-                            //textBox9.Text = errormessage;
                             dataGridView7.DataSource = null;
                             dataGridView7.Refresh();
                         }
@@ -6284,8 +5990,6 @@ LIKE '%";
                             label30.Visible = false;
                             label31.Visible = false;
                             this.dataGridView6.ColumnHeadersVisible = true;
-                            //textBox10.Visible = false;
-                            //dataGridView6.Visible = true;
                         }
 
 
@@ -6293,7 +5997,6 @@ LIKE '%";
                         if (dta2.Rows.Count < 1 & errormessage != "")
                         {
                             datacleared = true;
-                            //label31.Visible = true;
                             this.dataGridView6.ColumnHeadersVisible = false;
                             button3.Enabled = false;
                             textBox10.Visible = true;
@@ -6423,39 +6126,12 @@ LIKE '%";
             string wrd = richTextBox4.SelectedText.ToString();
 
 
-            //if (beforetext.Contains("\n"))
-            //{
-            //    containsreturn = true;
-            //}
 
             if (!beforetext.Contains("\n"))
             {
                 containsreturn = false;
             }
 
-
-            //lastspacebeforetext = beforetext.LastIndexOf(' ');
-
-            //lineIndex = richTextBox4.GetLineFromCharIndex(caretposition);
-
-            //splitint = beforetext.LastIndexOf(" ");
-
-            //if (splitint > 0)
-            //{
-
-            //    string[] split = beforetext.Split(' ');
-
-            //    int splitcount = split.Count();
-
-            //    if (splitcount <= 2)
-            //    {
-            //        holds = split.ToArray();
-            //    }
-
-            //   if (splitcount > 2 && caretposition > lastspacebeforetext)
-            //   {
-            //        holds = split.Reverse().ToArray();
-            //        splits = 0;
 
             //    }
             currentword = wrd.Replace('\n', ' ');
@@ -6478,16 +6154,6 @@ LIKE '%";
 
 
 
-            //this.tablelist = new List<string>();
-            //this.columnlist = new List<string>();
-
-
-            //if (Keys.Control != 0 && e.KeyData == Keys.OemPeriod)
-
-            //if (richTextBox4.SelectionStart >= 0 && richTextBox4.Text.LastIndexOf(' ') >= 0)
-            //{
-
-            //string lastWord = richTextBox4.Text.TrimEnd().Substring(richTextBox4.Text.TrimEnd().LastIndexOf(' ')).Trim();
 
             //TABLES
 
@@ -6512,17 +6178,7 @@ LIKE '%";
             adapter.Fill(ds);
 
 
-            //foreach (DataRow dr in ds.Rows)
-            //{
-            //    BeginInvoke((MethodInvoker)delegate
-            //    {
-
-            //        string l = dr[0].ToString();
-            //        tablelist.Add(l);
-
-            //    });
-
-            //}
+   
             //COLUMNS
 
             Form1 connectionstring2 = new Form1("Server=", "; Database=", "; username=", "; password=", ";Trusted_Connection=True;");
@@ -6555,8 +6211,7 @@ LIKE '%";
                 //{
 
                 string l = dr2[0].ToString();
-                //columnlist.Add(l);
-                //contextMenuStrip4.Items.Add(l);
+
                 listBox2.Items.Add(l);
 
                 // });
@@ -6585,7 +6240,7 @@ LIKE '%";
 
                 listBox2.Focus();
 
-                //richTextBox4.Focus();
+
 
                 int charpos = richTextBox4.SelectionStart;
 
@@ -6640,17 +6295,7 @@ LIKE '%";
 
             }
 
-            //if 
-            //(
-            //    e.KeyData != Keys.Enter || e.KeyCode != Keys.Tab || 
-            //    e.KeyCode != Keys.Up || e.KeyCode != Keys.Down)
-            //{
-
-            //    if (listBox2.Visible == true)
-            //    {
-            //        listBox2.Visible = false;
-            //    }
-            //}
+  
 
 
             if (e.KeyData == Keys.Enter)
@@ -6714,44 +6359,11 @@ LIKE '%";
 
 
 
-                //if (listBox2.Visible == true)
-                //{
-
-
-
-                //    richTextBox4.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
-
-                //    richTextBox4.SelectedText = listBox2.SelectedItem.ToString() + " ";
-
-                //    autocomplete = false;
-
-                //    richTextBox4.Focus();
-
-
-
-                //}
 
 
 
                 if (listBox2.Visible == true)
                 {
-                    //richTextBox4.Select(lastspace, currentlen + 2);
-
-                    //richTextBox4.SelectedText = "";
-
-                    //string appendageleft = listBox2.SelectedItem.ToString().Split('.')[0];
-
-                    //richTextBox4.AppendText(" " + appendageleft);
-
-                    //listBox2.Hide();
-
-                    //int sellength = listBox2.SelectedItem.ToString().Length;
-
-                    //autocomplete = false;
-
-                    //richTextBox4.Focus();
-
-                    //richTextBox4.SelectionStart = lastspace + sellength + 1;
 
 
                     richTextBox4.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
