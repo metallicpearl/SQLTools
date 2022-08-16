@@ -74,6 +74,9 @@ namespace WinFormsApp1
             textBox10.ForeColor = Color.Red;
             autocomplete = false;
 
+            richTextBox4.Enabled = false;
+           
+
             checkforfile();
 
         }
@@ -145,6 +148,18 @@ namespace WinFormsApp1
         public bool containsreturn;
         public string addchar;
         public bool newlineonened;
+        public string[] copiedrows;
+        public DataTable copytable;
+        public string copyrows;
+        public string[] selectedrows;
+        public string[] selectedcolumns;
+        public int selcells;
+        public int colindex;
+        public int[] rowindex;
+        public string tableselectionstring;
+        public int gridnumber;
+        public string errormessage;
+        public bool datacleared;
 
         public List<string> tablelist;
         public List<string> columnlist;
@@ -405,7 +420,7 @@ INNER JOIN sys.columns col2
 
                         IF @ColumnName IS NOT NULL
 
-                        BEGIN
+                        BEGINric
                             INSERT INTO @Results
                             EXEC
                             (
@@ -589,6 +604,7 @@ LIKE '%";
             contextMenuStrip2.Enabled = false;
             toolStripMenuItem2.Enabled = false;
             contextMenuStrip3.Enabled = false;
+            toolStripMenuItem3.Enabled = false;
             CopyCell.Enabled = false;
             CopyColumn.Enabled = false;
             CopyRow.Enabled = false;
@@ -2025,7 +2041,7 @@ LIKE '%";
                     e.Handled = true;
                     e.SuppressKeyPress = true;
                     getdbdetails(sender, e);
-                    getdbdetails(sender, e);
+                    //getdbdetails(sender, e);
 
                 }
                 else if (autocomplete == true)
@@ -2474,6 +2490,25 @@ LIKE '%";
         private void richTextBox1_KeyDowns(object sender, EventArgs e)
         {
 
+            if (dta is not null)
+            {
+                if (dta.Rows.Count != 0)
+                {
+
+                    dta.Clear();
+                    datacleared = true;
+                }
+            }
+            if (dta2 is not null)
+            {
+                if (dta2.Rows.Count != 0)
+                {
+                    dta2.Clear();
+                    datacleared = true;
+                }
+            }
+
+
             errortextbox.Visible = false;
             dataGridView4.Visible = true;
 
@@ -2498,6 +2533,7 @@ LIKE '%";
             this.label17.ForeColor = System.Drawing.Color.Black;
             contextMenuStrip1.Enabled = false;
             toolStripMenuItem1.Enabled = false;
+
             contextMenuStrip2.Enabled = false;
             toolStripMenuItem2.Enabled = false;
             sqlcomm = "";
@@ -2505,6 +2541,8 @@ LIKE '%";
             quer = richTextBox1.Text;
 
 
+
+           
 
 
             if (backgroundWorker4.IsBusy != true)
@@ -2517,7 +2555,7 @@ LIKE '%";
                 }
                 catch (Exception ex)
                 {
-
+                    errortextbox.Text = ex.Message;
 
                 }
             }
@@ -2660,6 +2698,7 @@ LIKE '%";
                                     {
                                         //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
                                         dataGridView4.Rows.Clear();
+                                        dataGridView4.Visible = false;
                                         errortextbox.Visible = true;
                                         errortextbox.Text = msg;
                                         groupBox8.Text = "Error";
@@ -2753,6 +2792,7 @@ LIKE '%";
                         if (dta.Rows.Count > 0)
                         {
                             label22.Visible = false;
+                            dataGridView4.ColumnHeadersVisible = true;
                         }
 
                     }
@@ -2778,9 +2818,23 @@ LIKE '%";
                         toolStripMenuItem2.Enabled = false;
                     }
 
+
+                    if (dta != null && datacleared == true && dta.Rows.Count == 0)
+                    {
+                        errortextbox.Text = "An error occurred - please check your query and syntax.";
+                        datacleared = false;
+                        dataGridView4.Visible = false;
+                        errortextbox.Visible = true;
+                        dataGridView4.ScrollBars = ScrollBars.None;
+                        dataGridView4.ColumnHeadersVisible = false;
+                    }
+
+
                     busy = false;
                     richTextBox1.Enabled = true;
                 }
+
+
             }
         }
 
@@ -2842,10 +2896,10 @@ LIKE '%";
             string wrd = richTextBox1.SelectedText.ToString();
 
 
-            if (beforetext.Contains("\n"))
-            {
-                containsreturn = true;
-            }
+            //if (beforetext.Contains("\n"))
+            //{
+            //    containsreturn = true;
+            //}
 
             if (!beforetext.Contains("\n"))
             {
@@ -3028,6 +3082,9 @@ LIKE '%";
 
         private void Lb_KeyDown(object sender, KeyEventArgs e)
         {
+
+            listBox1.Visible = false;
+            listBox2.Visible = false;
 
 
             if (containsreturn == true)
@@ -3426,6 +3483,27 @@ LIKE '%";
         private void richTextBox2_KeyDown2(object sender, KeyEventArgs e)
         {
 
+            var len = richTextBox2.TextLength;
+
+            if (e.KeyCode == Keys.Back)
+            {
+                len = len -2;
+            }
+
+            if (len > -1)
+            {
+                richTextBox4.Enabled = true;
+               
+            }
+
+            if (len <= -1)
+            {
+                richTextBox4.Enabled = false;
+            }
+
+            lb.Visible = false;
+            listBox2.Visible = false;
+
             if (listBox1.Visible == true && e.KeyCode != Keys.Decimal || autocompletebusy == true)
             {
                 e.Handled = true;
@@ -3471,7 +3549,7 @@ LIKE '%";
                 dataGridView6.DataSource = null;
                 dataGridView7.DataSource = null;
                 //richTextBox2.Enabled = false;
-                //richTextBox2_KeyDowns2(sender, e);
+                richTextBox4_KeyDown3(sender, e);
                 //tabControl3.SelectedTab = tabPage9;
 
 
@@ -4055,10 +4133,11 @@ LIKE '%";
 
                                                 }
                                             }
+                                            datacleared = false;
                                         }
 
                                     }
-
+                                    
                                 }
 
 
@@ -4135,14 +4214,15 @@ LIKE '%";
 
                                                 }
                                             }
+                                            datacleared = false;
                                         }
 
                                     }
 
                                 }
 
-
-                            }
+                                
+                            } 
 
                             catch (Exception ex)
 
@@ -4153,6 +4233,7 @@ LIKE '%";
 
                                 if (ex.Message != null)
                                 {
+
                                     string msg = ex.Message;
 
 
@@ -4191,6 +4272,7 @@ LIKE '%";
                             //textBox9.Text = msg;
                             groupBox8.Text = "Error";
                             label23.Visible = false;
+                            datacleared = false;
                         });
                     }
 
@@ -4346,10 +4428,10 @@ LIKE '%";
             string wrd = richTextBox2.SelectedText.ToString();
 
 
-            if (beforetext.Contains("\n"))
-            {
-                containsreturn = true;
-            }
+            //if (beforetext.Contains("\n"))
+            //{
+            //    containsreturn = true;
+            //}
 
             if (!beforetext.Contains("\n"))
             {
@@ -4907,6 +4989,8 @@ LIKE '%";
 
         private void richTextBox4_KeyDown3(object sender, KeyEventArgs e)
         {
+            listBox1.Visible = false;
+            lb.Visible = false;
 
             if (listBox2.Visible == true && e.KeyCode != Keys.Decimal || autocompletebusy == true)
             {
@@ -5376,14 +5460,35 @@ LIKE '%";
 
             textBox9.Visible = false;
             textBox10.Visible = false;
-            dataGridView6.Visible = true;
+            //dataGridView6.Visible = true;
 
+            if (dta is not null)
+            {
+                if (dta.Rows.Count != 0)
+                {
+
+                    dta.Clear();
+                    datacleared = true;
+                }
+            }
+            if (dta2 is not null)
+            {
+                if (dta2.Rows.Count != 0)
+                {
+                    dta2.Clear();
+                    datacleared = true;
+                }
+            }
             this.dataGridView1.ColumnHeadersVisible = false;
             this.dataGridView2.ColumnHeadersVisible = false;
             this.dataGridView3.ColumnHeadersVisible = false;
             this.dataGridView4.ColumnHeadersVisible = false;
             this.dataGridView5.ColumnHeadersVisible = false;
             this.dataGridView6.ColumnHeadersVisible = false;
+
+            dataGridView6.Rows.Clear();
+            dataGridView7.Rows.Clear();
+
             button3.Enabled = false;
             button4.Enabled = false;
             button1.Enabled = false;
@@ -5404,9 +5509,6 @@ LIKE '%";
             sqlcomm = "";
 
             quer = richTextBox2.Text;
-
-
-
 
 
             if (backgroundWorker5.IsBusy != true)
@@ -5432,6 +5534,18 @@ LIKE '%";
         private void backgroundWorker6_DoWork(object sender, DoWorkEventArgs e)
         {
 
+            if (dta is not null)
+            {
+                dta.Dispose();
+            }
+            if (dta2 is not null)
+            {
+                dta2.Dispose();
+            }
+            if (dta3 is not null)
+            {
+                dta3.Dispose();
+            }
 
 
 
@@ -5523,20 +5637,25 @@ LIKE '%";
 
                             }
 
-                            
+
 
                             adapter.SelectCommand = cmd1;
                             DataTable ds = new DataTable();
                             adapter.Fill(ds);
+                            cmd.Close();
 
 
                             if (dta != null)
                             {
 
+                                dta.Clear();
+
                                 if (dta.Rows.Count > 0)
                                 {
                                     dta.Rows.Clear();
                                 }
+
+                                dta = null;
                             }
 
 
@@ -5547,21 +5666,24 @@ LIKE '%";
                                 {
 
                                     {
-                                        
+
                                         dta = dr.Table;
                                         dta.AcceptChanges();
 
                                         e.Result = true;
+                                        datacleared = false;
                                         return;
 
 
                                     }
+                                    
                                 }
-
+                                
                                 return;
                             }
-
+                               
                         }
+
                     }
                     catch (SqlException ex)
 
@@ -5572,22 +5694,32 @@ LIKE '%";
                             return;
 
                         {
-                            string msg = ex.Message;
-                            BeginInvoke((MethodInvoker)delegate
-                                            {
-                                                //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
-                                                dataGridView6.Rows.Clear();
-                                                dataGridView7.Rows.Clear();
-                                                textBox9.Visible = true;
-                                                errormessages = msg;
-                                                groupBox11.Text = "Error";
-                                                groupBox12.Text = "Error";
-                                                label24.Visible = false;
-                                                label25.Visible = false;
-                                                label30.Visible = false;
-                                                label31.Visible = false;
-                                            });
+                            if (errormessage != "Incorrect syntax near the keyword 'Rollback'.")
+                            {
 
+                                errormessage = ex.Message;
+
+                                //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
+                                //dataGridView6.Rows.Clear();
+                                //dataGridView7.Rows.Clear();
+                                //textBox9.Visible = true;
+                                //errormessage = msg;
+                                //groupBox11.Text = "Error";
+                                //groupBox12.Text = "Error";
+                                //label24.Visible = false;
+                                //label25.Visible = false;
+                                //label30.Visible = false;
+                                //label31.Visible = false;
+                                datacleared = false;
+                            }
+
+                            if (errormessage == "Incorrect syntax near the keyword 'Rollback'.")
+                            {
+
+                                errormessage = "An error occurred - please check your query and syntax.";
+                            }
+                                safesqlexceptionhandler(sender, e);
+                            
                         }
 
                     }
@@ -5597,8 +5729,11 @@ LIKE '%";
                     finally
                     {
                         
+                        dataGridView5.Rows.Clear();
+                        dataGridView6.Rows.Clear();
+                        dataGridView7.Rows.Clear();
                         secondsql(sender, e);
-                        
+
 
                     }
 
@@ -5711,6 +5846,7 @@ LIKE '%";
 
                             if (dta2 != null)
                             {
+                                dta2.Clear();
 
                                 if (dta2.Rows.Count > 0)
                                 {
@@ -5732,16 +5868,19 @@ LIKE '%";
                                         dta2.AcceptChanges();
 
                                         e.Result = true;
+                                        datacleared = false;
                                         return;
 
 
                                     }
+                                    
                                 }
-
+                                
                                 return;
                             }
 
                         }
+                       
                     }
                     catch (SqlException ex2)
 
@@ -5752,14 +5891,20 @@ LIKE '%";
                             return;
 
                         {
-                            //string msg2 = ex2.Message;
+
+                            if (errormessage != ex2.Message && errormessage != "An error occurred - please check your query and syntax.")
+                            {
+                                errormessage += ex2.Message;
+
+                                datacleared = false;
+                            }
                             //BeginInvoke((MethodInvoker)delegate
                             //{
                             //    //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
                             //    dataGridView6.Rows.Clear();
                             //    dataGridView7.Rows.Clear();
                             //    textBox10.Visible = true;
-                            //    errormessages += msg2;
+                            //    errormessage += msg2;
                             //    groupBox11.Text = "Error";
                             //    groupBox12.Text = "Error";
                             //    label24.Visible = false;
@@ -5768,6 +5913,8 @@ LIKE '%";
                             //    label31.Visible = false;
                             //});
 
+                            safesqlexceptionhandler(sender, e);
+
                         }
 
                     }
@@ -5775,7 +5922,15 @@ LIKE '%";
 
                     finally
                     {
-                        thirdsql(null,null);
+                        dataGridView5.Rows.Clear();
+                        dataGridView6.Rows.Clear();
+                        dataGridView7.Rows.Clear();
+
+                        dataGridView6.DataSource = null;
+                        dataGridView7.DataSource = null;
+
+
+                        thirdsql(null, null);
 
                     }
 
@@ -5786,291 +5941,175 @@ LIKE '%";
         }
 
 
-            public void thirdsql(Object sender, EventArgs e)
+        public void thirdsql(Object sender, EventArgs e)
+        {
+
+
+            BeginInvoke((MethodInvoker)delegate
             {
+                quer2 = richTextBox4.Text;
 
+                //dataGridView6.Visible = false;
+                //dataGridView7.Visible = false;
+                groupBox12.Text = "Results";
+                groupBox11.Text = "Results";
+                textBox9.Visible = false;
+                textBox10.Visible = false;
+                label24.Visible = true;
+                label30.Visible = true;
+            });
 
-                BeginInvoke((MethodInvoker)delegate
+            {
+                if (radioButton1.Checked == true)
                 {
-                    quer2 = richTextBox4.Text;
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                }
 
-                    //dataGridView6.Visible = false;
-                    //dataGridView7.Visible = false;
-                    groupBox8.Text = "Results";
-                    textBox9.Visible = false;
-                    textBox10.Visible = false;
-                    label24.Visible = true;
-                    label30.Visible = true;
-                });
-
+                else if (radioButton2.Checked == true)
                 {
-                    if (radioButton1.Checked == true)
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
+                }
+
+
+                try
+                {
+                    using (SqlConnection cmd0 = new SqlConnection(connex))
+
                     {
-                        Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
-                        connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
-                    }
 
-                    else if (radioButton2.Checked == true)
-                    {
-                        Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
-                        connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
-                    }
+                        //sqlcomm = sqlquery1 + " " + quer + " " + sqlquery2;
+                        sqlcomm = sqlquery1 + " " + quer2 + " " + sqlquery2;
 
+                        SqlCommand cmd1 = new SqlCommand(sqlcomm, cmd0);
+                        // SqlCommand cmd2 = new SqlCommand(sqlcomm2, cmd);
 
-                        try
+                        SqlDataAdapter adapter = new SqlDataAdapter();
+                        static void OpenAndSetArithAbort(SqlConnection cmd0)
                         {
-                            using (SqlConnection cmd0 = new SqlConnection(connex))
 
+                            using (SqlCommand cmd2 = cmd0.CreateCommand())
                             {
-
-                                //sqlcomm = sqlquery1 + " " + quer + " " + sqlquery2;
-                                sqlcomm = sqlquery1 + " " + quer2 + " " + sqlquery2;
-
-                                SqlCommand cmd1 = new SqlCommand(sqlcomm, cmd0);
-                                // SqlCommand cmd2 = new SqlCommand(sqlcomm2, cmd);
-
-                                SqlDataAdapter adapter = new SqlDataAdapter();
-                                static void OpenAndSetArithAbort(SqlConnection cmd0)
-                                {
-
-                                    using (SqlCommand cmd2 = cmd0.CreateCommand())
-                                    {
-                                        cmd2.CommandType = CommandType.Text;
-                                        cmd2.CommandText = "SET ARITHABORT ON";
-                                        cmd2.CommandTimeout = 0;
-                                        cmd0.Open();
-                                        cmd2.ExecuteNonQuery();
-                                    }
-
-                                    return;
-                                }
-
-                                OpenAndSetArithAbort(cmd0);
-
-                                if (cmd0.State == ConnectionState.Open)
-
-                                {
-                                    BeginInvoke((MethodInvoker)delegate
-                                    {
-                                        label17.Text = "Connected";
-                                        this.label17.Location = new System.Drawing.Point(288, 112);
-                                        this.label17.ForeColor = System.Drawing.Color.DarkGreen;
-                                    }
-                                 );
-
-
-                                    if (cmd0 == null)
-
-                                    {
-                                        BeginInvoke((MethodInvoker)delegate
-                                        {
-                                            label17.Text = "Connection Failed";
-                                            this.label17.Location = new System.Drawing.Point(255, 112);
-                                            this.label17.ForeColor = System.Drawing.Color.DarkRed;
-                                        }
-                                     );
-
-                                    }
-
-                                }
-
-                                adapter.SelectCommand = cmd1;
-                                DataTable ds = new DataTable();
-                                adapter.Fill(ds);
-
-                                foreach (DataColumn dc in ds.Columns)
-                                {
-
-                                    foreach (DataRow dr in ds.Rows)
-                                    {
-
-                                        {
-
-                                            dta3 = dr.Table;
-                                            dta3.AcceptChanges();
-
-                                            //e.Result = true;
-                                            return;
-
-
-                                        }
-                                    }
-
-                                    //return;
-                                }
-
+                                cmd2.CommandType = CommandType.Text;
+                                cmd2.CommandText = "SET ARITHABORT ON";
+                                cmd2.CommandTimeout = 0;
+                                cmd0.Open();
+                                cmd2.ExecuteNonQuery();
                             }
+
+                            return;
                         }
-                        catch (SqlException ex2)
+
+                        OpenAndSetArithAbort(cmd0);
+
+                        if (cmd0.State == ConnectionState.Open)
 
                         {
-
-                         
+                            BeginInvoke((MethodInvoker)delegate
                             {
-                                string msg2 = ex2.Message;
+                                label17.Text = "Connected";
+                                this.label17.Location = new System.Drawing.Point(288, 112);
+                                this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                            }
+                         );
+
+
+                            if (cmd0 == null)
+
+                            {
                                 BeginInvoke((MethodInvoker)delegate
                                 {
-                                    //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
-                                    errormessages += Environment.NewLine+msg2;
-
-                                });
+                                    label17.Text = "Connection Failed";
+                                    this.label17.Location = new System.Drawing.Point(255, 112);
+                                    this.label17.ForeColor = System.Drawing.Color.DarkRed;
+                                }
+                             );
 
                             }
 
                         }
 
+                        adapter.SelectCommand = cmd1;
+                        DataTable ds = new DataTable();
+                        adapter.Fill(ds);
 
-                        finally
+                        foreach (DataColumn dc in ds.Columns)
                         {
-                            //cmd0.Close();
 
+                            foreach (DataRow dr in ds.Rows)
+                            {
+
+                                {
+
+                                    dta3 = dr.Table;
+                                    dta3.AcceptChanges();
+
+                                    //e.Result = true;
+                                    return;
+
+
+                                }
+                                datacleared = false;
+                            }
+                            
+                            //return;
                         }
 
-
-
+                    }
                     
+                }
+                catch (SqlException ex2)
+
+                {
+
+
+                    {
+                        string msg2 = ex2.Message;
+                        BeginInvoke((MethodInvoker)delegate
+                        {
+                            //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
+
+                            if (msg2 != errormessage)
+                            {
+                                errormessage += Environment.NewLine + msg2;
+                            }
+                            //dataGridView6.Rows.Clear();
+                            //dataGridView7.Rows.Clear();
+
+                            safesqlexceptionhandler(sender, e);
+
+                            //dataGridView6.Rows.Clear();
+                            //dataGridView7.Rows.Clear();
+                            //textBox9.Visible = true;
+                            //groupBox11.Text = "Error";
+                            //groupBox12.Text = "Error";
+                            //label24.Visible = false;
+                            //label25.Visible = false;
+                            //label30.Visible = false;
+                            //label31.Visible = false;
+
+                        });
+
+                    }
+
+                }
+
+
+                finally
+                {
+                    dataGridView5.Rows.Clear();
+                    dataGridView6.Rows.Clear();
+                    dataGridView7.Rows.Clear();
+
                 }
 
 
 
-                //        catch (Exception ex)
-                //        {
-                //            string msg = ex.Message;
-                //            errormessages = (msg + Environment.NewLine);
-                //            BeginInvoke((MethodInvoker)delegate
-                //                            {
-                //                                //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
-                //                                dataGridView6.Rows.Clear();
-                //                                dataGridView7.Rows.Clear();
-                //                                textBox9.Visible = true;
-                //                                textBox9.Text = errormessages;
-                //                                groupBox11.Text = "Error";
-                //                                groupBox12.Text = "Error";
-                //                                label24.Visible = false;
-                //                                label25.Visible = false;
-                //                                label30.Visible = false;
-                //                                label31.Visible = false;
-                //                            });
 
-
-                //        }
-
-                //    }
-                //}
-
-                //finally
-                //{
-
-                //}
-                //}
             }
-        //            try
-        //            {
 
-        //                adapter2.SelectCommand = cmd2;
-        //                DataTable ds2 = new DataTable();
-        //                adapter2.Fill(ds2);
-        //                if (dta2 != null)
-        //                {
-        //                    dta2.Clear();
-        //                }
-
-        //                foreach (DataColumn dc in ds2.Columns)
-        //                {
-
-        //                    foreach (DataRow dr in ds2.Rows)
-        //                    {
-
-        //                        {
-        //                            dta2 = dr.Table;
-        //                            dta2.AcceptChanges();
-
-        //                            if (worker.CancellationPending == true)
-        //                            {
-
-        //                                cmd.Close();
-        //                                e.Result = null;
-        //                                return;
-
-        //                            }
-
-        //                            if (worker.CancellationPending == false)
-
-        //                            {
-        //                                e.Result = true;
-        //                                return;
-
-        //                            }
-        //                        }
-        //                    }
-        //                }
-
-        //            }
-
-
-
-
-        //            catch (Exception ex)
-
-        //            {
-        //                if (worker.CancellationPending == true)
-
-        //                    return;
-
-        //                if (ex.Message != null)
-        //                {
-        //                    errormessages = (errormessages + ex.Message);
-
-
-        //                    BeginInvoke((MethodInvoker)delegate
-        //                    {
-        //                        //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
-        //                        dataGridView6.Rows.Clear();
-        //                        dataGridView7.Rows.Clear();
-        //                        textBox9.Visible = true;
-        //                        textBox9.Text = errormessages;
-        //                        textBox10.Visible = true;
-        //                        textBox10.Text = errormessages;
-        //                        groupBox11.Text = "Error";
-        //                        groupBox12.Text = "Error";
-        //                        label24.Visible = false;
-        //                        label25.Visible = false;
-        //                        label30.Visible = false;
-        //                        label31.Visible = false;
-        //                    });
-        //                }
-        //            }
-        //        }
-        //    }
-        //    finally
-        //    {
-        //        cmd.Close();
-        //        cmds.Close();
-        //    }
-        //} }
-
-
-
-
-
-        //catch (Exception ex)
-        //{
-        //    string msg = "Please enter valid connection details.";
-        //    //MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
-
-        //    BeginInvoke((MethodInvoker)delegate
-        //    {
-        //        dataGridView5.Rows.Clear();
-        //        dataGridView6.Rows.Clear();
-        //        dataGridView7.Rows.Clear();
-        //    });
-        //}
-
-
-
-
-
-
+        }
 
 
 
@@ -6097,6 +6136,12 @@ LIKE '%";
                     dataGridView6.DataBindings.Clear();
                     dataGridView7.DataBindings.Clear();
 
+                    dataGridView6.Rows.Clear();
+                    dataGridView7.Rows.Clear();
+
+                    dataGridView6.ColumnHeadersVisible = false;
+                    dataGridView7.ColumnHeadersVisible = false;
+
                     f5pressed = false;
                     ctp = "ctp4";
                     button3.Enabled = true;
@@ -6116,6 +6161,7 @@ LIKE '%";
                     cmd.Close();
                     if (dta != null)
                     {
+                        
 
                         dta = dta.Copy();
                         dataGridView7.DataSource = null;
@@ -6123,14 +6169,19 @@ LIKE '%";
                         dataGridView7.DataSource = dta;
                         dataGridView7.ScrollBars = ScrollBars.Both;
                         dataGridView7.Visible = true;
+                        contextMenuStrip4.Enabled = true;
+                        toolStripMenuItem3.Enabled = true;
+                        toolStripMenuItem3.Visible = true;
+                        
 
 
-                        if (dta.Rows.Count < 1 && errormessages == null)
+                        if (dta.Rows.Count < 1 & errormessage == null)
                         {
+                            datacleared = false;
                             label24.Visible = true;
                             dataGridView7.ScrollBars = ScrollBars.None;
                             textBox9.Visible = false;
-                            textBox9.Text = errormessages;
+                            textBox9.Text = errormessage;
                             this.dataGridView7.ColumnHeadersVisible = false;
                             dataGridView7.DataSource = null;
                             dataGridView7.Refresh();
@@ -6143,51 +6194,56 @@ LIKE '%";
                             label24.Visible = false;
                             label25.Visible = false;
                             this.dataGridView7.ColumnHeadersVisible = true;
+                            //textBox9.Visible = false;
+                            //dataGridView7.Visible = true;
                         }
 
 
 
-                        if (dta.Rows.Count < 1 && errormessages != null)
+                        if (dta.Rows.Count < 1 & errormessage != "")
                         {
                             //label31.Visible = true;
                             this.dataGridView7.ColumnHeadersVisible = false;
                             button3.Enabled = false;
                             textBox9.Visible = true;
-                            textBox9.Text = errormessages;
+                            textBox9.Text = errormessage;
                             dataGridView7.DataSource = null;
                             dataGridView7.Refresh();
+                            datacleared = true;
+                            
                         }
 
-                       
+
                     }
 
-                   
-                        if (dta is null)
-                        {
+
+                    if (dta is null)
+                    {
 
                         dataGridView7.Visible = false;
                         dataGridView7.DataSource = null;
                         dataGridView7.Refresh();
+                        dta2 = null;
 
-                        if (errormessages != "")
+                        if (errormessage != "")
                         {
                             //label31.Visible = true;
                             this.dataGridView7.ColumnHeadersVisible = false;
                             button3.Enabled = false;
                             textBox9.Visible = true;
-                            textBox9.Text = errormessages;
+                            textBox9.Text = errormessage;
 
                         }
 
-                        if (errormessages == null || errormessages == "")
+                        if (errormessage == null || errormessage == "")
                         {
                             label31.Visible = true;
-                            label25.Visible=true;
+                            label25.Visible = true;
                             this.dataGridView7.ColumnHeadersVisible = false;
                             button3.Enabled = false;
                             textBox9.Visible = false;
                             textBox10.Visible = false;
-                            //textBox9.Text = errormessages;
+                            //textBox9.Text = errormessage;
                             dataGridView7.DataSource = null;
                             dataGridView7.Refresh();
                         }
@@ -6199,6 +6255,7 @@ LIKE '%";
 
                     if (dta2 != null)
                     {
+                       
 
                         dta2 = dta2.Copy();
                         dataGridView6.DataSource = null;
@@ -6206,14 +6263,15 @@ LIKE '%";
                         dataGridView6.DataSource = dta2;
                         dataGridView6.ScrollBars = ScrollBars.Both;
                         dataGridView6.Visible = true;
+                        
 
-
-                        if (dta2.Rows.Count < 1 && errormessages == null)
+                        if (dta2.Rows.Count < 1 & errormessage == "")
                         {
+                            datacleared = false;
                             label30.Visible = true;
                             dataGridView6.ScrollBars = ScrollBars.None;
                             textBox10.Visible = false;
-                            textBox10.Text = errormessages;
+                            textBox10.Text = errormessage;
                             this.dataGridView6.ColumnHeadersVisible = false;
                             dataGridView6.DataSource = null;
                             dataGridView6.Refresh();
@@ -6226,44 +6284,47 @@ LIKE '%";
                             label30.Visible = false;
                             label31.Visible = false;
                             this.dataGridView6.ColumnHeadersVisible = true;
+                            //textBox10.Visible = false;
+                            //dataGridView6.Visible = true;
                         }
 
 
 
-                        if (dta2.Rows.Count < 1 && errormessages != null)
+                        if (dta2.Rows.Count < 1 & errormessage != "")
                         {
+                            datacleared = true;
                             //label31.Visible = true;
                             this.dataGridView6.ColumnHeadersVisible = false;
                             button3.Enabled = false;
                             textBox10.Visible = true;
-                            textBox10.Text = errormessages;
+                            textBox10.Text = errormessage;
                             dataGridView6.DataSource = null;
                             dataGridView6.Refresh();
                         }
 
-                        
+
 
                     }
 
 
-                    if (dta2 is null)
+                    if (dta2 is null && dta is null)
                     {
 
                         dataGridView6.Visible = false;
                         dataGridView6.DataSource = null;
                         dataGridView6.Refresh();
 
-                        if (errormessages != "")
+                        if (errormessage != "")
                         {
                             //label31.Visible = true;
                             this.dataGridView6.ColumnHeadersVisible = false;
                             button3.Enabled = false;
                             textBox10.Visible = true;
-                            textBox10.Text = errormessages;
+                            textBox10.Text = errormessage;
 
                         }
 
-                        if (errormessages == null || errormessages == "")
+                        if (errormessage == null || errormessage == "")
                         {
                             //label31.Visible = true;
                             this.dataGridView6.ColumnHeadersVisible = false;
@@ -6271,7 +6332,7 @@ LIKE '%";
                             textBox10.Visible = false;
                             label31.Visible = true;
                             label25.Visible = true;
-                            //textBox9.Text = errormessages;
+                            //textBox9.Text = errormessage;
                             dataGridView6.DataSource = null;
                             dataGridView6.Refresh();
                         }
@@ -6286,8 +6347,19 @@ LIKE '%";
                     busy = false;
                     richTextBox4.Enabled = true;
                     richTextBox2.Enabled = true;
-                    errormessages = "";
-                  
+                    errormessage = "";
+
+                    if (datacleared == true)
+                    {
+                        dataGridView6.Visible = false;
+                        dataGridView7.Visible = false;
+                        textBox10.Visible = true;
+                        textBox9.Visible = true;
+                        textBox9.Text = "An error occurred - please check your query and syntax.";
+                        textBox10.Text = "An error occurred - please check your query and syntax.";
+                        datacleared = false;
+                    }
+
 
                 }
             }
@@ -6351,10 +6423,10 @@ LIKE '%";
             string wrd = richTextBox4.SelectedText.ToString();
 
 
-            if (beforetext.Contains("\n"))
-            {
-                containsreturn = true;
-            }
+            //if (beforetext.Contains("\n"))
+            //{
+            //    containsreturn = true;
+            //}
 
             if (!beforetext.Contains("\n"))
             {
@@ -6799,20 +6871,19 @@ LIKE '%";
             }
 
 
+            
 
+                if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape)
+                {
+                    listBox2.Hide();
+                    richTextBox4.SelectionStart = caretposition;
+                    richTextBox4.DeselectAll();
+                    richTextBox4.Focus();
+                    richTextBox4.Refresh();
 
+                }
 
-            if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape)
-            {
-                listBox2.Hide();
-                richTextBox4.SelectionStart = caretposition;
-                richTextBox4.DeselectAll();
-                richTextBox4.Focus();
-                richTextBox4.Refresh();
-
-            }
-
-
+            
         }
 
 
@@ -6968,13 +7039,851 @@ LIKE '%";
 
         }
 
+        void copyresultsRow(object sender, EventArgs e)
+
+        {
+            if (dta is not null && tabControl3.SelectedTab == this.tabPage9)
+
+            {
+
+
+
+                if (String.Equals(ctp, "ctp4"))
+                {
+
+                    DataTable dtc = ((DataTable)dataGridView7.DataSource).Copy(); //original copy of datagridview data
+                    DataTable dtr = ((DataTable)dataGridView7.DataSource).Clone(); //holding table with the same structure as above
+                    DataTable dtd = ((DataTable)dataGridView7.DataSource).Clone(); //reverse-order table for the above
+
+
+                    foreach (DataGridViewCell c in dataGridView7.SelectedCells)
+                    {
+                        var ind = c.RowIndex;
+                        dataGridView7.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                        dataGridView7.Rows[ind].Selected = true;
+                    }
+
+
+
+                    int numrows = dataGridView7.SelectedRows.Count;
+
+                    int[] selectedrows = new int[numrows];
+
+                    foreach (DataGridViewRow d in dataGridView7.SelectedRows)
+                    {
+                        var i = d.Index;
+                        DataRow dd = dtc.Rows[i];
+                        dtd.ImportRow(dd);
+                    }
+
+                    dtd.AcceptChanges();
+
+                    var newline = System.Environment.NewLine;
+                    var tab = "\t";
+                    var clipboard_string = new StringBuilder();
+
+
+                    for (int r = dtd.Rows.Count - 1; r >= 0; r--)
+                    {
+                        var row = dtd.Rows[r];
+                        dtr.ImportRow(row);
+                    }
+
+                    dtr.AcceptChanges();
+
+
+                    copyrows = string.Join(Environment.NewLine, dtd.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+
+                    clipboard_string.Append(copyrows);
+
+                    //button3.Enabled = false;
+                    //button3.Text = "Results Copied";
+
+
+
+                    if (clipboard_string.Length > 0)
+                        Clipboard.SetText(clipboard_string.ToString());
+
+                    if (clipboard_string == null)
+                    {
+                        return;
+                    }
+
+
+
+                    if (dta == null)
+                    {
+                        return;
+                    }
+
+                }
+
+                if (!(String.Equals(ctp, "ctp4")))
+                {
+                    return;
+                }
+
+
+
+
+
+                dataGridView7.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            }
+
+
+            if (dta is not null && tabControl3.SelectedTab == this.tabPage10)
+
+            {
+
+
+
+                if (String.Equals(ctp, "ctp4"))
+                {
+
+                    DataTable dtc = ((DataTable)dataGridView6.DataSource).Copy(); //original copy of datagridview data
+                    DataTable dtr = ((DataTable)dataGridView6.DataSource).Clone(); //holding table with the same structure as above
+                    DataTable dtd = ((DataTable)dataGridView6.DataSource).Clone(); //reverse-order table for the above
+
+
+                    foreach (DataGridViewCell c in dataGridView6.SelectedCells)
+                    {
+                        var ind = c.RowIndex;
+                        dataGridView6.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                        dataGridView6.Rows[ind].Selected = true;
+                    }
+
+
+
+                    int numrows = dataGridView6.SelectedRows.Count;
+
+                    int[] selectedrows = new int[numrows];
+
+                    foreach (DataGridViewRow d in dataGridView6.SelectedRows)
+                    {
+                        var i = d.Index;
+                        DataRow dd = dtc.Rows[i];
+                        dtd.ImportRow(dd);
+                    }
+
+                    dtd.AcceptChanges();
+
+                    var newline = System.Environment.NewLine;
+                    var tab = "\t";
+                    var clipboard_string = new StringBuilder();
+
+
+                    for (int r = dtd.Rows.Count - 1; r >= 0; r--)
+                    {
+                        var row = dtd.Rows[r];
+                        dtr.ImportRow(row);
+                    }
+
+                    dtr.AcceptChanges();
+
+
+                    copyrows = string.Join(Environment.NewLine, dtd.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+
+                    clipboard_string.Append(copyrows);
+
+                    //button3.Enabled = false;
+                    //button3.Text = "Results Copied";
+
+
+
+                    if (clipboard_string.Length > 0)
+                        Clipboard.SetText(clipboard_string.ToString());
+
+                    if (clipboard_string == null)
+                    {
+                        return;
+                    }
+
+
+
+                    if (dta == null)
+                    {
+                        return;
+                    }
+
+                }
+
+                if (!(String.Equals(ctp, "ctp4")))
+                {
+                    return;
+                }
+
+
+
+
+
+                dataGridView6.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            }
+
+
+            if (dta is not null && tabControl2.SelectedTab == this.tabPage5)
+
+            {
+
+
+
+                if (String.Equals(ctp, "ctp4"))
+                {
+
+                    DataTable dtc = ((DataTable)dataGridView4.DataSource).Copy(); //original copy of datagridview data
+                    DataTable dtr = ((DataTable)dataGridView4.DataSource).Clone(); //holding table with the same structure as above
+                    DataTable dtd = ((DataTable)dataGridView4.DataSource).Clone(); //reverse-order table for the above
+
+
+                    foreach (DataGridViewCell c in dataGridView4.SelectedCells)
+                    {
+                        var ind = c.RowIndex;
+                        dataGridView4.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                        dataGridView4.Rows[ind].Selected = true;
+                    }
+
+
+
+                    int numrows = dataGridView4.SelectedRows.Count;
+
+                    int[] selectedrows = new int[numrows];
+
+                    foreach (DataGridViewRow d in dataGridView4.SelectedRows)
+                    {
+                        var i = d.Index;
+                        DataRow dd = dtc.Rows[i];
+                        dtd.ImportRow(dd);
+                    }
+
+                    dtd.AcceptChanges();
+
+                    var newline = System.Environment.NewLine;
+                    var tab = "\t";
+                    var clipboard_string = new StringBuilder();
+
+
+                    for (int r = dtd.Rows.Count - 1; r >= 0; r--)
+                    {
+                        var row = dtd.Rows[r];
+                        dtr.ImportRow(row);
+                    }
+
+                    dtr.AcceptChanges();
+
+
+                    copyrows = string.Join(Environment.NewLine, dtd.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+
+                    clipboard_string.Append(copyrows);
+
+                    //button3.Enabled = false;
+                    //button3.Text = "Results Copied";
+
+
+
+                    if (clipboard_string.Length > 0)
+                        Clipboard.SetText(clipboard_string.ToString());
+
+                    if (clipboard_string == null)
+                    {
+                        return;
+                    }
+
+
+
+                    if (dta == null)
+                    {
+                        return;
+                    }
+
+                }
+
+                if (!(String.Equals(ctp, "ctp4")))
+                {
+                    return;
+                }
+
+
+
+
+
+                dataGridView4.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            }
+
+            dataGridView7.SelectionMode = DataGridViewSelectionMode.CellSelect;
+
+
+            dataGridView6.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dataGridView4.SelectionMode = DataGridViewSelectionMode.CellSelect;
+        }
+
+
+
+
+
+        void copyresultsCell(object sender, EventArgs e)
+
+        {
+
+            if (dta is not null && tabControl3.SelectedTab == this.tabPage9)
+
+            {
+                if (String.Equals(ctp, "ctp4"))
+                {
+
+                    DataTable dtc = ((DataTable)dataGridView7.DataSource).Copy(); //original copy of datagridview data
+                    DataTable dtr = ((DataTable)dataGridView7.DataSource).Clone(); //holding table with the same structure as above
+                    DataTable dtd = ((DataTable)dataGridView7.DataSource).Clone(); //reverse-order table for the above
+
+                    int numcel = dataGridView7.SelectedCells.Count;
+
+                    int[] selectedcells = new int[numcel];
+
+
+                    var clipboard_string = new StringBuilder();
+
+                    string[] hold = new string[numcel];
+
+                    int num = 0;
+
+                    foreach (DataGridViewCell d in dataGridView7.SelectedCells)
+                    {
+
+                        var val = d.Value;
+                        //var i = d.ColumnIndex;
+                        //var j = d.RowIndex;
+
+                        var fullstring = string.Concat(val, ',');
+
+                        hold[num] = fullstring;
+
+                        num++;
+
+                    }
+
+                    string[] hold2 = new string[numcel];
+                    hold2 = hold.Reverse().ToArray();
+
+                    foreach (string s in hold2)
+                    {
+                        clipboard_string.Append(s);
+                    }
+
+
+
+                    if (clipboard_string.Length > 0)
+                        Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
+
+                    if (clipboard_string == null)
+                    {
+                        return;
+                    }
+
+
+
+                    if (dta == null)
+                    {
+                        return;
+                    }
+
+                }
+
+                if (!(String.Equals(ctp, "ctp4")))
+                {
+                    return;
+                }
+
+                dataGridView7.ClearSelection();
+            }
+
+
+            if (dta is not null && tabControl3.SelectedTab == this.tabPage10)
+
+            {
+                if (String.Equals(ctp, "ctp4"))
+                {
+
+                    DataTable dtc = ((DataTable)dataGridView6.DataSource).Copy(); //original copy of datagridview data
+                    DataTable dtr = ((DataTable)dataGridView6.DataSource).Clone(); //holding table with the same structure as above
+                    DataTable dtd = ((DataTable)dataGridView6.DataSource).Clone(); //reverse-order table for the above
+
+                    int numcel = dataGridView6.SelectedCells.Count;
+
+                    int[] selectedcells = new int[numcel];
+
+
+                    var clipboard_string = new StringBuilder();
+
+                    string[] hold = new string[numcel];
+
+                    int num = 0;
+
+                    foreach (DataGridViewCell d in dataGridView6.SelectedCells)
+                    {
+
+                        var val = d.Value;
+                        //var i = d.ColumnIndex;
+                        //var j = d.RowIndex;
+
+                        var fullstring = string.Concat(val, ',');
+
+                        hold[num] = fullstring;
+
+                        num++;
+
+                    }
+
+                    string[] hold2 = new string[numcel];
+                    hold2 = hold.Reverse().ToArray();
+
+                    foreach (string s in hold2)
+                    {
+                        clipboard_string.Append(s);
+                    }
+
+
+
+                    if (clipboard_string.Length > 0)
+                        Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
+
+                    if (clipboard_string == null)
+                    {
+                        return;
+                    }
+
+
+
+                    if (dta == null)
+                    {
+                        return;
+                    }
+
+                }
+
+                if (!(String.Equals(ctp, "ctp4")))
+                {
+                    return;
+                }
+
+                dataGridView6.ClearSelection();
+            }
+
+
+            if (dta is not null && tabControl2.SelectedTab == this.tabPage5)
+
+            {
+                if (String.Equals(ctp, "ctp4"))
+                {
+
+                    DataTable dtc = ((DataTable)dataGridView4.DataSource).Copy(); //original copy of datagridview data
+                    DataTable dtr = ((DataTable)dataGridView4.DataSource).Clone(); //holding table with the same structure as above
+                    DataTable dtd = ((DataTable)dataGridView4.DataSource).Clone(); //reverse-order table for the above
+
+                    int numcel = dataGridView4.SelectedCells.Count;
+
+                    int[] selectedcells = new int[numcel];
+
+
+                    var clipboard_string = new StringBuilder();
+
+                    string[] hold = new string[numcel];
+
+                    int num = 0;
+
+                    foreach (DataGridViewCell d in dataGridView4.SelectedCells)
+                    {
+
+                        var val = d.Value;
+                        //var i = d.ColumnIndex;
+                        //var j = d.RowIndex;
+
+                        var fullstring = string.Concat(val, ',');
+
+                        hold[num] = fullstring;
+
+                        num++;
+
+                    }
+
+                    string[] hold2 = new string[numcel];
+                    hold2 = hold.Reverse().ToArray();
+
+                    foreach (string s in hold2)
+                    {
+                        clipboard_string.Append(s);
+                    }
+
+
+
+                    if (clipboard_string.Length > 0)
+                        Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
+
+                    if (clipboard_string == null)
+                    {
+                        return;
+                    }
+
+
+
+                    if (dta == null)
+                    {
+                        return;
+                    }
+
+                }
+
+                if (!(String.Equals(ctp, "ctp4")))
+                {
+                    return;
+                }
+
+                dataGridView4.ClearSelection();
+            }
+
+            dataGridView7.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dataGridView6.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dataGridView4.SelectionMode = DataGridViewSelectionMode.CellSelect;
+        }
+
+
+        void copyresultsColumn(object sender, EventArgs e)
+
+        {
+
+
+
+            if (dta is not null && tabControl3.SelectedTab == this.tabPage9)
+
+            {
+                if (String.Equals(ctp, "ctp4"))
+                {
+
+                    //DataTable dtc = new DataTable();
+                    DataTable dtd = new DataTable();
+                    //DataTable dtr = new DataTable();
+
+                    int rowcount = dataGridView7.Rows.Count;
+                    int columncount = dataGridView7.Columns.Count;
+                    int[] selectedrows = new int[rowcount];
+                    int[] allcolumns = new int[columncount];
+                    int[] selectedcolumns = new int[1000];
+
+                    DataTable dtc = ((DataTable)dataGridView7.DataSource).Copy(); //original copy of datagridview data
+                    DataTable dtr = ((DataTable)dataGridView7.DataSource).Clone(); //holding table with the same structure as above
+
+                    List<int> ts = new List<int>();
+                    List<int> tr = new List<int>();
+                    List<string> allcolnames = new List<string>();
+                    List<string> colnames = new List<string>();
+                    
+
+
+                    foreach (DataGridViewCell c in dataGridView7.SelectedCells)
+                    {
+                        var ind = c.ColumnIndex;
+                        string name = dtc.Columns[ind].ColumnName;
+
+                        colnames.Add(name);
+                    }
+
+
+                    foreach (DataGridViewColumn dc in dataGridView7.SelectedColumns)
+                    {
+                        var id = dc.Index;
+                        string s = dtc.Columns[id].ColumnName;
+                        colnames.Add(s);
+                    }
+
+
+                    foreach (DataGridViewColumn dcs in dataGridView7.Columns)
+                    {
+                        var ids = dcs.Index;
+                        string t = dcs.Name;
+                        allcolnames.Add(t);
+                    }
+           
+
+                   
+
+                    List<string> colnamestodelete = allcolnames.Except(colnames).ToList();
+
+                    foreach (string s in colnamestodelete)
+                    {
+                        dtc.Columns.RemoveAt(dtc.Columns.IndexOf(s));
+                    }
+
+                    dtc.AcceptChanges();
+
+
+                    copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+                    var clipboard_string = new StringBuilder();
+
+  
+
+                    clipboard_string.Append(copyrows);
+
+
+                    if (clipboard_string.Length > 0)
+                        Clipboard.SetText(clipboard_string.ToString());
+
+                    if (clipboard_string == null)
+                    {
+                        return;
+                    }
+
+
+
+                    if (dta == null)
+                    {
+                        return;
+                    }
+
+                }
+
+                if (!(String.Equals(ctp, "ctp4")))
+                {
+                    return;
+                }
+
+
+            }
+
+            if (dta is not null && tabControl3.SelectedTab == this.tabPage10)
+
+            {
+                if (String.Equals(ctp, "ctp4"))
+                {
+
+                    //DataTable dtc = new DataTable();
+                    DataTable dtd = new DataTable();
+                    //DataTable dtr = new DataTable();
+
+                    int rowcount = dataGridView6.Rows.Count;
+                    int columncount = dataGridView6.Columns.Count;
+                    int[] selectedrows = new int[rowcount];
+                    int[] allcolumns = new int[columncount];
+                    int[] selectedcolumns = new int[1000];
+
+                    DataTable dtc = ((DataTable)dataGridView6.DataSource).Copy(); //original copy of datagridview data
+                    DataTable dtr = ((DataTable)dataGridView6.DataSource).Clone(); //holding table with the same structure as above
+
+                    List<int> ts = new List<int>();
+                    List<int> tr = new List<int>();
+                    List<string> allcolnames = new List<string>();
+                    List<string> colnames = new List<string>();
+
+
+
+                    foreach (DataGridViewCell c in dataGridView6.SelectedCells)
+                    {
+                        var ind = c.ColumnIndex;
+                        string name = dtc.Columns[ind].ColumnName;
+
+                        colnames.Add(name);
+                    }
+
+
+                    foreach (DataGridViewColumn dc in dataGridView6.SelectedColumns)
+                    {
+                        var id = dc.Index;
+                        string s = dtc.Columns[id].ColumnName;
+                        colnames.Add(s);
+                    }
+
+
+                    foreach (DataGridViewColumn dcs in dataGridView6.Columns)
+                    {
+                        var ids = dcs.Index;
+                        string t = dcs.Name;
+                        allcolnames.Add(t);
+                    }
+
+
+
+
+                    List<string> colnamestodelete = allcolnames.Except(colnames).ToList();
+
+                    foreach (string s in colnamestodelete)
+                    {
+                        dtc.Columns.RemoveAt(dtc.Columns.IndexOf(s));
+                    }
+
+                    dtc.AcceptChanges();
+
+
+                    copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+                    var clipboard_string = new StringBuilder();
+
+
+
+                    clipboard_string.Append(copyrows);
+
+
+                    if (clipboard_string.Length > 0)
+                        Clipboard.SetText(clipboard_string.ToString());
+
+                    if (clipboard_string == null)
+                    {
+                        return;
+                    }
+
+
+
+                    if (dta == null)
+                    {
+                        return;
+                    }
+
+                }
+
+                if (!(String.Equals(ctp, "ctp4")))
+                {
+                    return;
+                }
+
+
+            }
+
+            if (dta is not null && tabControl2.SelectedTab == this.tabPage5)
+
+            {
+                if (String.Equals(ctp, "ctp4"))
+                {
+
+                    //DataTable dtc = new DataTable();
+                    DataTable dtd = new DataTable();
+                    //DataTable dtr = new DataTable();
+
+                    int rowcount = dataGridView4.Rows.Count;
+                    int columncount = dataGridView4.Columns.Count;
+                    int[] selectedrows = new int[rowcount];
+                    int[] allcolumns = new int[columncount];
+                    int[] selectedcolumns = new int[1000];
+
+                    DataTable dtc = ((DataTable)dataGridView4.DataSource).Copy(); //original copy of datagridview data
+                    DataTable dtr = ((DataTable)dataGridView4.DataSource).Clone(); //holding table with the same structure as above
+
+                    List<int> ts = new List<int>();
+                    List<int> tr = new List<int>();
+                    List<string> allcolnames = new List<string>();
+                    List<string> colnames = new List<string>();
+
+
+
+                    foreach (DataGridViewCell c in dataGridView4.SelectedCells)
+                    {
+                        var ind = c.ColumnIndex;
+                        string name = dtc.Columns[ind].ColumnName;
+
+                        colnames.Add(name);
+                    }
+
+
+                    foreach (DataGridViewColumn dc in dataGridView4.SelectedColumns)
+                    {
+                        var id = dc.Index;
+                        string s = dtc.Columns[id].ColumnName;
+                        colnames.Add(s);
+                    }
+
+
+                    foreach (DataGridViewColumn dcs in dataGridView4.Columns)
+                    {
+                        var ids = dcs.Index;
+                        string t = dcs.Name;
+                        allcolnames.Add(t);
+                    }
+
+
+
+
+                    List<string> colnamestodelete = allcolnames.Except(colnames).ToList();
+
+                    foreach (string s in colnamestodelete)
+                    {
+                        dtc.Columns.RemoveAt(dtc.Columns.IndexOf(s));
+                    }
+
+                    dtc.AcceptChanges();
+
+
+                    copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+                    var clipboard_string = new StringBuilder();
+
+
+
+                    clipboard_string.Append(copyrows);
+
+
+                    if (clipboard_string.Length > 0)
+                        Clipboard.SetText(clipboard_string.ToString());
+
+                    if (clipboard_string == null)
+                    {
+                        return;
+                    }
+
+
+
+                    if (dta == null)
+                    {
+                        return;
+                    }
+
+                }
+
+                if (!(String.Equals(ctp, "ctp4")))
+                {
+                    return;
+                }
+
+
+            }
+
+
+
+            dataGridView7.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dataGridView6.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dataGridView4.SelectionMode = DataGridViewSelectionMode.CellSelect;
+
+     
+        }
+
+        void safesqlexceptionhandler(object sender, EventArgs e)
+        {
+            BeginInvoke((MethodInvoker)delegate
+            {
+
+                dataGridView6.Rows.Clear();
+                dataGridView7.Rows.Clear();
+                textBox9.Visible = true;
+                textBox9.Text = errormessage;
+                textBox10.Visible = true;
+                textBox10.Text = errormessage;  
+                groupBox11.Text = "Error";
+                groupBox12.Text = "Error";
+                label24.Visible = false;
+                label25.Visible = false;
+                label30.Visible = false;
+                label31.Visible = false;
+                datacleared = false;
+
+            });
+        }
 
     }
 
 
-    
 
 }
+
+
+
+    
 
 
 
