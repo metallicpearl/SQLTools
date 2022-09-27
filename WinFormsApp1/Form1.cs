@@ -76,6 +76,9 @@ namespace WinFormsApp1
 
             richTextBox4.Enabled = false;
 
+            radioButton7.Checked = true;
+            radioButton6.Checked = false;
+
 
             //dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             //dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -96,6 +99,31 @@ namespace WinFormsApp1
 
 
             checkforfile();
+
+            if (dataGridView7.Visible == true)
+            {
+                label24.BackColor = Color.White;
+                label25.BackColor = Color.White;
+            }
+
+            if (dataGridView7.Visible == false)
+            {
+                label24.BackColor = Color.Transparent;
+                label25.BackColor = Color.Transparent;
+            }
+
+            if (dataGridView6.Visible == true)
+            {
+                label30.BackColor = Color.White;
+                label31.BackColor = Color.White;
+            }
+
+            if (dataGridView6.Visible == false)
+            {
+                label30.BackColor = Color.Transparent;
+                label31.BackColor = Color.Transparent;
+            }
+
 
         }
 
@@ -621,6 +649,8 @@ LIKE '%";
             this.dataGridView6.ColumnHeadersVisible = false;
             contextMenuStrip1.Enabled = false;
             toolStripMenuItem1.Enabled = false;
+            toolStripMenuItem9.Enabled = false;
+            toolStripMenuItem10.Enabled = false;
             contextMenuStrip2.Enabled = false;
             toolStripMenuItem2.Enabled = false;
             contextMenuStrip3.Enabled = false;
@@ -872,6 +902,8 @@ LIKE '%";
                     {
                         contextMenuStrip1.Enabled = true;
                         toolStripMenuItem1.Enabled = true;
+                        toolStripMenuItem9.Enabled = true;
+                        toolStripMenuItem10.Enabled = true;
                         dta = dta.Copy();
                         dataGridView1.DataSource = dta;
                         this.dataGridView1.ColumnHeadersVisible = true;
@@ -894,6 +926,8 @@ LIKE '%";
                         this.dataGridView1.ColumnHeadersVisible = false;
                         button3.Enabled = false;
                         contextMenuStrip1.Enabled = false;
+                        toolStripMenuItem9.Enabled = false;
+                        toolStripMenuItem10.Enabled = false;
                         toolStripMenuItem1.Enabled = false;
                         contextMenuStrip2.Enabled = false;
                         toolStripMenuItem2.Enabled = false;
@@ -929,6 +963,8 @@ LIKE '%";
             this.label17.ForeColor = System.Drawing.Color.Black;
             contextMenuStrip1.Enabled = false;
             toolStripMenuItem1.Enabled = false;
+            toolStripMenuItem9.Enabled = false;
+            toolStripMenuItem10.Enabled = false;
             contextMenuStrip2.Enabled = false;
             toolStripMenuItem2.Enabled = false;
 
@@ -1148,6 +1184,8 @@ LIKE '%";
                     button3.Enabled = false;
                     contextMenuStrip1.Enabled = false;
                     toolStripMenuItem1.Enabled = false;
+                    toolStripMenuItem9.Enabled = false;
+                    toolStripMenuItem10.Enabled = false;
                     contextMenuStrip2.Enabled = false;
                     toolStripMenuItem2.Enabled = false;
                 }
@@ -1179,6 +1217,8 @@ LIKE '%";
             this.label17.ForeColor = System.Drawing.Color.Black;
             contextMenuStrip1.Enabled = false;
             toolStripMenuItem1.Enabled = false;
+            toolStripMenuItem9.Enabled = false;
+            toolStripMenuItem10.Enabled = false;
             contextMenuStrip2.Enabled = false;
             toolStripMenuItem2.Enabled = false;
             sqlcomm = "";
@@ -1387,7 +1427,7 @@ LIKE '%";
                     this.dataGridView3.ColumnHeadersVisible = true;
                     relationshipsearchsuccess = true;
                     button7.Enabled = true;
-                    button7.Text = "Copy Search Term History to Clipboard";
+                    button7.Text = "Search Term History to Clipboard";
 
                     if (builtpath == null && dataGridView3.RowCount < 1)
                     {
@@ -1397,14 +1437,11 @@ LIKE '%";
                     }
 
 
-                    if (builtpath == null && dataGridView3 != null)
+                    if (builtpath == null && dataGridView3 != null || Clipboard.GetData == null)
                     {
                         builtpath = ("--START OF SEARCH--" + Environment.NewLine + textBox6.Text + " [Initial Search Term]" + Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value);
 
                     }
-
-
-
 
                     if (builtpath != null && dataGridView3.SelectedCells.Count != 0 && builtpath != "--START OF SEARCH--" + Environment.NewLine + textBox6.Text + " [Initial Search Term]" + Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value)
 
@@ -1424,6 +1461,7 @@ LIKE '%";
                         builtpath += textBox6.Text;
 
                     }
+
 
                     if (builtpath == (Environment.NewLine).ToString())
                     {
@@ -1462,6 +1500,8 @@ LIKE '%";
                     button3.Enabled = false;
                     contextMenuStrip1.Enabled = false;
                     toolStripMenuItem1.Enabled = false;
+                    toolStripMenuItem9.Enabled = false;
+                    toolStripMenuItem10.Enabled = false;
                     contextMenuStrip2.Enabled = false;
                     toolStripMenuItem2.Enabled = false;
 
@@ -1565,6 +1605,72 @@ LIKE '%";
 
 
 
+        public void clickmenu3(object sender, EventArgs e)
+        {
+
+            if (dataGridView1.RowCount > 0)
+            {
+                label19.Visible = false;
+
+                int index = new int();
+
+                if (dataGridView1.Columns[0].Name == "Table Name")
+                    index = 0;
+                if (dataGridView1.Columns[1].Name == "Table Name")
+                    index = 1;
+
+                var holding = dataGridView1.SelectedCells[index].Value;
+                if (holding != null)
+                {
+                    
+                    textBox5.Text = holding.ToString();
+                    tabControl1.SelectedIndex = 0;
+                    radioButton3.Checked = true;
+                    Set_Search_Table(sender, e);
+                    passtobgworker(sender, e);
+                    actualclick = true;
+                }
+            }
+
+            else
+                return;
+
+        }
+
+        public void clickmenu4(object sender, EventArgs e)
+        {
+
+            if (dataGridView1.RowCount > 0)
+            {
+                label19.Visible = false;
+
+                int index = new int();
+
+                if (dataGridView1.Columns[0].Name == "Column Name")
+                    index = 0;
+                if (dataGridView1.Columns[1].Name == "Column Name")
+                    index = 1;
+
+                var holding = dataGridView1.SelectedCells[index].Value;
+                if (holding != null)
+                {
+
+                    textBox7.Text = holding.ToString();
+                    tabControl1.SelectedIndex = 0;
+                    radioButton4.Checked = true;
+                    Set_Search_Column(sender, e);
+                    passtobgworker(sender, e);
+                    actualclick = true;
+                }
+            }
+
+            else
+                return;
+
+        }
+
+
+
         /// <summary>
         /// Copy functions
         /// </summary>
@@ -1576,12 +1682,19 @@ LIKE '%";
 
             if (builtpath != null)
             {
-                builtpath += Environment.NewLine + textBox6.Text + " [No Further Results]" + Environment.NewLine + "--END OF SEARCH--";
+                if (builtpath != "--START OF SEARCH--\r\n" + textBox6.Text)
+                {
+                    builtpath += textBox6.Text;
+                }
+                builtpath += " [No Further Results]" + Environment.NewLine + "--END OF SEARCH--";
                 Clipboard.SetText(builtpath);
                 button7.Enabled = false;
+                button6.Enabled = true;
                 button7.Text = "Copied to Clipboard";
                 builtpath = null;
             }
+
+      
 
             if (builtpath == null)
             {
@@ -2592,7 +2705,8 @@ LIKE '%";
             this.label17.ForeColor = System.Drawing.Color.Black;
             contextMenuStrip1.Enabled = false;
             toolStripMenuItem1.Enabled = false;
-
+            toolStripMenuItem9.Enabled = false;
+            toolStripMenuItem10.Enabled = false;
             contextMenuStrip2.Enabled = false;
             toolStripMenuItem2.Enabled = false;
             sqlcomm = "";
@@ -2820,6 +2934,12 @@ LIKE '%";
             {
 
                 {
+                    dataGridView6.Rows.Clear();
+                    dataGridView7.Rows.Clear();
+
+                    dataGridView6.ColumnHeadersVisible = false;
+                    dataGridView7.ColumnHeadersVisible = false;
+
                     f5pressed = false;
                     ctp = "ctp4";
                     button3.Enabled = true;
@@ -2839,6 +2959,8 @@ LIKE '%";
                     {
                         contextMenuStrip1.Enabled = true;
                         toolStripMenuItem1.Enabled = true;
+                        toolStripMenuItem9.Enabled = true;
+                        toolStripMenuItem10.Enabled = true;
                         dta = dta.Copy();
                         dataGridView4.DataSource = null;
                         dataGridView4.Refresh();
@@ -2882,6 +3004,8 @@ LIKE '%";
                         button3.Enabled = false;
                         contextMenuStrip1.Enabled = false;
                         toolStripMenuItem1.Enabled = false;
+                        toolStripMenuItem9.Enabled = false;
+                        toolStripMenuItem10.Enabled = false;
                         contextMenuStrip2.Enabled = false;
                         toolStripMenuItem2.Enabled = false;
                     }
@@ -3415,6 +3539,32 @@ LIKE '%";
         private void richTextBox2_KeyDown2(object sender, KeyEventArgs e)
         {
 
+            if (dataGridView7.Visible == true)
+            {
+                label24.BackColor = Color.White;
+                label25.BackColor = Color.White;
+            }
+
+            if (dataGridView7.Visible == false)
+            {
+                label24.BackColor = Color.Transparent;
+                label25.BackColor = Color.Transparent;
+            }
+
+            if (dataGridView6.Visible == true)
+            {
+                label30.BackColor = Color.White;
+                label31.BackColor = Color.White;
+            }
+
+            if (dataGridView6.Visible == false)
+            {
+                label30.BackColor = Color.Transparent;
+                label31.BackColor = Color.Transparent;
+            }
+
+
+
             var len = richTextBox2.TextLength;
 
             if (e.KeyCode == Keys.Back)
@@ -3927,6 +4077,8 @@ LIKE '%";
             this.label17.ForeColor = System.Drawing.Color.Black;
             contextMenuStrip1.Enabled = false;
             toolStripMenuItem1.Enabled = false;
+            toolStripMenuItem9.Enabled = false;
+            toolStripMenuItem10.Enabled = false;
             contextMenuStrip2.Enabled = false;
             toolStripMenuItem2.Enabled = false;
             sqlcomm = "";
@@ -4184,15 +4336,19 @@ LIKE '%";
                                     BeginInvoke((MethodInvoker)delegate
                                     {
                                         //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
-                                        dataGridView5.Rows.Clear();
-                                        dataGridView6.Rows.Clear();
-                                        dataGridView7.Rows.Clear();
-                                        textBox9.Visible = true;
-                                        textBox9.Text = msg;
-                                        groupBox8.Text = "Error";
-                                        label23.Visible = false;
+                                        //dataGridView5.Rows.Clear();
+                                        //dataGridView6.Rows.Clear();
+                                        //dataGridView7.Rows.Clear();
+                                        //textBox9.Visible = true;
+                                        //textBox9.Text = msg;
+                                        //groupBox8.Text = "Error";
+                                        //label23.Visible = false;
+
+                                        
 
                                     });
+
+                                    safesqlexceptionhandler(sender, e);
                                 }
                             }
                             finally
@@ -4270,6 +4426,8 @@ LIKE '%";
                     {
                         contextMenuStrip1.Enabled = true;
                         toolStripMenuItem1.Enabled = true;
+                        toolStripMenuItem9.Enabled = true;
+                        toolStripMenuItem10.Enabled = true;
                         dta = dta.Copy();
                         dataGridView5.DataSource = null;
                         dataGridView5.Refresh();
@@ -5294,6 +5452,31 @@ LIKE '%";
            (object sender, EventArgs e)
         {
 
+            if (dataGridView7.Visible == true)
+            {
+                label24.BackColor = Color.White;
+                label25.BackColor = Color.White;
+            }
+
+            if (dataGridView7.Visible == false)
+            {
+                label24.BackColor = Color.Transparent;
+                label25.BackColor = Color.Transparent;
+            }
+
+            if (dataGridView6.Visible == true)
+            {
+                label30.BackColor = Color.White;
+                label31.BackColor = Color.White;
+            }
+
+            if (dataGridView6.Visible == false)
+            {
+                label30.BackColor = Color.Transparent;
+                label31.BackColor = Color.Transparent;
+            }
+
+
             textBox9.Visible = false;
             textBox10.Visible = false;
             //dataGridView6.Visible = true;
@@ -5340,6 +5523,8 @@ LIKE '%";
             this.label17.ForeColor = System.Drawing.Color.Black;
             contextMenuStrip1.Enabled = false;
             toolStripMenuItem1.Enabled = false;
+            toolStripMenuItem9.Enabled = false;
+            toolStripMenuItem10.Enabled = false;
             contextMenuStrip2.Enabled = false;
             toolStripMenuItem2.Enabled = false;
             sqlcomm = "";
@@ -5995,8 +6180,20 @@ LIKE '%";
                     button1.Enabled = true;
                     button4.Enabled = true;
                     label23.Text = "Working...";
-                    label24.Visible = false;
-                    label30.Visible = false;
+
+                    if (dataGridView6 == null)
+                    {
+                        label24.Visible = false;
+                        contextMenuStrip5.Enabled = false;
+                    }
+
+                    if (dataGridView7 == null)
+                    {
+                        label30.Visible = false;
+                        contextMenuStrip4.Enabled = false;
+                    }
+
+
                     ctp = "ctp4";
 
                     //dataGridView4.Rows.Clear();
@@ -6011,7 +6208,33 @@ LIKE '%";
                         dataGridView6.DataBindings.Clear();
                         dataGridView7.DataBindings.Clear();
 
-                        
+
+                        if (dataGridView7.Visible == true)
+                        {
+                            label24.BackColor = Color.White;
+                            label25.BackColor = Color.White;
+                        }
+
+                        if (dataGridView7.Visible == false)
+                        {
+                            label24.BackColor = Color.Transparent;
+                            label25.BackColor = Color.Transparent;
+                        }
+
+                        if (dataGridView6.Visible == true)
+                        {
+                            label30.BackColor = Color.White;
+                            label31.BackColor = Color.White;
+                        }
+
+                        if (dataGridView6.Visible == false)
+                        {
+                            label30.BackColor = Color.Transparent;
+                            label31.BackColor = Color.Transparent;
+                        }
+
+
+
 
                         dataGridView7.DataSource = null;
                         dataGridView7.Refresh();
@@ -6070,6 +6293,31 @@ LIKE '%";
                     {
 
                         dataGridView7.Visible = false;
+
+                        if (dataGridView7.Visible == true)
+                        {
+                            label24.BackColor = Color.White;
+                            label25.BackColor = Color.White;
+                        }
+
+                        if (dataGridView7.Visible == false)
+                        {
+                            label24.BackColor = Color.Transparent;
+                            label25.BackColor = Color.Transparent;
+                        }
+
+                        if (dataGridView6.Visible == true)
+                        {
+                            label30.BackColor = Color.White;
+                            label31.BackColor = Color.White;
+                        }
+
+                        if (dataGridView6.Visible == false)
+                        {
+                            label30.BackColor = Color.Transparent;
+                            label31.BackColor = Color.Transparent;
+                        }
+
                         dataGridView7.DataSource = null;
                         dataGridView7.Refresh();
                         dta2 = null;
@@ -6156,8 +6404,37 @@ LIKE '%";
                     {
 
                         dataGridView6.Visible = false;
+                        dataGridView7.Visible = false;
                         dataGridView6.DataSource = null;
+                        dataGridView7.DataSource = null;
+
+                        if (dataGridView7.Visible == true)
+                        {
+                            label24.BackColor = Color.White;
+                            label25.BackColor = Color.White;
+                        }
+
+                        if (dataGridView7.Visible == false)
+                        {
+                            label24.BackColor = Color.Transparent;
+                            label25.BackColor = Color.Transparent;
+                        }
+
+                        if (dataGridView6.Visible == true)
+                        {
+                            label30.BackColor = Color.White;
+                            label31.BackColor = Color.White;
+                        }
+
+                        if (dataGridView6.Visible == false)
+                        {
+                            label30.BackColor = Color.Transparent;
+                            label31.BackColor = Color.Transparent;
+                        }
+
+
                         dataGridView6.Refresh();
+                        dataGridView7.Refresh();
 
                         if (errormessage != "")
                         {
@@ -6198,6 +6475,32 @@ LIKE '%";
                     {
                         dataGridView6.Visible = false;
                         dataGridView7.Visible = false;
+
+                        if (dataGridView7.Visible == true)
+                        {
+                            label24.BackColor = Color.White;
+                            label25.BackColor = Color.White;
+                        }
+
+                        if (dataGridView7.Visible == false)
+                        {
+                            label24.BackColor = Color.Transparent;
+                            label25.BackColor = Color.Transparent;
+                        }
+
+                        if (dataGridView6.Visible == true)
+                        {
+                            label30.BackColor = Color.White;
+                            label31.BackColor = Color.White;
+                        }
+
+                        if (dataGridView6.Visible == false)
+                        {
+                            label30.BackColor = Color.Transparent;
+                            label31.BackColor = Color.Transparent;
+                        }
+
+
                         textBox10.Visible = true;
                         textBox9.Visible = true;
                         textBox9.Text = "An error occurred - please check your query and syntax.";
@@ -6812,73 +7115,75 @@ LIKE '%";
 
                 if (String.Equals(ctp, "ctp4"))
                 {
-
-                    DataTable dtc = ((DataTable)dataGridView7.DataSource).Copy(); //original copy of datagridview data
-                    DataTable dtr = ((DataTable)dataGridView7.DataSource).Clone(); //holding table with the same structure as above
-                    DataTable dtd = ((DataTable)dataGridView7.DataSource).Clone(); //reverse-order table for the above
-
-
-                    foreach (DataGridViewCell c in dataGridView7.SelectedCells)
+                    if (dataGridView7.Rows.Count > 0)
                     {
-                        var ind = c.RowIndex;
-                        dataGridView7.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                        dataGridView7.Rows[ind].Selected = true;
+
+                        DataTable dtc = ((DataTable)dataGridView7.DataSource).Copy(); //original copy of datagridview data
+                        DataTable dtr = ((DataTable)dataGridView7.DataSource).Clone(); //holding table with the same structure as above
+                        DataTable dtd = ((DataTable)dataGridView7.DataSource).Clone(); //reverse-order table for the above
+
+
+                        foreach (DataGridViewCell c in dataGridView7.SelectedCells)
+                        {
+                            var ind = c.RowIndex;
+                            dataGridView7.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                            dataGridView7.Rows[ind].Selected = true;
+                        }
+
+
+
+                        int numrows = dataGridView7.SelectedRows.Count;
+
+                        int[] selectedrows = new int[numrows];
+
+                        foreach (DataGridViewRow d in dataGridView7.SelectedRows)
+                        {
+                            var i = d.Index;
+                            DataRow dd = dtc.Rows[i];
+                            dtd.ImportRow(dd);
+                        }
+
+                        dtd.AcceptChanges();
+
+                        var newline = System.Environment.NewLine;
+                        var tab = "\t";
+                        var clipboard_string = new StringBuilder();
+
+
+                        for (int r = dtd.Rows.Count - 1; r >= 0; r--)
+                        {
+                            var row = dtd.Rows[r];
+                            dtr.ImportRow(row);
+                        }
+
+                        dtr.AcceptChanges();
+
+
+                        copyrows = string.Join(Environment.NewLine, dtd.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+
+                        clipboard_string.Append(copyrows);
+
+                        //button3.Enabled = false;
+                        //button3.Text = "Results Copied";
+
+
+
+                        if (clipboard_string.Length > 0)
+                            Clipboard.SetText(clipboard_string.ToString());
+
+                        if (clipboard_string == null)
+                        {
+                            return;
+                        }
+
+
+
+                        if (dta == null)
+                        {
+                            return;
+                        }
                     }
-
-
-
-                    int numrows = dataGridView7.SelectedRows.Count;
-
-                    int[] selectedrows = new int[numrows];
-
-                    foreach (DataGridViewRow d in dataGridView7.SelectedRows)
-                    {
-                        var i = d.Index;
-                        DataRow dd = dtc.Rows[i];
-                        dtd.ImportRow(dd);
-                    }
-
-                    dtd.AcceptChanges();
-
-                    var newline = System.Environment.NewLine;
-                    var tab = "\t";
-                    var clipboard_string = new StringBuilder();
-
-
-                    for (int r = dtd.Rows.Count - 1; r >= 0; r--)
-                    {
-                        var row = dtd.Rows[r];
-                        dtr.ImportRow(row);
-                    }
-
-                    dtr.AcceptChanges();
-
-
-                    copyrows = string.Join(Environment.NewLine, dtd.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
-
-
-                    clipboard_string.Append(copyrows);
-
-                    //button3.Enabled = false;
-                    //button3.Text = "Results Copied";
-
-
-
-                    if (clipboard_string.Length > 0)
-                        Clipboard.SetText(clipboard_string.ToString());
-
-                    if (clipboard_string == null)
-                    {
-                        return;
-                    }
-
-
-
-                    if (dta == null)
-                    {
-                        return;
-                    }
-
                 }
 
                 if (!(String.Equals(ctp, "ctp4")))
@@ -6902,73 +7207,75 @@ LIKE '%";
 
                 if (String.Equals(ctp, "ctp4"))
                 {
+                    if (dataGridView6.Rows.Count != 0)
 
-                    DataTable dtc = ((DataTable)dataGridView6.DataSource).Copy(); //original copy of datagridview data
-                    DataTable dtr = ((DataTable)dataGridView6.DataSource).Clone(); //holding table with the same structure as above
-                    DataTable dtd = ((DataTable)dataGridView6.DataSource).Clone(); //reverse-order table for the above
-
-
-                    foreach (DataGridViewCell c in dataGridView6.SelectedCells)
                     {
-                        var ind = c.RowIndex;
-                        dataGridView6.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                        dataGridView6.Rows[ind].Selected = true;
+                        DataTable dtc = ((DataTable)dataGridView6.DataSource).Copy(); //original copy of datagridview data
+                        DataTable dtr = ((DataTable)dataGridView6.DataSource).Clone(); //holding table with the same structure as above
+                        DataTable dtd = ((DataTable)dataGridView6.DataSource).Clone(); //reverse-order table for the above
+
+
+                        foreach (DataGridViewCell c in dataGridView6.SelectedCells)
+                        {
+                            var ind = c.RowIndex;
+                            dataGridView6.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                            dataGridView6.Rows[ind].Selected = true;
+                        }
+
+
+
+                        int numrows = dataGridView6.SelectedRows.Count;
+
+                        int[] selectedrows = new int[numrows];
+
+                        foreach (DataGridViewRow d in dataGridView6.SelectedRows)
+                        {
+                            var i = d.Index;
+                            DataRow dd = dtc.Rows[i];
+                            dtd.ImportRow(dd);
+                        }
+
+                        dtd.AcceptChanges();
+
+                        var newline = System.Environment.NewLine;
+                        var tab = "\t";
+                        var clipboard_string = new StringBuilder();
+
+
+                        for (int r = dtd.Rows.Count - 1; r >= 0; r--)
+                        {
+                            var row = dtd.Rows[r];
+                            dtr.ImportRow(row);
+                        }
+
+                        dtr.AcceptChanges();
+
+
+                        copyrows = string.Join(Environment.NewLine, dtd.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+
+                        clipboard_string.Append(copyrows);
+
+                        //button3.Enabled = false;
+                        //button3.Text = "Results Copied";
+
+
+
+                        if (clipboard_string.Length > 0)
+                            Clipboard.SetText(clipboard_string.ToString());
+
+                        if (clipboard_string == null)
+                        {
+                            return;
+                        }
+
+
+
+                        if (dta == null)
+                        {
+                            return;
+                        }
                     }
-
-
-
-                    int numrows = dataGridView6.SelectedRows.Count;
-
-                    int[] selectedrows = new int[numrows];
-
-                    foreach (DataGridViewRow d in dataGridView6.SelectedRows)
-                    {
-                        var i = d.Index;
-                        DataRow dd = dtc.Rows[i];
-                        dtd.ImportRow(dd);
-                    }
-
-                    dtd.AcceptChanges();
-
-                    var newline = System.Environment.NewLine;
-                    var tab = "\t";
-                    var clipboard_string = new StringBuilder();
-
-
-                    for (int r = dtd.Rows.Count - 1; r >= 0; r--)
-                    {
-                        var row = dtd.Rows[r];
-                        dtr.ImportRow(row);
-                    }
-
-                    dtr.AcceptChanges();
-
-
-                    copyrows = string.Join(Environment.NewLine, dtd.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
-
-
-                    clipboard_string.Append(copyrows);
-
-                    //button3.Enabled = false;
-                    //button3.Text = "Results Copied";
-
-
-
-                    if (clipboard_string.Length > 0)
-                        Clipboard.SetText(clipboard_string.ToString());
-
-                    if (clipboard_string == null)
-                    {
-                        return;
-                    }
-
-
-
-                    if (dta == null)
-                    {
-                        return;
-                    }
-
                 }
 
                 if (!(String.Equals(ctp, "ctp4")))
@@ -6992,73 +7299,75 @@ LIKE '%";
 
                 if (String.Equals(ctp, "ctp4"))
                 {
-
-                    DataTable dtc = ((DataTable)dataGridView4.DataSource).Copy(); //original copy of datagridview data
-                    DataTable dtr = ((DataTable)dataGridView4.DataSource).Clone(); //holding table with the same structure as above
-                    DataTable dtd = ((DataTable)dataGridView4.DataSource).Clone(); //reverse-order table for the above
-
-
-                    foreach (DataGridViewCell c in dataGridView4.SelectedCells)
+                    if (dataGridView4.Rows.Count > 0)
                     {
-                        var ind = c.RowIndex;
-                        dataGridView4.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                        dataGridView4.Rows[ind].Selected = true;
+
+                        DataTable dtc = ((DataTable)dataGridView4.DataSource).Copy(); //original copy of datagridview data
+                        DataTable dtr = ((DataTable)dataGridView4.DataSource).Clone(); //holding table with the same structure as above
+                        DataTable dtd = ((DataTable)dataGridView4.DataSource).Clone(); //reverse-order table for the above
+
+
+                        foreach (DataGridViewCell c in dataGridView4.SelectedCells)
+                        {
+                            var ind = c.RowIndex;
+                            dataGridView4.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                            dataGridView4.Rows[ind].Selected = true;
+                        }
+
+
+
+                        int numrows = dataGridView4.SelectedRows.Count;
+
+                        int[] selectedrows = new int[numrows];
+
+                        foreach (DataGridViewRow d in dataGridView4.SelectedRows)
+                        {
+                            var i = d.Index;
+                            DataRow dd = dtc.Rows[i];
+                            dtd.ImportRow(dd);
+                        }
+
+                        dtd.AcceptChanges();
+
+                        var newline = System.Environment.NewLine;
+                        var tab = "\t";
+                        var clipboard_string = new StringBuilder();
+
+
+                        for (int r = dtd.Rows.Count - 1; r >= 0; r--)
+                        {
+                            var row = dtd.Rows[r];
+                            dtr.ImportRow(row);
+                        }
+
+                        dtr.AcceptChanges();
+
+
+                        copyrows = string.Join(Environment.NewLine, dtd.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+
+                        clipboard_string.Append(copyrows);
+
+                        //button3.Enabled = false;
+                        //button3.Text = "Results Copied";
+
+
+
+                        if (clipboard_string.Length > 0)
+                            Clipboard.SetText(clipboard_string.ToString());
+
+                        if (clipboard_string == null)
+                        {
+                            return;
+                        }
+
+
+
+                        if (dta == null)
+                        {
+                            return;
+                        }
                     }
-
-
-
-                    int numrows = dataGridView4.SelectedRows.Count;
-
-                    int[] selectedrows = new int[numrows];
-
-                    foreach (DataGridViewRow d in dataGridView4.SelectedRows)
-                    {
-                        var i = d.Index;
-                        DataRow dd = dtc.Rows[i];
-                        dtd.ImportRow(dd);
-                    }
-
-                    dtd.AcceptChanges();
-
-                    var newline = System.Environment.NewLine;
-                    var tab = "\t";
-                    var clipboard_string = new StringBuilder();
-
-
-                    for (int r = dtd.Rows.Count - 1; r >= 0; r--)
-                    {
-                        var row = dtd.Rows[r];
-                        dtr.ImportRow(row);
-                    }
-
-                    dtr.AcceptChanges();
-
-
-                    copyrows = string.Join(Environment.NewLine, dtd.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
-
-
-                    clipboard_string.Append(copyrows);
-
-                    //button3.Enabled = false;
-                    //button3.Text = "Results Copied";
-
-
-
-                    if (clipboard_string.Length > 0)
-                        Clipboard.SetText(clipboard_string.ToString());
-
-                    if (clipboard_string == null)
-                    {
-                        return;
-                    }
-
-
-
-                    if (dta == null)
-                    {
-                        return;
-                    }
-
                 }
 
                 if (!(String.Equals(ctp, "ctp4")))
@@ -7093,62 +7402,63 @@ LIKE '%";
             {
                 if (String.Equals(ctp, "ctp4"))
                 {
-
-                    DataTable dtc = ((DataTable)dataGridView7.DataSource).Copy(); //original copy of datagridview data
-                    DataTable dtr = ((DataTable)dataGridView7.DataSource).Clone(); //holding table with the same structure as above
-                    DataTable dtd = ((DataTable)dataGridView7.DataSource).Clone(); //reverse-order table for the above
-
-                    int numcel = dataGridView7.SelectedCells.Count;
-
-                    int[] selectedcells = new int[numcel];
-
-
-                    var clipboard_string = new StringBuilder();
-
-                    string[] hold = new string[numcel];
-
-                    int num = 0;
-
-                    foreach (DataGridViewCell d in dataGridView7.SelectedCells)
+                    if (dataGridView7.Rows.Count > 0)
                     {
+                        DataTable dtc = ((DataTable)dataGridView7.DataSource).Copy(); //original copy of datagridview data
+                        DataTable dtr = ((DataTable)dataGridView7.DataSource).Clone(); //holding table with the same structure as above
+                        DataTable dtd = ((DataTable)dataGridView7.DataSource).Clone(); //reverse-order table for the above
 
-                        var val = d.Value;
-                        //var i = d.ColumnIndex;
-                        //var j = d.RowIndex;
+                        int numcel = dataGridView7.SelectedCells.Count;
 
-                        var fullstring = string.Concat(val, ',');
+                        int[] selectedcells = new int[numcel];
 
-                        hold[num] = fullstring;
 
-                        num++;
+                        var clipboard_string = new StringBuilder();
 
+                        string[] hold = new string[numcel];
+
+                        int num = 0;
+
+                        foreach (DataGridViewCell d in dataGridView7.SelectedCells)
+                        {
+
+                            var val = d.Value;
+                            //var i = d.ColumnIndex;
+                            //var j = d.RowIndex;
+
+                            var fullstring = string.Concat(val, ',');
+
+                            hold[num] = fullstring;
+
+                            num++;
+
+                        }
+
+                        string[] hold2 = new string[numcel];
+                        hold2 = hold.Reverse().ToArray();
+
+                        foreach (string s in hold2)
+                        {
+                            clipboard_string.Append(s);
+                        }
+
+
+
+                        if (clipboard_string.Length > 0)
+                            Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
+
+                        if (clipboard_string == null)
+                        {
+                            return;
+                        }
+
+
+
+                        if (dta == null)
+                        {
+                            return;
+                        }
                     }
-
-                    string[] hold2 = new string[numcel];
-                    hold2 = hold.Reverse().ToArray();
-
-                    foreach (string s in hold2)
-                    {
-                        clipboard_string.Append(s);
-                    }
-
-
-
-                    if (clipboard_string.Length > 0)
-                        Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
-
-                    if (clipboard_string == null)
-                    {
-                        return;
-                    }
-
-
-
-                    if (dta == null)
-                    {
-                        return;
-                    }
-
                 }
 
                 if (!(String.Equals(ctp, "ctp4")))
@@ -7166,61 +7476,64 @@ LIKE '%";
                 if (String.Equals(ctp, "ctp4"))
                 {
 
-                    DataTable dtc = ((DataTable)dataGridView6.DataSource).Copy(); //original copy of datagridview data
-                    DataTable dtr = ((DataTable)dataGridView6.DataSource).Clone(); //holding table with the same structure as above
-                    DataTable dtd = ((DataTable)dataGridView6.DataSource).Clone(); //reverse-order table for the above
-
-                    int numcel = dataGridView6.SelectedCells.Count;
-
-                    int[] selectedcells = new int[numcel];
-
-
-                    var clipboard_string = new StringBuilder();
-
-                    string[] hold = new string[numcel];
-
-                    int num = 0;
-
-                    foreach (DataGridViewCell d in dataGridView6.SelectedCells)
+                    if (dataGridView6.Rows.Count > 0)
                     {
 
-                        var val = d.Value;
-                        //var i = d.ColumnIndex;
-                        //var j = d.RowIndex;
+                        DataTable dtc = ((DataTable)dataGridView6.DataSource).Copy(); //original copy of datagridview data
+                        DataTable dtr = ((DataTable)dataGridView6.DataSource).Clone(); //holding table with the same structure as above
+                        DataTable dtd = ((DataTable)dataGridView6.DataSource).Clone(); //reverse-order table for the above
 
-                        var fullstring = string.Concat(val, ',');
+                        int numcel = dataGridView6.SelectedCells.Count;
 
-                        hold[num] = fullstring;
+                        int[] selectedcells = new int[numcel];
 
-                        num++;
 
+                        var clipboard_string = new StringBuilder();
+
+                        string[] hold = new string[numcel];
+
+                        int num = 0;
+
+                        foreach (DataGridViewCell d in dataGridView6.SelectedCells)
+                        {
+
+                            var val = d.Value;
+                            //var i = d.ColumnIndex;
+                            //var j = d.RowIndex;
+
+                            var fullstring = string.Concat(val, ',');
+
+                            hold[num] = fullstring;
+
+                            num++;
+
+                        }
+
+                        string[] hold2 = new string[numcel];
+                        hold2 = hold.Reverse().ToArray();
+
+                        foreach (string s in hold2)
+                        {
+                            clipboard_string.Append(s);
+                        }
+
+
+
+                        if (clipboard_string.Length > 0)
+                            Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
+
+                        if (clipboard_string == null)
+                        {
+                            return;
+                        }
+
+
+
+                        if (dta == null)
+                        {
+                            return;
+                        }
                     }
-
-                    string[] hold2 = new string[numcel];
-                    hold2 = hold.Reverse().ToArray();
-
-                    foreach (string s in hold2)
-                    {
-                        clipboard_string.Append(s);
-                    }
-
-
-
-                    if (clipboard_string.Length > 0)
-                        Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
-
-                    if (clipboard_string == null)
-                    {
-                        return;
-                    }
-
-
-
-                    if (dta == null)
-                    {
-                        return;
-                    }
-
                 }
 
                 if (!(String.Equals(ctp, "ctp4")))
@@ -7237,62 +7550,64 @@ LIKE '%";
             {
                 if (String.Equals(ctp, "ctp4"))
                 {
-
-                    DataTable dtc = ((DataTable)dataGridView4.DataSource).Copy(); //original copy of datagridview data
-                    DataTable dtr = ((DataTable)dataGridView4.DataSource).Clone(); //holding table with the same structure as above
-                    DataTable dtd = ((DataTable)dataGridView4.DataSource).Clone(); //reverse-order table for the above
-
-                    int numcel = dataGridView4.SelectedCells.Count;
-
-                    int[] selectedcells = new int[numcel];
-
-
-                    var clipboard_string = new StringBuilder();
-
-                    string[] hold = new string[numcel];
-
-                    int num = 0;
-
-                    foreach (DataGridViewCell d in dataGridView4.SelectedCells)
+                    if (dataGridView4.Rows.Count > 0)
                     {
 
-                        var val = d.Value;
-                        //var i = d.ColumnIndex;
-                        //var j = d.RowIndex;
+                        DataTable dtc = ((DataTable)dataGridView4.DataSource).Copy(); //original copy of datagridview data
+                        DataTable dtr = ((DataTable)dataGridView4.DataSource).Clone(); //holding table with the same structure as above
+                        DataTable dtd = ((DataTable)dataGridView4.DataSource).Clone(); //reverse-order table for the above
 
-                        var fullstring = string.Concat(val, ',');
+                        int numcel = dataGridView4.SelectedCells.Count;
 
-                        hold[num] = fullstring;
+                        int[] selectedcells = new int[numcel];
 
-                        num++;
 
+                        var clipboard_string = new StringBuilder();
+
+                        string[] hold = new string[numcel];
+
+                        int num = 0;
+
+                        foreach (DataGridViewCell d in dataGridView4.SelectedCells)
+                        {
+
+                            var val = d.Value;
+                            //var i = d.ColumnIndex;
+                            //var j = d.RowIndex;
+
+                            var fullstring = string.Concat(val, ',');
+
+                            hold[num] = fullstring;
+
+                            num++;
+
+                        }
+
+                        string[] hold2 = new string[numcel];
+                        hold2 = hold.Reverse().ToArray();
+
+                        foreach (string s in hold2)
+                        {
+                            clipboard_string.Append(s);
+                        }
+
+
+
+                        if (clipboard_string.Length > 0)
+                            Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
+
+                        if (clipboard_string == null)
+                        {
+                            return;
+                        }
+
+
+
+                        if (dta == null)
+                        {
+                            return;
+                        }
                     }
-
-                    string[] hold2 = new string[numcel];
-                    hold2 = hold.Reverse().ToArray();
-
-                    foreach (string s in hold2)
-                    {
-                        clipboard_string.Append(s);
-                    }
-
-
-
-                    if (clipboard_string.Length > 0)
-                        Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
-
-                    if (clipboard_string == null)
-                    {
-                        return;
-                    }
-
-
-
-                    if (dta == null)
-                    {
-                        return;
-                    }
-
                 }
 
                 if (!(String.Equals(ctp, "ctp4")))
@@ -7331,85 +7646,88 @@ LIKE '%";
                     int[] allcolumns = new int[columncount];
                     int[] selectedcolumns = new int[1000];
 
-                    DataTable dtc = ((DataTable)dataGridView7.DataSource).Copy(); //original copy of datagridview data
-                    DataTable dtr = ((DataTable)dataGridView7.DataSource).Clone(); //holding table with the same structure as above
-
-                    List<int> ts = new List<int>();
-                    List<int> tr = new List<int>();
-                    List<string> allcolnames = new List<string>();
-                    List<string> colnames = new List<string>();
-                    
-
-
-                    foreach (DataGridViewCell c in dataGridView7.SelectedCells)
+                    if (dataGridView7.Rows.Count > 0)
                     {
-                        var ind = c.ColumnIndex;
-                        string name = dtc.Columns[ind].ColumnName;
 
-                        colnames.Add(name);
+                        DataTable dtc = ((DataTable)dataGridView7.DataSource).Copy(); //original copy of datagridview data
+                        DataTable dtr = ((DataTable)dataGridView7.DataSource).Clone(); //holding table with the same structure as above
+
+                        List<int> ts = new List<int>();
+                        List<int> tr = new List<int>();
+                        List<string> allcolnames = new List<string>();
+                        List<string> colnames = new List<string>();
+
+
+
+                        foreach (DataGridViewCell c in dataGridView7.SelectedCells)
+                        {
+                            var ind = c.ColumnIndex;
+                            string name = dtc.Columns[ind].ColumnName;
+
+                            colnames.Add(name);
+                        }
+
+
+                        foreach (DataGridViewColumn dc in dataGridView7.SelectedColumns)
+                        {
+                            var id = dc.Index;
+                            string s = dtc.Columns[id].ColumnName;
+                            colnames.Add(s);
+                        }
+
+
+                        foreach (DataGridViewColumn dcs in dataGridView7.Columns)
+                        {
+                            var ids = dcs.Index;
+                            string t = dcs.Name;
+                            allcolnames.Add(t);
+                        }
+
+
+
+
+                        List<string> colnamestodelete = allcolnames.Except(colnames).ToList();
+
+                        foreach (string s in colnamestodelete)
+                        {
+                            dtc.Columns.RemoveAt(dtc.Columns.IndexOf(s));
+                        }
+
+                        dtc.AcceptChanges();
+
+
+                        copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+                        var clipboard_string = new StringBuilder();
+
+
+
+                        clipboard_string.Append(copyrows);
+
+
+                        if (clipboard_string.Length > 0)
+                            Clipboard.SetText(clipboard_string.ToString());
+
+                        if (clipboard_string == null)
+                        {
+                            return;
+                        }
+
+
+
+                        if (dta == null)
+                        {
+                            return;
+                        }
+
                     }
 
-
-                    foreach (DataGridViewColumn dc in dataGridView7.SelectedColumns)
-                    {
-                        var id = dc.Index;
-                        string s = dtc.Columns[id].ColumnName;
-                        colnames.Add(s);
-                    }
-
-
-                    foreach (DataGridViewColumn dcs in dataGridView7.Columns)
-                    {
-                        var ids = dcs.Index;
-                        string t = dcs.Name;
-                        allcolnames.Add(t);
-                    }
-           
-
-                   
-
-                    List<string> colnamestodelete = allcolnames.Except(colnames).ToList();
-
-                    foreach (string s in colnamestodelete)
-                    {
-                        dtc.Columns.RemoveAt(dtc.Columns.IndexOf(s));
-                    }
-
-                    dtc.AcceptChanges();
-
-
-                    copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
-
-                    var clipboard_string = new StringBuilder();
-
-  
-
-                    clipboard_string.Append(copyrows);
-
-
-                    if (clipboard_string.Length > 0)
-                        Clipboard.SetText(clipboard_string.ToString());
-
-                    if (clipboard_string == null)
-                    {
-                        return;
-                    }
-
-
-
-                    if (dta == null)
+                    if (!(String.Equals(ctp, "ctp4")))
                     {
                         return;
                     }
 
                 }
-
-                if (!(String.Equals(ctp, "ctp4")))
-                {
-                    return;
-                }
-
-
             }
 
             if (dta is not null && tabControl3.SelectedTab == this.tabPage10)
@@ -7428,77 +7746,80 @@ LIKE '%";
                     int[] allcolumns = new int[columncount];
                     int[] selectedcolumns = new int[1000];
 
-                    DataTable dtc = ((DataTable)dataGridView6.DataSource).Copy(); //original copy of datagridview data
-                    DataTable dtr = ((DataTable)dataGridView6.DataSource).Clone(); //holding table with the same structure as above
-
-                    List<int> ts = new List<int>();
-                    List<int> tr = new List<int>();
-                    List<string> allcolnames = new List<string>();
-                    List<string> colnames = new List<string>();
-
-
-
-                    foreach (DataGridViewCell c in dataGridView6.SelectedCells)
+                    if (dataGridView6.Columns.Count > 0)
                     {
-                        var ind = c.ColumnIndex;
-                        string name = dtc.Columns[ind].ColumnName;
 
-                        colnames.Add(name);
+                        DataTable dtc = ((DataTable)dataGridView6.DataSource).Copy(); //original copy of datagridview data
+                        DataTable dtr = ((DataTable)dataGridView6.DataSource).Clone(); //holding table with the same structure as above
+
+                        List<int> ts = new List<int>();
+                        List<int> tr = new List<int>();
+                        List<string> allcolnames = new List<string>();
+                        List<string> colnames = new List<string>();
+
+
+
+                        foreach (DataGridViewCell c in dataGridView6.SelectedCells)
+                        {
+                            var ind = c.ColumnIndex;
+                            string name = dtc.Columns[ind].ColumnName;
+
+                            colnames.Add(name);
+                        }
+
+
+                        foreach (DataGridViewColumn dc in dataGridView6.SelectedColumns)
+                        {
+                            var id = dc.Index;
+                            string s = dtc.Columns[id].ColumnName;
+                            colnames.Add(s);
+                        }
+
+
+                        foreach (DataGridViewColumn dcs in dataGridView6.Columns)
+                        {
+                            var ids = dcs.Index;
+                            string t = dcs.Name;
+                            allcolnames.Add(t);
+                        }
+
+
+
+
+                        List<string> colnamestodelete = allcolnames.Except(colnames).ToList();
+
+                        foreach (string s in colnamestodelete)
+                        {
+                            dtc.Columns.RemoveAt(dtc.Columns.IndexOf(s));
+                        }
+
+                        dtc.AcceptChanges();
+
+
+                        copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+                        var clipboard_string = new StringBuilder();
+
+
+
+                        clipboard_string.Append(copyrows);
+
+
+                        if (clipboard_string.Length > 0)
+                            Clipboard.SetText(clipboard_string.ToString());
+
+                        if (clipboard_string == null)
+                        {
+                            return;
+                        }
+
+
+
+                        if (dta == null)
+                        {
+                            return;
+                        }
                     }
-
-
-                    foreach (DataGridViewColumn dc in dataGridView6.SelectedColumns)
-                    {
-                        var id = dc.Index;
-                        string s = dtc.Columns[id].ColumnName;
-                        colnames.Add(s);
-                    }
-
-
-                    foreach (DataGridViewColumn dcs in dataGridView6.Columns)
-                    {
-                        var ids = dcs.Index;
-                        string t = dcs.Name;
-                        allcolnames.Add(t);
-                    }
-
-
-
-
-                    List<string> colnamestodelete = allcolnames.Except(colnames).ToList();
-
-                    foreach (string s in colnamestodelete)
-                    {
-                        dtc.Columns.RemoveAt(dtc.Columns.IndexOf(s));
-                    }
-
-                    dtc.AcceptChanges();
-
-
-                    copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
-
-                    var clipboard_string = new StringBuilder();
-
-
-
-                    clipboard_string.Append(copyrows);
-
-
-                    if (clipboard_string.Length > 0)
-                        Clipboard.SetText(clipboard_string.ToString());
-
-                    if (clipboard_string == null)
-                    {
-                        return;
-                    }
-
-
-
-                    if (dta == null)
-                    {
-                        return;
-                    }
-
                 }
 
                 if (!(String.Equals(ctp, "ctp4")))
@@ -7525,77 +7846,80 @@ LIKE '%";
                     int[] allcolumns = new int[columncount];
                     int[] selectedcolumns = new int[1000];
 
-                    DataTable dtc = ((DataTable)dataGridView4.DataSource).Copy(); //original copy of datagridview data
-                    DataTable dtr = ((DataTable)dataGridView4.DataSource).Clone(); //holding table with the same structure as above
-
-                    List<int> ts = new List<int>();
-                    List<int> tr = new List<int>();
-                    List<string> allcolnames = new List<string>();
-                    List<string> colnames = new List<string>();
-
-
-
-                    foreach (DataGridViewCell c in dataGridView4.SelectedCells)
+                    if (dataGridView4.Rows.Count > 0)
                     {
-                        var ind = c.ColumnIndex;
-                        string name = dtc.Columns[ind].ColumnName;
 
-                        colnames.Add(name);
+                        DataTable dtc = ((DataTable)dataGridView4.DataSource).Copy(); //original copy of datagridview data
+                        DataTable dtr = ((DataTable)dataGridView4.DataSource).Clone(); //holding table with the same structure as above
+
+                        List<int> ts = new List<int>();
+                        List<int> tr = new List<int>();
+                        List<string> allcolnames = new List<string>();
+                        List<string> colnames = new List<string>();
+
+
+
+                        foreach (DataGridViewCell c in dataGridView4.SelectedCells)
+                        {
+                            var ind = c.ColumnIndex;
+                            string name = dtc.Columns[ind].ColumnName;
+
+                            colnames.Add(name);
+                        }
+
+
+                        foreach (DataGridViewColumn dc in dataGridView4.SelectedColumns)
+                        {
+                            var id = dc.Index;
+                            string s = dtc.Columns[id].ColumnName;
+                            colnames.Add(s);
+                        }
+
+
+                        foreach (DataGridViewColumn dcs in dataGridView4.Columns)
+                        {
+                            var ids = dcs.Index;
+                            string t = dcs.Name;
+                            allcolnames.Add(t);
+                        }
+
+
+
+
+                        List<string> colnamestodelete = allcolnames.Except(colnames).ToList();
+
+                        foreach (string s in colnamestodelete)
+                        {
+                            dtc.Columns.RemoveAt(dtc.Columns.IndexOf(s));
+                        }
+
+                        dtc.AcceptChanges();
+
+
+                        copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
+
+                        var clipboard_string = new StringBuilder();
+
+
+
+                        clipboard_string.Append(copyrows);
+
+
+                        if (clipboard_string.Length > 0)
+                            Clipboard.SetText(clipboard_string.ToString());
+
+                        if (clipboard_string == null)
+                        {
+                            return;
+                        }
+
+
+
+                        if (dta == null)
+                        {
+                            return;
+                        }
                     }
-
-
-                    foreach (DataGridViewColumn dc in dataGridView4.SelectedColumns)
-                    {
-                        var id = dc.Index;
-                        string s = dtc.Columns[id].ColumnName;
-                        colnames.Add(s);
-                    }
-
-
-                    foreach (DataGridViewColumn dcs in dataGridView4.Columns)
-                    {
-                        var ids = dcs.Index;
-                        string t = dcs.Name;
-                        allcolnames.Add(t);
-                    }
-
-
-
-
-                    List<string> colnamestodelete = allcolnames.Except(colnames).ToList();
-
-                    foreach (string s in colnamestodelete)
-                    {
-                        dtc.Columns.RemoveAt(dtc.Columns.IndexOf(s));
-                    }
-
-                    dtc.AcceptChanges();
-
-
-                    copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
-
-                    var clipboard_string = new StringBuilder();
-
-
-
-                    clipboard_string.Append(copyrows);
-
-
-                    if (clipboard_string.Length > 0)
-                        Clipboard.SetText(clipboard_string.ToString());
-
-                    if (clipboard_string == null)
-                    {
-                        return;
-                    }
-
-
-
-                    if (dta == null)
-                    {
-                        return;
-                    }
-
                 }
 
                 if (!(String.Equals(ctp, "ctp4")))
@@ -7622,22 +7946,73 @@ LIKE '%";
 
                 dataGridView6.Rows.Clear();
                 dataGridView7.Rows.Clear();
+
+                //label24.BackColor = Color.Transparent;
+                //label25.BackColor = Color.Transparent;
+                //label30.BackColor = Color.Transparent;
+                //label31.BackColor = Color.Transparent;
+
                 textBox9.Visible = true;
                 textBox9.Text = errormessage;
                 textBox10.Visible = true;
                 textBox10.Text = errormessage;  
                 groupBox11.Text = "Error";
                 groupBox12.Text = "Error";
+
                 label24.Visible = false;
                 label25.Visible = false;
                 label30.Visible = false;
                 label31.Visible = false;
+
                 datacleared = false;
+                dataGridView6.Visible = false;
+                dataGridView7.Visible = false;
+
+                if (dataGridView7.Visible == true)
+                {
+                    label24.BackColor = Color.White;
+                    label25.BackColor = Color.White;
+                }
+
+                if (dataGridView7.Visible == false)
+                {
+                    label24.BackColor = Color.Transparent;
+                    label25.BackColor = Color.Transparent;
+                }
+
+                if (dataGridView6.Visible == true)
+                {
+                    label30.BackColor = Color.White;
+                    label31.BackColor = Color.White;
+                }
+
+                if (dataGridView6.Visible == false)
+                {
+                    label30.BackColor = Color.Transparent;
+                    label31.BackColor = Color.Transparent;
+                }
 
             });
         }
 
-   
+        private void ClearClipboard(object sender, EventArgs e)
+        {
+            Clipboard.Clear();
+            button6.Enabled = false;
+
+            //if (dataGridView3.Rows.Count > 0 && dataGridView3.Visible == true)
+            //{ 
+            //     button7.Enabled = true;
+            //     button7.Text = "Search Term History to Clipboard";
+            //}
+
+            //if (dataGridView3.Rows.Count < 1 || dataGridView3.Visible == false)
+            //{
+                button7.Enabled = false;
+                button7.Text = "Search Term History to Clipboard";
+            //}
+
+        }
     }
 
 
