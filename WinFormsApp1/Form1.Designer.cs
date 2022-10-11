@@ -140,6 +140,8 @@
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.textBox16 = new System.Windows.Forms.TextBox();
             this.dataGridView8 = new System.Windows.Forms.DataGridView();
+            this.contextMenuStrip6 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copySelectedRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -209,6 +211,7 @@
             this.groupBox14.SuspendLayout();
             this.groupBox10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView8)).BeginInit();
+            this.contextMenuStrip6.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage5.SuspendLayout();
@@ -1263,6 +1266,7 @@
             this.dataGridView8.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.dataGridView8.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView8.ColumnHeadersVisible = false;
+            this.dataGridView8.ContextMenuStrip = this.contextMenuStrip6;
             dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle10.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -1294,6 +1298,21 @@
             this.dataGridView8.ShowCellToolTips = false;
             this.dataGridView8.Size = new System.Drawing.Size(651, 363);
             this.dataGridView8.TabIndex = 0;
+            // 
+            // contextMenuStrip6
+            // 
+            this.contextMenuStrip6.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuStrip6.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copySelectedRowToolStripMenuItem});
+            this.contextMenuStrip6.Name = "contextMenuStrip6";
+            this.contextMenuStrip6.Size = new System.Drawing.Size(211, 56);
+            // 
+            // copySelectedRowToolStripMenuItem
+            // 
+            this.copySelectedRowToolStripMenuItem.Name = "copySelectedRowToolStripMenuItem";
+            this.copySelectedRowToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.copySelectedRowToolStripMenuItem.Text = "Copy Selected Row";
+            this.copySelectedRowToolStripMenuItem.Click += new System.EventHandler(this.DefCopyOut);
             // 
             // tabPage4
             // 
@@ -2019,6 +2038,7 @@
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView8)).EndInit();
+            this.contextMenuStrip6.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
@@ -2191,6 +2211,8 @@
         private DataGridView dataGridView8;
         private System.ComponentModel.BackgroundWorker backgroundWorker7;
         private TextBox textBox16;
+        private ContextMenuStrip contextMenuStrip6;
+        private ToolStripMenuItem copySelectedRowToolStripMenuItem;
     }
 
 

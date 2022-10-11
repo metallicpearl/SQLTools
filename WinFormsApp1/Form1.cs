@@ -3189,7 +3189,7 @@ public string sql10 =
                         richTextBox1.Enabled = true;
                     }
 
-                    if (busy == true)
+                    if (busy == true && dataGridView4.Visible == true)
                     {
                         this.dataGridView4.ColumnHeadersVisible = false;
                         this.dataGridView5.ColumnHeadersVisible = false;
@@ -8246,7 +8246,7 @@ public string sql10 =
                 {
 
                     richTextBox1.Text = ("select distinct("+holding.ToString()+") from "+holding2.ToString());
-                    tabControl1.SelectedIndex = 3;
+                    tabControl1.SelectedIndex = 4;
                     tabControl2.SelectedIndex = 0;
                     richTextBox1_KeyDowns(sender, e);
                 
@@ -8280,7 +8280,7 @@ public string sql10 =
                 {
 
                     richTextBox1.Text = ("select * from " + holding2.ToString());
-                    tabControl1.SelectedIndex = 3;
+                    tabControl1.SelectedIndex = 4;
                     tabControl2.SelectedIndex = 0;
                     richTextBox1_KeyDowns(sender, e);
 
@@ -8864,6 +8864,30 @@ public string sql10 =
             string topaste = namevalue.ToUpper() + " - " + typevalue + Environment.NewLine + "------------"+ Environment.NewLine+defvalue + Environment.NewLine + "------------";
             Clipboard.SetText(topaste);
             
+        }
+
+
+        private void DefCopyOut(object sender, EventArgs e)
+        {
+
+            button9.Enabled = false;
+            button10.Enabled = true;
+            button9.Text = "Copied to Clipboard";
+
+
+            int coldef = dataGridView8.Columns["Definition"].Index;
+            int coltype = dataGridView8.Columns["Type"].Index;
+            int colname = dataGridView8.Columns["Name"].Index;
+            int row = dataGridView8.CurrentRow.Index;
+
+
+            var defvalue = dataGridView8.Rows[row].Cells[coldef].Value.ToString();
+            var namevalue = dataGridView8.Rows[row].Cells[colname].Value.ToString();
+            var typevalue = dataGridView8.Rows[row].Cells[coltype].Value.ToString();
+
+            string topaste = namevalue + "," + typevalue + "," + defvalue;
+            Clipboard.SetText(topaste);
+
         }
 
         private void ClearDefClipboard(object sender, EventArgs e)
