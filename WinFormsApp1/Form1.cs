@@ -712,6 +712,8 @@ public string sql10 =
             textBox11.Visible = true;
             button1.Enabled = false;
             button2.Enabled = false;
+            button10.Enabled = false;
+            button9.Enabled = false;
             //this.label17.Location = new System.Drawing.Point(127, 111);
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
@@ -8374,6 +8376,7 @@ public string sql10 =
             CopyCell.Enabled = false;
             CopyColumn.Enabled = false;
             CopyRow.Enabled = false;
+            button9.Text = "Copy Selected Definition To Clipboard";
 
             sqlcomm = "";
             endpressed = false;
@@ -8786,7 +8789,7 @@ public string sql10 =
                         textBox16.Visible = false;
                         textBox16.Text = "";
                         button9.Enabled = true;
-                        button10.Enabled = true;
+                        
 
 
 
@@ -8838,6 +8841,37 @@ public string sql10 =
                 e.SuppressKeyPress = true;
             }
 
+        }
+
+        private void DefToClipboard(object sender, EventArgs e)
+        {
+
+                button9.Enabled = false;
+                button10.Enabled = true;
+                button9.Text = "Copied to Clipboard";
+
+            
+            int coldef = dataGridView8.Columns["Definition"].Index;
+            int coltype = dataGridView8.Columns["Type"].Index;
+            int colname = dataGridView8.Columns["Name"].Index;
+            int row = dataGridView8.CurrentRow.Index;
+
+
+            var defvalue = dataGridView8.Rows[row].Cells[coldef].Value.ToString();
+            var namevalue = dataGridView8.Rows[row].Cells[colname].Value.ToString();
+            var typevalue = dataGridView8.Rows[row].Cells[coltype].Value.ToString();
+
+            string topaste = namevalue.ToUpper() + " - " + typevalue + Environment.NewLine + "------------"+ Environment.NewLine+defvalue + Environment.NewLine + "------------";
+            Clipboard.SetText(topaste);
+            
+        }
+
+        private void ClearDefClipboard(object sender, EventArgs e)
+        {
+            ClearClipboard(sender, e);
+            button10.Enabled = false;
+            button9.Enabled = true;
+            button9.Text = "Copy Selected Definition To Clipboard";
         }
     }
 
