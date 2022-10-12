@@ -560,7 +560,10 @@ LIKE '%";
 
     when v.type = 'X' then 'Extended Stored Procedure'
 
+	when v.type = 'FN' then 'Scalar Function'
+
     end[Type],
+
     ltrim(s.definition)[Definition]
 
     FROM
@@ -709,6 +712,7 @@ public string sql10 =
             button3.Enabled = false;
             button4.Enabled = false;
             button1.Enabled = false;
+            button8.Enabled = false;
             textBox11.Visible = true;
             button1.Enabled = false;
             button2.Enabled = false;
@@ -987,6 +991,7 @@ public string sql10 =
                     button2.Enabled = true;
                     button1.Enabled = true;
                     button4.Enabled = true;
+                    button8.Enabled = true;
                     ctp = "ctp1";
 
 
@@ -1086,7 +1091,7 @@ public string sql10 =
             button4.Enabled = false;
             button1.Enabled = false;
             button2.Enabled = false;
-            button1.Enabled = false;
+            button8.Enabled = false;
            // //this.label17.Location = new System.Drawing.Point(268, 112);
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
@@ -1298,6 +1303,7 @@ public string sql10 =
                 button2.Enabled = true;
                 button1.Enabled = true;
                 button4.Enabled = true;
+                button8.Enabled = true;
                 busy = false;
 
                 SqlConnection cmd = new SqlConnection();
@@ -1356,10 +1362,11 @@ public string sql10 =
             button3.Enabled = false;
             button4.Enabled = false;
             button1.Enabled = false;
+            button8.Enabled = false;
             //textBox11.Text = "No Results.";
             //label14.Visible = false;
             button2.Enabled = false;
-            button1.Enabled = false;
+            
             //this.label17.Location = new System.Drawing.Point(268, 112);
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
@@ -1573,6 +1580,7 @@ public string sql10 =
                 button2.Enabled = true;
                 button1.Enabled = true;
                 button4.Enabled = true;
+                button8.Enabled = true;
                 SqlConnection cmd = new SqlConnection();
                 cmd.Close();
 
@@ -1600,7 +1608,7 @@ public string sql10 =
 
                     if (builtpath == null && dataGridView3 != null || Clipboard.GetData == null)
                     {
-                        builtpath = ("--START OF SEARCH--" + Environment.NewLine + textBox6.Text + " [Initial Search Term]" + Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value);
+                        //builtpath = ("--START OF SEARCH--" + Environment.NewLine + textBox6.Text + " [Initial Search Term]" + Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value);
 
                     }
 
@@ -2030,9 +2038,6 @@ public string sql10 =
 
             {
                 if (String.Equals(ctp, "ctp3"))
-
-
-
 
                 {
 
@@ -2867,8 +2872,9 @@ public string sql10 =
             button3.Enabled = false;
             button4.Enabled = false;
             button1.Enabled = false;
+            button8.Enabled = false;
             //label18.Visible = true;
-          
+
             //textBox11.Text = "No Results.";
             //label14.Visible = false;
             button2.Enabled = false;
@@ -3099,14 +3105,305 @@ public string sql10 =
 
         public void HideHeaders(object sender, EventArgs e)
         {
+
+            if (dataGridView1.DataSource is null)
+            {
+                dataGridView1.ColumnHeadersVisible = false;
+                this.dataGridView1.ColumnHeadersVisible = false;
+                dataGridView1.AllowUserToAddRows = false;
+              
+                textBox11.Visible = true;
+                textBox12.Visible = true;
+                textBox13.Visible = true;
+                textBox14.Visible = true;
+                textBox10.Visible = true;
+                textBox9.Visible = true;
+                textBox16.Visible = true;
+
+                textBox5.Text = "";
+                textBox7.Text = "";
+                textBox8.Text = "";
+                textBox6.Text = "";
+                textBox15.Text = "";
+
+                textBox11.Text = "";
+                textBox12.Text = "";
+                textBox13.Text = "";
+                textBox14.Text = "";
+                textBox10.Text = "";
+                textBox9.Text = "";
+                textBox16.Text = "";
+
+                button3.Enabled = false;
+                button6.Enabled = false;
+                button7.Enabled = false;
+                button9.Enabled = false;
+                button10.Enabled = false;
+
+                button3.Text = "Results to Clipboard";
+                button7.Text = "Search Term History to Clipboard";
+                button6.Text = "Clear Clipboard";
+                button9.Text = "Copy Selected Definition to Clipboard";
+                button10.Text = "Clear Clipboard";
+
+
+
+            }
+
+            if (dataGridView2.DataSource is null)
+            {
+                dataGridView2.ColumnHeadersVisible = false;
+                this.dataGridView2.ColumnHeadersVisible = false;
+                dataGridView2.AllowUserToAddRows = false;
+                textBox11.Visible = true;
+                textBox12.Visible = true;
+                textBox13.Visible = true;
+                textBox14.Visible = true;
+                textBox10.Visible = true;
+                textBox9.Visible = true;
+                textBox16.Visible = true;
+
+                textBox5.Text = "";
+                textBox7.Text = "";
+                textBox8.Text = "";
+                textBox6.Text = "";
+                textBox15.Text = "";
+
+                textBox11.Text = "";
+                textBox12.Text = "";
+                textBox13.Text = "";
+                textBox14.Text = "";
+                textBox10.Text = "";
+                textBox9.Text = "";
+                textBox16.Text = "";
+
+                button3.Enabled = false;
+                button6.Enabled = false;
+                button7.Enabled = false;
+                button9.Enabled = false;
+                button10.Enabled = false;
+
+                button3.Text = "Results to Clipboard";
+                button7.Text = "Search Term History to Clipboard";
+                button6.Text = "Clear Clipboard";
+                button9.Text = "Copy Selected Definition to Clipboard";
+                button10.Text = "Clear Clipboard";
+
+
+            }
+
+
+
             if (dataGridView4.DataSource is null)
             {
                 dataGridView4.ColumnHeadersVisible = false;
-                this.dataGridView5.ColumnHeadersVisible = false;
-                this.dataGridView6.ColumnHeadersVisible = false;
-                dataGridView4.ReadOnly = true;
+                this.dataGridView4.ColumnHeadersVisible = false;
                 dataGridView4.AllowUserToAddRows = false;
-                dataGridView4.ScrollBars = ScrollBars.None;
+                textBox11.Visible = true;
+                textBox12.Visible = true;
+                textBox13.Visible = true;
+                textBox14.Visible = true;
+                textBox10.Visible = true;
+                textBox9.Visible = true;
+                textBox16.Visible = true;
+
+                textBox5.Text = "";
+                textBox7.Text = "";
+                textBox8.Text = "";
+                textBox6.Text = "";
+                textBox15.Text = "";
+
+                textBox11.Text = "";
+                textBox12.Text = "";
+                textBox13.Text = "";
+                textBox14.Text = "";
+                textBox10.Text = "";
+                textBox9.Text = "";
+                textBox16.Text = "";
+
+                button3.Enabled = false;
+                button6.Enabled = false;
+                button7.Enabled = false;
+                button9.Enabled = false;
+                button10.Enabled = false;
+
+                button3.Text = "Results to Clipboard";
+                button7.Text = "Search Term History to Clipboard";
+                button6.Text = "Clear Clipboard";
+                button9.Text = "Copy Selected Definition to Clipboard";
+                button10.Text = "Clear Clipboard";
+
+            }
+
+
+
+            if (dataGridView6.DataSource is null)
+            {
+                dataGridView6.ColumnHeadersVisible = false;
+                this.dataGridView6.ColumnHeadersVisible = false;
+                dataGridView6.ReadOnly = true;
+                dataGridView6.AllowUserToAddRows = false;
+                textBox11.Visible = true;
+                textBox12.Visible = true;
+                textBox13.Visible = true;
+                textBox14.Visible = true;
+                textBox10.Visible = true;
+                textBox9.Visible = true;
+                textBox16.Visible = true;
+
+                textBox5.Text = "";
+                textBox7.Text = "";
+                textBox8.Text = "";
+                textBox6.Text = "";
+                textBox15.Text = "";
+
+                textBox11.Text = "";
+                textBox12.Text = "";
+                textBox13.Text = "";
+                textBox14.Text = "";
+                textBox10.Text = "";
+                textBox9.Text = "";
+                textBox16.Text = "";
+
+                button3.Enabled = false;
+                button6.Enabled = false;
+                button7.Enabled = false;
+                button9.Enabled = false;
+                button10.Enabled = false;
+
+                button3.Text = "Results to Clipboard";
+                button7.Text = "Search Term History to Clipboard";
+                button6.Text = "Clear Clipboard";
+                button9.Text = "Copy Selected Definition to Clipboard";
+                button10.Text = "Clear Clipboard";
+
+            }
+
+            if (dataGridView7.DataSource is null)
+            {
+                dataGridView7.ColumnHeadersVisible = false;
+                this.dataGridView7.ColumnHeadersVisible = false;
+                dataGridView7.ReadOnly = true;
+                dataGridView7.AllowUserToAddRows = false;
+                    textBox11.Visible = true;
+                    textBox12.Visible = true;
+                    textBox13.Visible = true;
+                    textBox14.Visible = true;
+                    textBox10.Visible = true;
+                    textBox9.Visible = true;
+                    textBox16.Visible = true;
+
+                    textBox5.Text = "";
+                    textBox7.Text = "";
+                    textBox8.Text = "";
+                    textBox6.Text = "";
+                    textBox15.Text = "";
+
+                textBox11.Text = "";
+                textBox12.Text = "";
+                textBox13.Text = "";
+                textBox14.Text = "";
+                textBox10.Text = "";
+                textBox9.Text = "";
+                textBox16.Text = "";
+
+                button3.Enabled = false;
+                button6.Enabled = false;
+                button7.Enabled = false;
+                button9.Enabled = false;
+                button10.Enabled = false;
+
+                button3.Text = "Results to Clipboard";
+                button7.Text = "Search Term History to Clipboard";
+                button6.Text = "Clear Clipboard";
+                button9.Text = "Copy Selected Definition to Clipboard";
+                button10.Text = "Clear Clipboard";
+
+            }
+
+            if (dataGridView8.DataSource is null)
+            {
+                dataGridView8.ColumnHeadersVisible = false;
+                this.dataGridView8.ColumnHeadersVisible = false;
+                dataGridView8.ReadOnly = true;
+                dataGridView8.AllowUserToAddRows = false;
+                    textBox11.Visible = true;
+                    textBox12.Visible = true;
+                    textBox13.Visible = true;
+                    textBox14.Visible = true;
+                    textBox10.Visible = true;
+                    textBox9.Visible = true;
+                    textBox16.Visible = true;
+
+                    textBox5.Text = "";
+                    textBox7.Text = "";
+                    textBox8.Text = "";
+                    textBox6.Text = "";
+                    textBox15.Text = "";
+
+                textBox11.Text = "";
+                textBox12.Text = "";
+                textBox13.Text = "";
+                textBox14.Text = "";
+                textBox10.Text = "";
+                textBox9.Text = "";
+                textBox16.Text = "";
+
+                button3.Enabled = false;
+                button6.Enabled = false;
+                button7.Enabled = false;
+                button9.Enabled = false;
+                button10.Enabled = false;
+
+                button3.Text = "Results to Clipboard";
+                button7.Text = "Search Term History to Clipboard";
+                button6.Text = "Clear Clipboard";
+                button9.Text = "Copy Selected Definition to Clipboard";
+                button10.Text = "Clear Clipboard";
+
+
+            }
+
+            if (dataGridView3.DataSource is null)
+            {
+                dataGridView3.ColumnHeadersVisible = false;
+                this.dataGridView3.ColumnHeadersVisible = false;
+                dataGridView3.ReadOnly = true;
+                dataGridView3.AllowUserToAddRows = false;
+                textBox11.Visible = true;
+                textBox12.Visible = true;
+                textBox13.Visible = true;
+                textBox14.Visible = true;
+                textBox10.Visible = true;
+                textBox9.Visible = true;
+                textBox16.Visible = true;
+
+                textBox5.Text = "";
+                textBox7.Text = "";
+                textBox8.Text = "";
+                textBox6.Text = "";
+                textBox15.Text = "";
+
+                textBox11.Text = "";
+                textBox12.Text = "";
+                textBox13.Text = "";
+                textBox14.Text = "";
+                textBox10.Text = "";
+                textBox9.Text = "";
+                textBox16.Text = "";
+
+                button3.Enabled = false;
+                button6.Enabled = false;
+                button7.Enabled = false;
+                button9.Enabled = false;
+                button10.Enabled = false;
+
+                button3.Text = "Results to Clipboard";
+                button7.Text = "Search Term History to Clipboard";
+                button6.Text = "Clear Clipboard";
+                button9.Text = "Copy Selected Definition to Clipboard";
+                button10.Text = "Clear Clipboard";
+
             }
 
         }
@@ -3131,6 +3428,7 @@ public string sql10 =
                     button2.Enabled = true;
                     button1.Enabled = true;
                     button4.Enabled = true;
+                    button8.Enabled = true;
                     ctp = "ctp4";
 
                     busy = false;
@@ -4275,9 +4573,11 @@ public string sql10 =
             this.dataGridView5.ColumnHeadersVisible = false;
             this.dataGridView6.ColumnHeadersVisible = false;
             this.dataGridView7.ColumnHeadersVisible = false;
+            this.dataGridView8.ColumnHeadersVisible = false;
             button3.Enabled = false;
             button4.Enabled = false;
             button1.Enabled = false;
+            button8.Enabled = false;
             //label18.Visible = true;
            
             //textBox11.Text = "No Results.";
@@ -4636,6 +4936,7 @@ public string sql10 =
                     button2.Enabled = true;
                     button1.Enabled = true;
                     button4.Enabled = true;
+                    button8.Enabled = true;
 
                     ctp = "ctp4";
                     busy = false;
@@ -5742,6 +6043,8 @@ public string sql10 =
             this.dataGridView4.ColumnHeadersVisible = false;
             this.dataGridView5.ColumnHeadersVisible = false;
             this.dataGridView6.ColumnHeadersVisible = false;
+            this.dataGridView7.ColumnHeadersVisible = false;
+            this.dataGridView8.ColumnHeadersVisible = false;
 
             dataGridView6.Rows.Clear();
             dataGridView7.Rows.Clear();
@@ -5749,7 +6052,7 @@ public string sql10 =
             button3.Enabled = false;
             button4.Enabled = false;
             button1.Enabled = false;
-            //label18.Visible = true;
+            button8.Enabled = false;
            
             //textBox11.Text = "No Results.";
             //label14.Visible = false;
@@ -6467,6 +6770,7 @@ public string sql10 =
                     button2.Enabled = true;
                     button1.Enabled = true;
                     button4.Enabled = true;
+                    button8.Enabled = true;
 
 
                     busy = false;
@@ -8376,7 +8680,7 @@ public string sql10 =
             CopyCell.Enabled = false;
             CopyColumn.Enabled = false;
             CopyRow.Enabled = false;
-            button9.Text = "Copy Selected Definition To Clipboard";
+            button9.Text = "Copy Selected Definition to Clipboard";
 
             sqlcomm = "";
             endpressed = false;
@@ -8446,7 +8750,7 @@ public string sql10 =
                                     if (radioButton16.Checked == true)
 
                                     {
-                                        definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U')";
+                                        definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U', 'FN')";
                                     }
 
                                     if (radioButton10.Checked == true)
@@ -8496,6 +8800,11 @@ public string sql10 =
                                     {
                                         definitionsearch = "and v.type = 'V'";
                                     }
+
+                                    if (radioButton17.Checked == true)
+                                    {
+                                    definitionsearch = "and v.type = 'FN'";
+                                    }
                                 }
 
 
@@ -8506,7 +8815,7 @@ public string sql10 =
                                 if (radioButton16.Checked == true)
 
                                 {
-                                    definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U') and v.[name] = '"+textBox15.Text+"'";
+                                    definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U', 'FN') and v.[name] = '"+textBox15.Text+"'";
                                 }
 
                                 if (radioButton10.Checked == true)
@@ -8556,6 +8865,12 @@ public string sql10 =
                                 {
                                     definitionsearch = "and v.type = 'V' and v.[name] = '" + textBox15.Text + "'";
                                 }
+
+                                if (radioButton17.Checked == true)
+                                {
+                                    definitionsearch = "and v.type = 'FN' and v.[name] = '" + textBox15.Text + "'";
+                                }
+
                             }
 
                             if (textBox15.Text != "" && radioButton7.Checked == true)
@@ -8565,7 +8880,7 @@ public string sql10 =
                                 if (radioButton16.Checked == true)
 
                                 {
-                                    definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U') and v.[name] like '%" + textBox15.Text + "%'";
+                                    definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U', 'FN') and v.[name] like '%" + textBox15.Text + "%'";
                                 }
 
                                 if (radioButton10.Checked == true)
@@ -8615,6 +8930,12 @@ public string sql10 =
                                 {
                                     definitionsearch = "and v.type = 'V' and v.[name] like '%" + textBox15.Text + "%'";
                                 }
+
+                                if (radioButton17.Checked == true)
+                                {
+                                    definitionsearch = "and v.type = 'FN' and v.[name] like '%" + textBox15.Text + "%'";
+                                }
+
                             }
 
                             try
@@ -8764,7 +9085,7 @@ public string sql10 =
                 {
                     ctp = "ctp1";
                     button3.Enabled = true;
-                    button3.Text = "Copy Selected Definition To Clipboard";
+                    button3.Text = "Results to Clipboard";
                     //textBox16.Visible = false;
                     button2.Enabled = true;
                     button1.Enabled = true;
@@ -8895,7 +9216,7 @@ public string sql10 =
             ClearClipboard(sender, e);
             button10.Enabled = false;
             button9.Enabled = true;
-            button9.Text = "Copy Selected Definition To Clipboard";
+            button9.Text = "Copy Selected Definition to Clipboard";
         }
     }
 
@@ -8905,11 +9226,10 @@ public string sql10 =
 
 
 
-    
 
 
 
-    
+
 
 
 
