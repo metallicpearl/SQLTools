@@ -1014,6 +1014,8 @@
             this.tabControl1.TabIndex = 0;
             this.tabControl1.Click += new System.EventHandler(this.HideHeaders);
             this.tabControl1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tabControl1_KeyPress);
+            this.tabControl1.MouseHover += new System.EventHandler(this.TabChangeWarning);
+            
             // 
             // tabPage8
             // 

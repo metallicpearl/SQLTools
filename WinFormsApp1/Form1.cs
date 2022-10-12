@@ -9218,6 +9218,32 @@ public string sql10 =
             button9.Enabled = true;
             button9.Text = "Copy Selected Definition to Clipboard";
         }
+
+        private void TabChangeWarning(object sender, EventArgs e)
+        {
+            ToolTip tt = new ToolTip();
+            
+            tt.ShowAlways = true;
+
+            tt.SetToolTip(tabControl1,"Switching tabs will clear the results from this tab.");
+
+            tt.AutoPopDelay = 4000;
+
+            tt.InitialDelay = 500;
+
+            tt.ForeColor = Color.White;
+
+            tt.ToolTipTitle = "Warning!";
+
+            tt.ReshowDelay = 1000;
+
+   
+
+        }
+
+       
+
+     
     }
 
 
