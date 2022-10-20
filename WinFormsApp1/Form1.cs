@@ -22,6 +22,9 @@ using System.Windows;
 namespace WinFormsApp1
 {
 
+   
+
+
     /// <summary>
     ///FORM CLASS
     /// </summary>
@@ -93,6 +96,10 @@ namespace WinFormsApp1
             dataGridView6.AllowUserToResizeColumns = true;
             dataGridView7.AllowUserToResizeColumns = true;
             dataGridView8.AllowUserToResizeColumns = true;
+
+            inedit = true;
+            inedit2 = true;
+            inedit3 = true;
 
 
             void dataGrid_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
@@ -189,6 +196,15 @@ namespace WinFormsApp1
         public bool datacleared;
         public string changederror = "";
         public string definitionsearch;
+        public bool colouroff;
+        public int ct1;
+        public int ct2;
+        public int ct3;
+        public bool intis;
+        public bool inedit;
+        public bool inedit2;
+        public bool inedit3;
+        public bool tooltipshown;
 
         public List<string> tablelist;
         public List<string> columnlist;
@@ -743,6 +759,9 @@ public string sql10 =
             CopyCell.Enabled = false;
             CopyColumn.Enabled = false;
             CopyRow.Enabled = false;
+            
+
+            
 
             sqlcomm = "";
             endpressed = false;
@@ -772,6 +791,7 @@ public string sql10 =
                 }
             }
 
+            inedit = true;
           
 
         }
@@ -782,8 +802,10 @@ public string sql10 =
             {
                 {
 
-            
-
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        this.Text = "SQL Tools - WORKING...";
+                    });
 
                     if (radioButton1.Checked == true)
                     {
@@ -905,6 +927,12 @@ public string sql10 =
                                     ds.Columns.RemoveAt(ind);
                                 }
 
+                                int ind2 = ds.Columns.IndexOf("TimeStamp");
+                                if (ind2 != -1)
+                                {
+                                    ds.Columns.RemoveAt(ind2);
+                                }
+
                                 foreach (DataColumn dc in ds.Columns)
                                 {
 
@@ -982,6 +1010,11 @@ public string sql10 =
         {
 
             {
+
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    this.Text = "SQL Tools";
+                });
 
                 {
                     ctp = "ctp1";
@@ -1142,7 +1175,10 @@ public string sql10 =
         {
 
             {
-             
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    this.Text = "SQL Tools - WORKING...";
+                });
 
                 if (radioButton1.Checked == true)
                 {
@@ -1218,6 +1254,12 @@ public string sql10 =
                                 if (ind != -1)
                                 {
                                     ds.Columns.RemoveAt(ind);
+                                }
+
+                                int ind2 = ds.Columns.IndexOf("TimeStamp");
+                                if (ind2 != -1)
+                                {
+                                    ds.Columns.RemoveAt(ind2);
                                 }
 
                                 foreach (DataColumn dc in ds.Columns)
@@ -1297,6 +1339,12 @@ public string sql10 =
         {
 
             {
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    this.Text = "SQL Tools";
+                });
+
+
                 ctp = "ctp2";
                 button3.Enabled = true;
                 button3.Text = "Results to Clipboard";
@@ -1417,7 +1465,10 @@ public string sql10 =
 
             {
                 {
-                 
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        this.Text = "SQL Tools - WORKING...";
+                    });
 
                     if (radioButton1.Checked == true)
                     {
@@ -1515,6 +1566,12 @@ public string sql10 =
                                     ds.Columns.RemoveAt(ind);
                                 }
 
+                                int ind2 = ds.Columns.IndexOf("TimeStamp");
+                                if (ind2 != -1)
+                                {
+                                    ds.Columns.RemoveAt(ind2);
+                                }
+
                                 foreach (DataColumn dc in ds.Columns)
                                 {
 
@@ -1574,6 +1631,12 @@ public string sql10 =
         {
 
             {
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    this.Text = "SQL Tools";
+                });
+
+
                 ctp = "ctp3";
                 button3.Enabled = true;
                 button3.Text = "Results to Clipboard";
@@ -1599,10 +1662,15 @@ public string sql10 =
                     button7.Enabled = true;
                     button7.Text = "Search Term History to Clipboard";
 
-                    if (builtpath == null && dataGridView3.RowCount < 1)
+                    if (builtpath == null && dataGridView3.RowCount > 1)
                     {
-                        builtpath = ("--START OF SEARCH--" + Environment.NewLine + textBox6.Text// + " < [Initial Search Term]"
-                            );
+
+                        builtpath = ("--START OF SEARCH--");
+
+                        if (textBox6.Text == "")
+                        {
+                            builtpath += Environment.NewLine + "[Blank Search]";
+                        }
                     }
 
 
@@ -1612,11 +1680,21 @@ public string sql10 =
 
                     }
 
-                    if (builtpath != null && dataGridView3.SelectedCells.Count != 0 && builtpath != "--START OF SEARCH--" + Environment.NewLine + textBox6.Text + " [Initial Search Term]" + Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value)
+                    if (builtpath != null && dataGridView3.SelectedCells.Count != 0 && builtpath != "--START OF SEARCH--" + Environment.NewLine + textBox6.Text + "< [Initial Search Term]" + Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value)
 
 
                     {
-                        builtpath += (Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value);
+                        if (textBox6.Text == "")
+                        {
+
+                            builtpath += textBox6.Text;
+                        }
+
+                        if (textBox6.Text != "")
+                        {
+
+                            builtpath += Environment.NewLine + textBox6.Text;
+                        }
                     }
 
                     if (builtpath == null)
@@ -1857,9 +1935,9 @@ public string sql10 =
             {
                 if (builtpath != "--START OF SEARCH--\r\n" + textBox6.Text)
                 {
-                    builtpath += textBox6.Text;
+                    builtpath += Environment.NewLine+textBox6.Text;
                 }
-                builtpath += " [No Further Results]" + Environment.NewLine + "--END OF SEARCH--";
+                builtpath += Environment.NewLine + "--END OF SEARCH--";
                 Clipboard.SetText(builtpath);
                 button7.Enabled = false;
                 button6.Enabled = true;
@@ -2261,31 +2339,20 @@ public string sql10 =
         }
 
 
-
-
-
-
-
-
-
-
-
-
         private void dotextstuff(object sender, EventArgs e)
         {
-            //string lastword = richTextBox1.Text.Substring(richTextBox1.Text.Substring(0, richTextBox1.Text.LastIndexOf(" ")).LastIndexOf(" ") + 1);
-            //int laswl = lastword.
 
             string findText = laswor;
 
             int index = 0;
-
-            int len = laswor.Length;
+            if (laswor.Length > 0)
+            {
+                int len = laswor.Length;
+            }
 
             int positionOfcarett = caretposition;
 
-            //do
-            //{
+          
             index = richTextBox1.Find(findText, index, RichTextBoxFinds.WholeWord);
             if (index > -1)
             {
@@ -2300,24 +2367,20 @@ public string sql10 =
 
 
                 index++;
-                //sqltextindex++;
+           
 
             }
 
 
 
 
-            //} while (index > -1);
 
-            //richTextBox1.ForeColor = Color.Black;
         }
 
 
 
         private void dotextstuffblack(object sender, EventArgs e)
         {
-            //string lastword = richTextBox1.Text.Substring(richTextBox1.Text.Substring(0, richTextBox1.Text.LastIndexOf(" ")).LastIndexOf(" ") + 1);
-            //int laswl = lastword.
 
             string findText = laswor;
             int index = 0;
@@ -2327,8 +2390,7 @@ public string sql10 =
 
             int positionOfcarett = caretposition;
 
-            // do
-            //{
+
             lineIndex = richTextBox1.GetFirstCharIndexOfCurrentLine();
 
             index = richTextBox1.Find(findText, index, RichTextBoxFinds.WholeWord);
@@ -2340,25 +2402,199 @@ public string sql10 =
                 richTextBox1.SelectionLength = 0;
                 richTextBox1.ForeColor = Color.Black;
                 richTextBox1.SelectionStart = richTextBox1.Text.Length;
-                //richTextBox1.DeselectAll();
                 richTextBox1.SelectionStart = positionOfcarett;
 
-
                 index++;
-                //sqltextindex++;
+
+
+            }
+
 
             }
 
 
 
+        private void dotextstuffred(object sender, EventArgs e)
+        {
+            int lastchar;
+            int nextchar;
 
-            //} while (index > -1);
 
-            //richTextBox1.ForeColor = Color.Black;
+            lastchar = richTextBox1.SelectionStart - 1;
+
+            nextchar = lastchar + 1;
+
+            decimal d = (decimal)ct1 / 2;
+
+            string d1 = d.ToString();
+
+            bool isint = StringReverse.IsInt(d1);
+
+            inedit = isint;
+
+            if (richTextBox1.Text.Length > 1 && richTextBox1.Text.Length >= lastchar && isint == false)
+                {
+
+                    int currentcaretposition = richTextBox1.SelectionStart;
+
+                    var chk = richTextBox1.Text.Substring(lastchar, 1);
+                    string stringoriginal = richTextBox1.Text.Substring(0, lastchar + 1);
+                    char[] stringarray = stringoriginal.ToString().ToCharArray();
+                    Array.Reverse(stringarray);
+                    string stringreverse = new string(stringarray);
+                    int stringreverselen = stringreverse.Length;
+                    richTextBox1.SelectionColor = Color.Black;
+                if (richTextBox1.Text.Length == currentcaretposition)
+                {
+                    richTextBox1.SelectionStart = nextchar;
+                    
+                }
+
+            }
+
+            if (richTextBox1.Text.Length > 1 && richTextBox1.Text.Length >= lastchar && isint == true)
+            {
+                if (lastchar > -1)
+                {
+                    var chk = richTextBox1.Text.Substring(lastchar, 0);
+                }
+                richTextBox1.Select(lastchar, 0);
+                richTextBox1.SelectionStart = nextchar;
+                richTextBox1.SelectionColor = Color.Black;
+                richTextBox1.ScrollToCaret();
+                textbacktoblack(sender, e);   
+            }
+
+
         }
 
 
 
+        private void dotextstuffred2(object sender, EventArgs e)
+        {
+            int lastchar;
+            int nextchar;
+
+
+            lastchar = richTextBox2.SelectionStart - 1;
+
+            nextchar = lastchar + 1;
+
+            decimal d = (decimal)ct2 / 2;
+
+            string d1 = d.ToString();
+
+            bool isint = StringReverse.IsInt(d1);
+
+            inedit2 = isint;
+
+            if (richTextBox2.Text.Length > 1 && richTextBox2.Text.Length >= lastchar && isint == false)
+            {
+
+                int currentcaretposition = richTextBox2.SelectionStart;
+
+                var chk = richTextBox2.Text.Substring(lastchar, 1);
+                string stringoriginal = richTextBox2.Text.Substring(0, lastchar + 1);
+                char[] stringarray = stringoriginal.ToString().ToCharArray();
+                Array.Reverse(stringarray);
+                string stringreverse = new string(stringarray);
+                int stringreverselen = stringreverse.Length;
+                richTextBox2.SelectionColor = Color.Black;
+                if (richTextBox2.Text.Length == currentcaretposition)
+                {
+                    richTextBox2.SelectionStart = nextchar;
+
+                }
+
+            }
+
+            if (richTextBox2.Text.Length > 1 && richTextBox2.Text.Length >= lastchar && isint == true)
+            {
+                if (lastchar > -1)
+                {
+                    var chk = richTextBox2.Text.Substring(lastchar, 0);
+                }
+                richTextBox2.Select(lastchar, 0);
+                richTextBox2.SelectionStart = nextchar;
+                richTextBox2.SelectionColor = Color.Black;
+                richTextBox2.ScrollToCaret();
+                textbacktoblack2(sender, e);
+            }
+
+
+        }
+
+
+
+        private void dotextstuffred3(object sender, EventArgs e)
+        {
+            int lastchar;
+            int nextchar;
+
+
+            lastchar = richTextBox4.SelectionStart - 1;
+
+            nextchar = lastchar + 1;
+
+            decimal d = (decimal)ct3 / 2;
+
+            string d1 = d.ToString();
+
+            bool isint = StringReverse.IsInt(d1);
+
+            inedit3 = isint;
+
+            if (richTextBox4.Text.Length > 1 && richTextBox4.Text.Length >= lastchar && isint == false)
+            {
+
+                int currentcaretposition = richTextBox4.SelectionStart;
+
+                var chk = richTextBox4.Text.Substring(lastchar, 1);
+                string stringoriginal = richTextBox4.Text.Substring(0, lastchar + 1);
+                char[] stringarray = stringoriginal.ToString().ToCharArray();
+                Array.Reverse(stringarray);
+                string stringreverse = new string(stringarray);
+                int stringreverselen = stringreverse.Length;
+                richTextBox4.SelectionColor = Color.Black;
+                if (richTextBox4.Text.Length == currentcaretposition)
+                {
+                    richTextBox4.SelectionStart = nextchar;
+
+                }
+
+            }
+
+            if (richTextBox4.Text.Length > 1 && richTextBox4.Text.Length >= lastchar && isint == true)
+            {
+                if (lastchar > -1)
+                {
+                    var chk = richTextBox4.Text.Substring(lastchar, 0);
+                }
+                richTextBox4.Select(lastchar, 0);
+                richTextBox4.SelectionStart = nextchar;
+                richTextBox4.SelectionColor = Color.Black;
+                richTextBox4.ScrollToCaret();
+                textbacktoblack3(sender, e);
+            }
+
+
+        }
+
+
+        private void textbacktoblack(object sender, EventArgs e)
+            {
+            richTextBox1.SelectionColor = Color.Black;
+            }
+
+        private void textbacktoblack2(object sender, EventArgs e)
+        {
+            richTextBox2.SelectionColor = Color.Black;
+        }
+
+        private void textbacktoblack3(object sender, EventArgs e)
+        {
+            richTextBox4.SelectionColor = Color.Black;
+        }
 
         private void tabControl1_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -2366,19 +2602,50 @@ public string sql10 =
         }
 
 
+        private void richTextBox1_KeyDownTest(object sender, KeyEventArgs e)
+        {
+
+        }
+
 
         private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
         {
 
 
+            if (e.KeyCode == Keys.Back)
+            {
+                
+                if (richTextBox1.Text.Length > 0)
+                {
+                    string txt;
 
+                    if ((richTextBox1.SelectionStart - 1) > 0)
+                    {
+                        txt = richTextBox1.Text.Substring(richTextBox1.SelectionStart - 1, 1);
+                        if (txt == "'")
+                        {
+                            ct1 = ct1 - 1;
+                        }
+                    }
+                }
+              
 
-            if 
-                (autocompletebusy == true)
+            }
+
+            if
+             (autocompletebusy == true)
             {
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
+
+
+            if (e.KeyCode == Keys.Oem3)
+            {
+                ct1 = ct1 + 1;
+                dotextstuffred(sender, e);
+            }
+
 
             if (e.KeyCode == Keys.Decimal)
             {
@@ -2412,15 +2679,15 @@ public string sql10 =
             if (e.KeyCode == Keys.F5 && busy == true)
             {
                 e.Handled = true;
-              
-                    workerbusy(sender, e);
-                    return;
-                
+
+                workerbusy(sender, e);
+                return;
+
             }
 
             if (e.KeyCode == Keys.F5 && busy == false)
             {
-                
+
                 dataGridView4.Refresh();
                 richTextBox1.Enabled = false;
                 richTextBox1_KeyDowns(sender, e);
@@ -2523,7 +2790,7 @@ public string sql10 =
 
                    e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return || e.KeyCode == Keys.F5) &&
                    richTextBox1.TextLength > 1 &&
-                   f5pressed == false
+                   f5pressed == false && inedit == true
                    )
                 {
 
@@ -2927,6 +3194,10 @@ public string sql10 =
 
         private void backgroundWorker4_DoWork(object sender, DoWorkEventArgs e)
         {
+            BeginInvoke((MethodInvoker)delegate
+            {
+                this.Text = "SQL Tools - WORKING...";
+            });
 
             busy = true;
             errormessage = "";
@@ -3018,6 +3289,12 @@ public string sql10 =
                                         ds.Columns.RemoveAt(ind);
                                     }
 
+                                    int ind2 = ds.Columns.IndexOf("TimeStamp");
+                                    if (ind2 != -1)
+                                    {
+                                        ds.Columns.RemoveAt(ind2);
+                                    }
+
                                     foreach (DataColumn dc in ds.Columns)
                                     {
 
@@ -3103,7 +3380,7 @@ public string sql10 =
         }
 
 
-        public void HideHeaders(object sender, EventArgs e)
+        public void HideTabeHaders(object sender, EventArgs e)
         {
 
             if (dataGridView1.DataSource is null)
@@ -3133,6 +3410,10 @@ public string sql10 =
                 textBox10.Text = "";
                 textBox9.Text = "";
                 textBox16.Text = "";
+                textBox15.Text = "";
+                richTextBox1.Text = "";
+                richTextBox2.Text = "";
+                richTextBox4.Text = "";
 
                 button3.Enabled = false;
                 button6.Enabled = false;
@@ -3145,6 +3426,7 @@ public string sql10 =
                 button6.Text = "Clear Clipboard";
                 button9.Text = "Copy Selected Definition to Clipboard";
                 button10.Text = "Clear Clipboard";
+
 
 
 
@@ -3415,8 +3697,35 @@ public string sql10 =
             {
 
                 {
-                    dataGridView6.Rows.Clear();
-                    dataGridView7.Rows.Clear();
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        this.Text = "SQL Tools";
+                    });
+
+                    if (dataGridView6.Rows.Count > 0)
+                    {
+                        dataGridView6.Rows.Clear();
+                        textBox9.Visible = true;
+                        textBox10.Visible = true;
+                        richTextBox2.Text = "";
+                        richTextBox4.Text = "";
+                    }
+
+                    if (dataGridView7.Rows.Count > 0)
+                    {
+                        dataGridView7.Rows.Clear();
+                        textBox9.Visible = true;
+                        textBox10.Visible = true;
+                        richTextBox2.Text = "";
+                        richTextBox4.Text = "";
+                    }
+
+
+                    textBox9.Visible = true;
+                    textBox10.Visible = true;
+                    textBox9.Text = "";
+                    textBox10.Text = "";
+
 
                     dataGridView6.ColumnHeadersVisible = false;
                     dataGridView7.ColumnHeadersVisible = false;
@@ -3626,129 +3935,145 @@ public string sql10 =
             richTextBox1.DeselectAll();
 
 
+            try
 
-
-            //TABLES
-
-           
-            
-
-            if (radioButton1.Checked == true)
             {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                //TABLES
+
+
+
+
+                if (radioButton1.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                }
+
+                else if (radioButton2.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
+                }
+
+
+                SqlConnection conn = new SqlConnection(connex);
+
+
+                string command = "select table_name FROM INFORMATION_SCHEMA.TABLES where table_name like '%" + currentword + "%'";
+                SqlCommand cmd = new SqlCommand(command);
+                cmd.Connection = conn;
+                string result = command.ToString();
+                conn.Open();
+
+                //DataTable dt = new DataTable();
+
+                SqlDataAdapter adapter = new SqlDataAdapter();
+                adapter.SelectCommand = cmd;
+                DataTable ds = new DataTable();
+                adapter.Fill(ds);
+
+                int ind = ds.Columns.IndexOf("RowVersion");
+                if (ind != -1)
+                {
+                    ds.Columns.RemoveAt(ind);
+                }
+
+                int ind2 = ds.Columns.IndexOf("TimeStamp");
+                if (ind2 != -1)
+                {
+                    ds.Columns.RemoveAt(ind2);
+                }
+
+                //COLUMNS
+
+                if (radioButton1.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                }
+
+                else if (radioButton2.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
+                }
+
+
+
+                SqlConnection conn2 = new SqlConnection(connex);
+
+
+                string command2 = "select concat(table_name,'.',column_name) FROM INFORMATION_SCHEMA.COLUMNS where column_name like '%" + currentword.Replace(" ", "") + "%'";
+                SqlCommand cmd2 = new SqlCommand(command2);
+                cmd2.Connection = conn2;
+                string result2 = command2.ToString();
+                conn2.Open();
+
+                //DataTable dt = new DataTable();
+
+                SqlDataAdapter adapter2 = new SqlDataAdapter();
+                adapter2.SelectCommand = cmd2;
+                DataTable ds2 = new DataTable();
+                adapter2.Fill(ds2);
+
+                ListBox listBox = new ListBox();
+
+                lb.Items.Clear();
+
+                foreach (DataRow dr2 in ds2.Rows)
+                {
+                    // BeginInvoke((MethodInvoker)delegate
+                    //{
+
+                    string l = dr2[0].ToString();
+                    //columnlist.Add(l);
+                    //contextMenuStrip4.Items.Add(l);
+                    lb.Items.Add(l);
+
+                    // });
+
+                }
+
+
+                lb.EndUpdate();
+                lb.Refresh();
+
+
+                if (lb.Items.Count == 0)
+                {
+                    richTextBox1.SelectionStart = caretposition;
+                }
+
+                if (lb.Items.Count > 0)
+                {
+                    autocompletebusy = true;
+
+                    richTextBox1.Select(lastspacebeforetext = beforetext.LastIndexOf(' ') + 1, currentlen + 1);
+
+                    string sl = richTextBox1.SelectedText;
+
+                    lb.Show();
+
+                    lb.Focus();
+
+                    //richTextBox1.Focus();
+
+                    int charpos = richTextBox1.SelectionStart;
+
+                    Point carpos = richTextBox1.GetPositionFromCharIndex(charpos);
+
+                    lb.Location = carpos;
+                    lb.Visible = true;
+                    lb.SetSelected(0, true);
+                }
+
             }
 
-            else if (radioButton2.Checked == true)
+            catch (Exception ex)
             {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
-            }
-
-
-            SqlConnection conn = new SqlConnection(connex);
-
-
-            string command = "select table_name FROM INFORMATION_SCHEMA.TABLES where table_name like '%" + currentword + "%'";
-            SqlCommand cmd = new SqlCommand(command);
-            cmd.Connection = conn;
-            string result = command.ToString();
-            conn.Open();
-
-            //DataTable dt = new DataTable();
-
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            adapter.SelectCommand = cmd;
-            DataTable ds = new DataTable();
-            adapter.Fill(ds);
-
-            int ind = ds.Columns.IndexOf("RowVersion");
-            if (ind != -1)
-            {
-                ds.Columns.RemoveAt(ind);
-            }
-
-            //COLUMNS
-
-            if (radioButton1.Checked == true)
-            {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
-            }
-
-            else if (radioButton2.Checked == true)
-            {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
-            }
-
-
-
-            SqlConnection conn2 = new SqlConnection(connex);
-
-
-            string command2 = "select concat(table_name,'.',column_name) FROM INFORMATION_SCHEMA.COLUMNS where column_name like '%" + currentword.Replace(" ", "") + "%'";
-            SqlCommand cmd2 = new SqlCommand(command2);
-            cmd2.Connection = conn2;
-            string result2 = command2.ToString();
-            conn2.Open();
-
-            //DataTable dt = new DataTable();
-
-            SqlDataAdapter adapter2 = new SqlDataAdapter();
-            adapter2.SelectCommand = cmd2;
-            DataTable ds2 = new DataTable();
-            adapter2.Fill(ds2);
-
-            ListBox listBox = new ListBox();
-
-            lb.Items.Clear();
-
-            foreach (DataRow dr2 in ds2.Rows)
-            {
-                // BeginInvoke((MethodInvoker)delegate
-                //{
-
-                string l = dr2[0].ToString();
-                //columnlist.Add(l);
-                //contextMenuStrip4.Items.Add(l);
-                lb.Items.Add(l);
-
-                // });
-
-            }
-
-
-            lb.EndUpdate();
-            lb.Refresh();
-
-
-            if (lb.Items.Count == 0)
-            {
-                richTextBox1.SelectionStart = caretposition;
-            }
-
-            if (lb.Items.Count > 0)
-            {
-                autocompletebusy = true;
-
-                richTextBox1.Select(lastspacebeforetext = beforetext.LastIndexOf(' ') + 1, currentlen + 1);
-
-                string sl = richTextBox1.SelectedText;
-
-                lb.Show();
-
-                lb.Focus();
-
-                //richTextBox1.Focus();
-
-                int charpos = richTextBox1.SelectionStart;
-
-                Point carpos = richTextBox1.GetPositionFromCharIndex(charpos);
-
-                lb.Location = carpos;
-                lb.Visible = true;
-                lb.SetSelected(0, true);
+                richTextBox1.Select(caretposition, 1);
+                MessageBox.Show("Suggestions failed to initialise.", "Error", MessageBoxButtons.OK,MessageBoxIcon.Error);
+                
             }
 
 
@@ -4069,6 +4394,42 @@ public string sql10 =
         private void richTextBox2_KeyDown2(object sender, KeyEventArgs e)
         {
 
+
+            if (e.KeyCode == Keys.Back)
+            {
+
+                if (richTextBox2.Text.Length > 0)
+                {
+                    string txt;
+
+                    if ((richTextBox2.SelectionStart - 1) > 0)
+                    {
+                        txt = richTextBox2.Text.Substring(richTextBox2.SelectionStart - 1, 1);
+                        if (txt == "'")
+                        {
+                            ct2 = ct2 - 1;
+                        }
+                    }
+                }
+
+
+            }
+
+            if
+             (autocompletebusy == true)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+
+
+            if (e.KeyCode == Keys.Oem3)
+            {
+                ct2 = ct2 + 1;
+                dotextstuffred2(sender, e);
+            }
+
+
             textBox9.Text = "";
             textBox10.Text = "";
 
@@ -4239,7 +4600,7 @@ public string sql10 =
 
                    e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return || e.KeyCode == Keys.F5) &&
                    richTextBox2.TextLength > 1 &&
-                   f5pressed == false
+                   f5pressed == false && inedit2 == true 
                    )
                 {
 
@@ -4631,7 +4992,10 @@ public string sql10 =
 
         private void backgroundWorker5_DoWork(object sender, DoWorkEventArgs e)
         {
-
+            BeginInvoke((MethodInvoker)delegate
+            {
+                this.Text = "SQL Tools - WORKING...";
+            });
             //errormessage = "";
             //changederror = "";
 
@@ -4739,6 +5103,12 @@ public string sql10 =
                                     {
                                         ds.Columns.RemoveAt(ind);
                                     }
+
+                                    int ind2 = ds.Columns.IndexOf("TimeStamp");
+                                    if (ind2 != -1)
+                                    {
+                                        ds.Columns.RemoveAt(ind2);
+                                    }
                                     foreach (DataColumn dc in ds.Columns)
                                     {
 
@@ -4824,6 +5194,12 @@ public string sql10 =
                                     if (ind != -1)
                                     {
                                         ds.Columns.RemoveAt(ind);
+                                    }
+
+                                    int ind2 = ds.Columns.IndexOf("TimeStamp");
+                                    if (ind2 != -1)
+                                    {
+                                        ds.Columns.RemoveAt(ind2);
                                     }
 
                                     foreach (DataColumn dc in ds.Columns)
@@ -4917,6 +5293,9 @@ public string sql10 =
                 dataGridView4.ReadOnly = true;
                 dataGridView4.AllowUserToAddRows = false;
                 dataGridView4.ScrollBars = ScrollBars.None;
+                richTextBox1.Text = "";
+                richTextBox2.Text = "";
+                richTextBox4.Text = "";
             }
 
         }
@@ -4928,6 +5307,12 @@ public string sql10 =
             {
 
                 {
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        this.Text = "SQL Tools";
+                    });
+
+
                     f5pressed = false;
                     ctp = "ctp4";
                     button3.Enabled = true;
@@ -4946,6 +5331,9 @@ public string sql10 =
 
                     dataGridView5.DataSource = null;
                     dataGridView6.DataSource = null;
+
+                    textBox14.Visible = true;
+                    textBox14.Text = "";
 
 
                     SqlConnection cmd = new SqlConnection();
@@ -5105,134 +5493,148 @@ public string sql10 =
 
 
 
-
-            //TABLES
-
-
-            if (radioButton1.Checked == true)
+            try
             {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                //TABLES
+
+
+                if (radioButton1.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                }
+
+                else if (radioButton2.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
+                }
+
+
+
+
+                SqlConnection conn = new SqlConnection(connex);
+
+
+                string command = "select table_name FROM INFORMATION_SCHEMA.TABLES where table_name like '%" + currentword + "%'";
+                SqlCommand cmd = new SqlCommand(command);
+                cmd.Connection = conn;
+                string result = command.ToString();
+                conn.Open();
+
+                //DataTable dt = new DataTable();
+
+                SqlDataAdapter adapter = new SqlDataAdapter();
+                adapter.SelectCommand = cmd;
+                DataTable ds = new DataTable();
+                adapter.Fill(ds);
+
+                int ind = ds.Columns.IndexOf("RowVersion");
+                if (ind != -1)
+                {
+                    ds.Columns.RemoveAt(ind);
+                }
+
+                int ind2 = ds.Columns.IndexOf("TimeStamp");
+                if (ind2 != -1)
+                {
+                    ds.Columns.RemoveAt(ind2);
+                }
+
+
+                //COLUMNS
+
+
+                if (radioButton1.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                }
+
+                else if (radioButton2.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
+                }
+
+
+
+
+                SqlConnection conn2 = new SqlConnection(connex);
+
+
+                string command2 = "select concat(table_name,'.',column_name) FROM INFORMATION_SCHEMA.COLUMNS where column_name like '%" + currentword.Replace(" ", "") + "%'";
+                SqlCommand cmd2 = new SqlCommand(command2);
+                cmd2.Connection = conn2;
+                string result2 = command2.ToString();
+                conn2.Open();
+
+                //DataTable dt = new DataTable();
+
+                SqlDataAdapter adapter2 = new SqlDataAdapter();
+                adapter2.SelectCommand = cmd2;
+                DataTable ds2 = new DataTable();
+                adapter2.Fill(ds2);
+
+                ListBox listBox = new ListBox();
+
+                listBox1.Items.Clear();
+
+                foreach (DataRow dr2 in ds2.Rows)
+                {
+                    // BeginInvoke((MethodInvoker)delegate
+                    //{
+
+                    string l = dr2[0].ToString();
+                    //columnlist.Add(l);
+                    //contextMenuStrip4.Items.Add(l);
+                    listBox1.Items.Add(l);
+
+                    // });
+
+                }
+
+
+                listBox1.EndUpdate();
+                listBox1.Refresh();
+
+
+                if (listBox1.Items.Count == 0)
+                {
+                    richTextBox2.SelectionStart = caretposition;
+                }
+
+                if (listBox1.Items.Count > 0)
+                {
+                    autocompletebusy = true;
+
+                    richTextBox2.Select(lastspacebeforetext = beforetext.LastIndexOf(' ') + 1, currentlen + 1);
+
+                    string sl = richTextBox2.SelectedText;
+
+                    listBox1.Show();
+
+                    listBox1.Focus();
+
+                    //richTextBox2.Focus();
+
+                    int charpos = richTextBox2.SelectionStart;
+
+                    Point carpos = richTextBox2.GetPositionFromCharIndex(charpos);
+
+                    listBox1.Location = carpos;
+                    listBox1.Visible = true;
+                    listBox1.SetSelected(0, true);
+                }
+
             }
 
-            else if (radioButton2.Checked == true)
+            catch (Exception ex)
             {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
-            }
-
-
-
-
-            SqlConnection conn = new SqlConnection(connex);
-
-
-            string command = "select table_name FROM INFORMATION_SCHEMA.TABLES where table_name like '%" + currentword + "%'";
-            SqlCommand cmd = new SqlCommand(command);
-            cmd.Connection = conn;
-            string result = command.ToString();
-            conn.Open();
-
-            //DataTable dt = new DataTable();
-
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            adapter.SelectCommand = cmd;
-            DataTable ds = new DataTable();
-            adapter.Fill(ds);
-
-            int ind = ds.Columns.IndexOf("RowVersion");
-            if (ind != -1)
-            {
-                ds.Columns.RemoveAt(ind);
-            }
-
-
-            //COLUMNS
-
-
-            if (radioButton1.Checked == true)
-            {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
-            }
-
-            else if (radioButton2.Checked == true)
-            {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
-            }
-
-
-
-
-            SqlConnection conn2 = new SqlConnection(connex);
-
-
-            string command2 = "select concat(table_name,'.',column_name) FROM INFORMATION_SCHEMA.COLUMNS where column_name like '%" + currentword.Replace(" ", "") + "%'";
-            SqlCommand cmd2 = new SqlCommand(command2);
-            cmd2.Connection = conn2;
-            string result2 = command2.ToString();
-            conn2.Open();
-
-            //DataTable dt = new DataTable();
-
-            SqlDataAdapter adapter2 = new SqlDataAdapter();
-            adapter2.SelectCommand = cmd2;
-            DataTable ds2 = new DataTable();
-            adapter2.Fill(ds2);
-
-            ListBox listBox = new ListBox();
-
-            listBox1.Items.Clear();
-
-            foreach (DataRow dr2 in ds2.Rows)
-            {
-                // BeginInvoke((MethodInvoker)delegate
-                //{
-
-                string l = dr2[0].ToString();
-                //columnlist.Add(l);
-                //contextMenuStrip4.Items.Add(l);
-                listBox1.Items.Add(l);
-
-                // });
+                richTextBox2.Select(caretposition, 1);
+                MessageBox.Show("Suggestions failed to initialise.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
-
-
-            listBox1.EndUpdate();
-            listBox1.Refresh();
-
-
-            if (listBox1.Items.Count == 0)
-            {
-                richTextBox2.SelectionStart = caretposition;
-            }
-
-            if (listBox1.Items.Count > 0)
-            {
-                autocompletebusy = true;
-
-                richTextBox2.Select(lastspacebeforetext = beforetext.LastIndexOf(' ') + 1, currentlen + 1);
-
-                string sl = richTextBox2.SelectedText;
-
-                listBox1.Show();
-
-                listBox1.Focus();
-
-                //richTextBox2.Focus();
-
-                int charpos = richTextBox2.SelectionStart;
-
-                Point carpos = richTextBox2.GetPositionFromCharIndex(charpos);
-
-                listBox1.Location = carpos;
-                listBox1.Visible = true;
-                listBox1.SetSelected(0, true);
-            }
-
-
             autocomplete = false;
             autocompletebusy = false;
 
@@ -5545,6 +5947,41 @@ public string sql10 =
 
         private void richTextBox4_KeyDown3(object sender, KeyEventArgs e)
         {
+
+            if (e.KeyCode == Keys.Back)
+            {
+
+                if (richTextBox4.Text.Length > 0)
+                {
+                    string txt;
+
+                    if ((richTextBox4.SelectionStart - 1) > 0)
+                    {
+                        txt = richTextBox4.Text.Substring(richTextBox4.SelectionStart - 1, 1);
+                        if (txt == "'")
+                        {
+                            ct3 = ct3 - 1;
+                        }
+                    }
+                }
+
+
+            }
+
+            if
+             (autocompletebusy == true)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+
+
+            if (e.KeyCode == Keys.Oem3)
+            {
+                ct3 = ct3 + 1;
+                dotextstuffred3(sender, e);
+            }
+
             listBox1.Visible = false;
             lb.Visible = false;
 
@@ -5696,7 +6133,7 @@ public string sql10 =
 
                    e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return || e.KeyCode == Keys.F5) &&
                    richTextBox4.TextLength > 1 &&
-                   f5pressed == false
+                   f5pressed == false && inedit3 == true
                    )
                 {
 
@@ -6101,7 +6538,10 @@ public string sql10 =
 
         private void backgroundWorker6_DoWork(object sender, DoWorkEventArgs e)
         {
-
+            BeginInvoke((MethodInvoker)delegate
+            {
+                this.Text = "SQL Tools - WORKING...";
+            });
             //busy = true;
             //errormessage = "";
             //changederror = "";
@@ -6227,6 +6667,11 @@ public string sql10 =
                                 ds.Columns.RemoveAt(ind);
                             }
 
+                            int ind2 = ds.Columns.IndexOf("TimeStamp");
+                            if (ind2 != -1)
+                            {
+                                ds.Columns.RemoveAt(ind2);
+                            }
 
 
                             if (dta != null)
@@ -6474,6 +6919,11 @@ public string sql10 =
                                 ds.Columns.RemoveAt(ind);
                             }
 
+                            int ind2 = ds.Columns.IndexOf("TimeStamp");
+                            if (ind2 != -1)
+                            {
+                                ds.Columns.RemoveAt(ind2);
+                            }
                             foreach (DataColumn dc in ds.Columns)
                             {
 
@@ -6655,6 +7105,12 @@ public string sql10 =
                             ds.Columns.RemoveAt(ind);
                         }
 
+                        int ind2 = ds.Columns.IndexOf("TimeStamp");
+                        if (ind2 != -1)
+                        {
+                            ds.Columns.RemoveAt(ind2);
+                        }
+
                         foreach (DataColumn dc in ds.Columns)
                         {
 
@@ -6740,6 +7196,9 @@ public string sql10 =
                 dataGridView4.ReadOnly = true;
                 dataGridView4.AllowUserToAddRows = false;
                 dataGridView4.ScrollBars = ScrollBars.None;
+                richTextBox1.Text = "";
+                richTextBox2.Text = "";
+                richTextBox4.Text = "";
             }
 
         }
@@ -6752,7 +7211,11 @@ public string sql10 =
 
                 {
 
-                 
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        this.Text = "SQL Tools";
+                    });
+
 
                     //dataGridView5.DataSource = null;
                     //dataGridView6.DataSource = null;
@@ -6772,6 +7235,8 @@ public string sql10 =
                     button4.Enabled = true;
                     button8.Enabled = true;
 
+                    textBox14.Visible = true;
+                    textBox14.Text = "";
 
                     busy = false;
 
@@ -7107,132 +7572,147 @@ public string sql10 =
 
 
 
-
-            //TABLES
-
-
-            if (radioButton1.Checked == true)
+            try
             {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                //TABLES
+
+
+                if (radioButton1.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                }
+
+                else if (radioButton2.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
+                }
+
+
+
+
+                SqlConnection conn = new SqlConnection(connex);
+
+
+                string command = "select table_name FROM INFORMATION_SCHEMA.TABLES where table_name like '%" + currentword + "%'";
+                SqlCommand cmd = new SqlCommand(command);
+                cmd.Connection = conn;
+                string result = command.ToString();
+                conn.Open();
+
+                //DataTable dt = new DataTable();
+
+                SqlDataAdapter adapter = new SqlDataAdapter();
+                adapter.SelectCommand = cmd;
+                DataTable ds = new DataTable();
+                adapter.Fill(ds);
+
+                int ind = ds.Columns.IndexOf("RowVersion");
+                if (ind != -1)
+                {
+                    ds.Columns.RemoveAt(ind);
+                }
+
+                int ind2 = ds.Columns.IndexOf("TimeStamp");
+                if (ind2 != -1)
+                {
+                    ds.Columns.RemoveAt(ind2);
+                }
+
+
+                //COLUMNS
+
+
+                if (radioButton1.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                }
+
+                else if (radioButton2.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
+                }
+
+
+
+
+                SqlConnection conn2 = new SqlConnection(connex);
+
+
+                string command2 = "select concat(table_name,'.',column_name) FROM INFORMATION_SCHEMA.COLUMNS where column_name like '%" + currentword.Replace(" ", "") + "%'";
+                SqlCommand cmd2 = new SqlCommand(command2);
+                cmd2.Connection = conn2;
+                string result2 = command2.ToString();
+                conn2.Open();
+
+                //DataTable dt = new DataTable();
+
+                SqlDataAdapter adapter2 = new SqlDataAdapter();
+                adapter2.SelectCommand = cmd2;
+                DataTable ds2 = new DataTable();
+                adapter2.Fill(ds2);
+
+                ListBox listBox = new ListBox();
+
+                listBox2.Items.Clear();
+
+                foreach (DataRow dr2 in ds2.Rows)
+                {
+                    // BeginInvoke((MethodInvoker)delegate
+                    //{
+
+                    string l = dr2[0].ToString();
+
+                    listBox2.Items.Add(l);
+
+                    // });
+
+                }
+
+
+                listBox2.EndUpdate();
+                listBox2.Refresh();
+
+
+                if (listBox2.Items.Count == 0)
+                {
+                    richTextBox4.SelectionStart = caretposition;
+                }
+
+                if (listBox2.Items.Count > 0)
+                {
+                    autocompletebusy = true;
+
+                    richTextBox4.Select(lastspacebeforetext = beforetext.LastIndexOf(' ') + 1, currentlen + 1);
+
+                    string sl = richTextBox4.SelectedText;
+
+                    listBox2.Show();
+
+                    listBox2.Focus();
+
+
+
+                    int charpos = richTextBox4.SelectionStart;
+
+                    Point carpos = richTextBox4.GetPositionFromCharIndex(charpos);
+
+                    listBox2.Location = carpos;
+                    listBox2.Visible = true;
+                    listBox2.SetSelected(0, true);
+                }
+
             }
 
-            else if (radioButton2.Checked == true)
+            catch (Exception ex)
             {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
-            }
-
-
-
-
-            SqlConnection conn = new SqlConnection(connex);
-
-
-            string command = "select table_name FROM INFORMATION_SCHEMA.TABLES where table_name like '%" + currentword + "%'";
-            SqlCommand cmd = new SqlCommand(command);
-            cmd.Connection = conn;
-            string result = command.ToString();
-            conn.Open();
-
-            //DataTable dt = new DataTable();
-
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            adapter.SelectCommand = cmd;
-            DataTable ds = new DataTable();
-            adapter.Fill(ds);
-
-            int ind = ds.Columns.IndexOf("RowVersion");
-            if (ind != -1)
-            {
-                ds.Columns.RemoveAt(ind);
-            }
-
-
-            //COLUMNS
-
-
-            if (radioButton1.Checked == true)
-            {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
-            }
-
-            else if (radioButton2.Checked == true)
-            {
-                Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
-                connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
-            }
-
-
-
-
-            SqlConnection conn2 = new SqlConnection(connex);
-
-
-            string command2 = "select concat(table_name,'.',column_name) FROM INFORMATION_SCHEMA.COLUMNS where column_name like '%" + currentword.Replace(" ", "") + "%'";
-            SqlCommand cmd2 = new SqlCommand(command2);
-            cmd2.Connection = conn2;
-            string result2 = command2.ToString();
-            conn2.Open();
-
-            //DataTable dt = new DataTable();
-
-            SqlDataAdapter adapter2 = new SqlDataAdapter();
-            adapter2.SelectCommand = cmd2;
-            DataTable ds2 = new DataTable();
-            adapter2.Fill(ds2);
-
-            ListBox listBox = new ListBox();
-
-            listBox2.Items.Clear();
-
-            foreach (DataRow dr2 in ds2.Rows)
-            {
-                // BeginInvoke((MethodInvoker)delegate
-                //{
-
-                string l = dr2[0].ToString();
-
-                listBox2.Items.Add(l);
-
-                // });
+                richTextBox4.Select(caretposition, 1);
+                MessageBox.Show("Suggestions failed to initialise.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
-
-
-            listBox2.EndUpdate();
-            listBox2.Refresh();
-
-
-            if (listBox2.Items.Count == 0)
-            {
-                richTextBox4.SelectionStart = caretposition;
-            }
-
-            if (listBox2.Items.Count > 0)
-            {
-                autocompletebusy = true;
-
-                richTextBox4.Select(lastspacebeforetext = beforetext.LastIndexOf(' ') + 1, currentlen + 1);
-
-                string sl = richTextBox4.SelectedText;
-
-                listBox2.Show();
-
-                listBox2.Focus();
-
-
-
-                int charpos = richTextBox4.SelectionStart;
-
-                Point carpos = richTextBox4.GetPositionFromCharIndex(charpos);
-
-                listBox2.Location = carpos;
-                listBox2.Visible = true;
-                listBox2.SetSelected(0, true);
-            }
-
 
             autocomplete = false;
             autocompletebusy = false;
@@ -8721,7 +9201,10 @@ public string sql10 =
                 {
 
 
-
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        this.Text = "SQL Tools - WORKING...";
+                    });
 
                     if (radioButton1.Checked == true)
                     {
@@ -9004,6 +9487,11 @@ public string sql10 =
                                     ds.Columns.RemoveAt(ind);
                                 }
 
+                                int ind2 = ds.Columns.IndexOf("TimeStamp");
+                                if (ind2 != -1)
+                                {
+                                    ds.Columns.RemoveAt(ind2);
+                                }
                                 foreach (DataColumn dc in ds.Columns)
                                 {
 
@@ -9083,6 +9571,12 @@ public string sql10 =
             {
 
                 {
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        this.Text = "SQL Tools";
+                    });
+
+
                     ctp = "ctp1";
                     button3.Enabled = true;
                     button3.Text = "Results to Clipboard";
@@ -9219,33 +9713,48 @@ public string sql10 =
             button9.Text = "Copy Selected Definition to Clipboard";
         }
 
-        private void TabChangeWarning(object sender, EventArgs e)
+        private void TabChangeWarnings(object sender, EventArgs e)
         {
-            ToolTip tt = new ToolTip();
-            
-            tt.ShowAlways = true;
 
-            tt.SetToolTip(tabControl1,"Switching tabs will clear the results from this tab.");
 
-            tt.AutoPopDelay = 4000;
 
-            tt.InitialDelay = 500;
 
-            tt.ForeColor = Color.White;
+            if (tooltipshown == false)
+            {
 
-            tt.ToolTipTitle = "Warning!";
+                MessageBox.Show("Switching to a new tab will clear any results from other tabs." + Environment.NewLine + "Switching tabs won't stop any queries from running in the current tab.", "Before switching tabs...", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            tt.ReshowDelay = 1000;
+                tooltipshown = true;
 
-   
+            }
+
+
+
 
         }
 
-       
 
-     
+
+
     }
 
+    static class StringReverse
+
+    {
+        public static string reverse(string star)
+        {
+            char[] stararr = star.ToCharArray();
+            Array.Reverse(stararr);
+            return new string(stararr);
+        }
+
+        public static bool IsInt(string value)
+        {
+            int intValue;
+            return Int32.TryParse(value, out intValue);
+        }
+
+    }
 
 
 }
