@@ -746,19 +746,19 @@ public string sql10 =
             this.dataGridView6.ColumnHeadersVisible = false;
             this.dataGridView7.ColumnHeadersVisible = false;
             this.dataGridView8.ColumnHeadersVisible = false;
-            contextMenuStrip1.Enabled = false;
-            toolStripMenuItem1.Enabled = false;
-            toolStripMenuItem9.Enabled = false;
-            toolStripMenuItem10.Enabled = false;
-            toolStripMenuItem11.Enabled = false;
-            toolStripMenuItem12.Enabled = false;
-            contextMenuStrip2.Enabled = false;
-            toolStripMenuItem2.Enabled = false;
-            contextMenuStrip3.Enabled = false;
-            toolStripMenuItem3.Enabled = false;
-            CopyCell.Enabled = false;
-            CopyColumn.Enabled = false;
-            CopyRow.Enabled = false;
+            //contextMenuStrip1.Enabled = false;
+            //toolStripMenuItem1.Enabled = false;
+            //toolStripMenuItem9.Enabled = false;
+            //toolStripMenuItem10.Enabled = false;
+            //toolStripMenuItem11.Enabled = false;
+            //toolStripMenuItem12.Enabled = false;
+            //contextMenuStrip2.Enabled = false;
+            //toolStripMenuItem2.Enabled = false;
+            //contextMenuStrip3.Enabled = false;
+            //toolStripMenuItem3.Enabled = false;
+            //CopyCell.Enabled = false;
+            //CopyColumn.Enabled = false;
+            //CopyRow.Enabled = false;
             
 
             
@@ -1091,15 +1091,15 @@ public string sql10 =
                     {
                         //this.dataGridView1.ColumnHeadersVisible = false;
                         button3.Enabled = false;
-                        contextMenuStrip1.Enabled = false;
-                        toolStripMenuItem9.Enabled = false;
-                        toolStripMenuItem10.Enabled = false;
-                        toolStripMenuItem1.Enabled = false;
-                        toolStripMenuItem10.Enabled = false;
-                        toolStripMenuItem11.Enabled = false;
-                        toolStripMenuItem12.Enabled = false;
-                        contextMenuStrip2.Enabled = false;
-                        toolStripMenuItem2.Enabled = false;
+                    //    contextMenuStrip1.Enabled = false;
+                    //    toolStripMenuItem9.Enabled = false;
+                    //    toolStripMenuItem10.Enabled = false;
+                    //    toolStripMenuItem1.Enabled = false;
+                    //    toolStripMenuItem10.Enabled = false;
+                    //    toolStripMenuItem11.Enabled = false;
+                    //    toolStripMenuItem12.Enabled = false;
+                    //    contextMenuStrip2.Enabled = false;
+                    //    toolStripMenuItem2.Enabled = false;
                     }
 
                 }
@@ -1130,13 +1130,13 @@ public string sql10 =
             this.label17.TextAlign = ContentAlignment.TopRight;
             this.label17.ForeColor = System.Drawing.Color.Black;
             contextMenuStrip1.Enabled = false;
-            toolStripMenuItem1.Enabled = false;
-            toolStripMenuItem9.Enabled = false;
-            toolStripMenuItem10.Enabled = false;
-            toolStripMenuItem11.Enabled = false;
-            toolStripMenuItem12.Enabled = false;
-            contextMenuStrip2.Enabled = false;
-            toolStripMenuItem2.Enabled = false;
+            //toolStripMenuItem1.Enabled = false;
+            //toolStripMenuItem9.Enabled = false;
+            //toolStripMenuItem10.Enabled = false;
+            //toolStripMenuItem11.Enabled = false;
+            //toolStripMenuItem12.Enabled = false;
+            //contextMenuStrip2.Enabled = false;
+            //toolStripMenuItem2.Enabled = false;
 
 
             sqlcomm = "";
@@ -1384,14 +1384,14 @@ public string sql10 =
                 {
                     this.dataGridView2.ColumnHeadersVisible = false;
                     button3.Enabled = false;
-                    contextMenuStrip1.Enabled = false;
-                    toolStripMenuItem1.Enabled = false;
-                    toolStripMenuItem9.Enabled = false;
-                    toolStripMenuItem10.Enabled = false;
-                    toolStripMenuItem11.Enabled = false;
-                    toolStripMenuItem12.Enabled = false;
-                    contextMenuStrip2.Enabled = false;
-                    toolStripMenuItem2.Enabled = false;
+                //    contextMenuStrip1.Enabled = false;
+                //    toolStripMenuItem1.Enabled = false;
+                //    toolStripMenuItem9.Enabled = false;
+                //    toolStripMenuItem10.Enabled = false;
+                //    toolStripMenuItem11.Enabled = false;
+                //    toolStripMenuItem12.Enabled = false;
+                //    contextMenuStrip2.Enabled = false;
+                //    toolStripMenuItem2.Enabled = false;
                 }
             }
             
@@ -1419,18 +1419,95 @@ public string sql10 =
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
             this.label17.ForeColor = System.Drawing.Color.Black;
-            contextMenuStrip1.Enabled = false;
-            toolStripMenuItem1.Enabled = false;
-            toolStripMenuItem9.Enabled = false;
-            toolStripMenuItem10.Enabled = false;
-            toolStripMenuItem11.Enabled = false;
-            toolStripMenuItem12.Enabled = false;
-            contextMenuStrip2.Enabled = false;
-            toolStripMenuItem2.Enabled = false;
+            //contextMenuStrip1.Enabled = false;
+            //toolStripMenuItem1.Enabled = false;
+            //toolStripMenuItem9.Enabled = false;
+            //toolStripMenuItem10.Enabled = false;
+            //toolStripMenuItem11.Enabled = false;
+            //toolStripMenuItem12.Enabled = false;
+            //contextMenuStrip2.Enabled = false;
+            //toolStripMenuItem2.Enabled = false;
             sqlcomm = "";
 
-            if (dta != null)
+            if (dta != null && dataGridView3.Rows.Count > 0)
             {
+
+                var r = dataGridView3.CurrentCell.RowIndex;
+                var c = dataGridView3.CurrentCell.ColumnIndex;
+
+                if (builtpath == null)// && dataGridView3.RowCount > 1)
+                {
+
+                    builtpath = ("--START OF SEARCH--");
+
+                    if (textBox6.Text == "")
+                    {
+                        builtpath += Environment.NewLine + "[Blank Search]";
+                    }
+                }
+
+
+                if (builtpath == null && dataGridView3 != null || Clipboard.GetData == null)
+                {
+                    //builtpath = ("--START OF SEARCH--" + Environment.NewLine + textBox6.Text + " [Initial Search Term]" + Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value);
+
+                }
+
+                if (builtpath != null && dataGridView3.SelectedCells.Count != 0 && builtpath != "--START OF SEARCH--" + Environment.NewLine + "'" + textBox6.Text + "'" + "< [Initial Search Term]" + Environment.NewLine + "Result: " + "[" + dataGridView3.Rows[r].Cells[0].Value + " > " + dataGridView3.Rows[r].Cells[2].Value + "]" + " (" + dataGridView3.Rows[r].Cells[0].Value + "." + dataGridView3.Rows[r].Cells[1].Value + " > " + dataGridView3.Rows[r].Cells[2].Value + "." + dataGridView3.Rows[r].Cells[3].Value + ")")
+
+
+                {
+
+
+
+                    if (dataGridView3.Rows.Count > 0 && builtpath == "--START OF SEARCH--")
+                    {
+
+                        builtpath += Environment.NewLine + "'" + textBox6.Text + "'" + " < [Initial Search Term]";
+                    }
+
+                    if (textBox6.Text != "")
+                    {
+
+                        builtpath +=
+
+                        //dataGridView3.SelectedRows[0].Cells.ToString();
+
+                        Environment.NewLine + "Result: "+ "[" + dataGridView3.Rows[r].Cells[0].Value + " > "+ dataGridView3.Rows[r].Cells[2].Value + "]" + " (" + dataGridView3.Rows[r].Cells[0].Value + "." + dataGridView3.Rows[r].Cells[1].Value + " > " + dataGridView3.Rows[r].Cells[2].Value + "." + dataGridView3.Rows[r].Cells[3].Value+")";
+                    }
+                }
+
+                //if (builtpath == null)
+                //{
+                //    builtpath += textBox6.Text;
+                //}
+
+                //if (builtpath == "")
+                //{
+
+                //    builtpath += textBox6.Text;
+
+                //}
+
+
+                if (builtpath == (Environment.NewLine).ToString())
+                {
+                    Clipboard.Clear();
+                    builtpath = "'" + textBox6.Text + "'";
+
+                }
+
+                if (dta.Rows.Count < 1)
+                {
+                    relationshipsearchsuccess = false;
+                    //if (builtpath is null)
+                    //{
+                    //    actualclick = false;
+                    //}
+
+                }
+
+
                 dta.Clear();
             }
 
@@ -1662,71 +1739,8 @@ public string sql10 =
                     button7.Enabled = true;
                     button7.Text = "Search Term History to Clipboard";
 
-                    if (builtpath == null && dataGridView3.RowCount > 1)
-                    {
 
-                        builtpath = ("--START OF SEARCH--");
-
-                        if (textBox6.Text == "")
-                        {
-                            builtpath += Environment.NewLine + "[Blank Search]";
-                        }
-                    }
-
-
-                    if (builtpath == null && dataGridView3 != null || Clipboard.GetData == null)
-                    {
-                        //builtpath = ("--START OF SEARCH--" + Environment.NewLine + textBox6.Text + " [Initial Search Term]" + Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value);
-
-                    }
-
-                    if (builtpath != null && dataGridView3.SelectedCells.Count != 0 && builtpath != "--START OF SEARCH--" + Environment.NewLine + textBox6.Text + "< [Initial Search Term]" + Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value)
-
-
-                    {
-                        if (textBox6.Text == "")
-                        {
-
-                            builtpath += textBox6.Text;
-                        }
-
-                        if (textBox6.Text != "")
-                        {
-
-                            builtpath += Environment.NewLine + textBox6.Text;
-                        }
-                    }
-
-                    if (builtpath == null)
-                    {
-                        builtpath += textBox6.Text;
-                    }
-
-                    if (builtpath == "")
-                    {
-
-                        builtpath += textBox6.Text;
-
-                    }
-
-
-                    if (builtpath == (Environment.NewLine).ToString())
-                    {
-                        Clipboard.Clear();
-                        builtpath = textBox6.Text;
-
-                    }
-
-                    if (dta.Rows.Count < 1)
-                    {
-                        relationshipsearchsuccess = false;
-                        //if (builtpath is null)
-                        //{
-                        //    actualclick = false;
-                        //}
-
-                    }
-
+                  
 
                 }
 
@@ -1745,14 +1759,14 @@ public string sql10 =
                 {
                     this.dataGridView3.ColumnHeadersVisible = false;
                     button3.Enabled = false;
-                    contextMenuStrip1.Enabled = false;
-                    toolStripMenuItem1.Enabled = false;
-                    toolStripMenuItem9.Enabled = false;
-                    toolStripMenuItem10.Enabled = false;
-                    toolStripMenuItem11.Enabled = false;
-                    toolStripMenuItem12.Enabled = false;
-                    contextMenuStrip2.Enabled = false;
-                    toolStripMenuItem2.Enabled = false;
+                    //contextMenuStrip1.Enabled = false;
+                    //toolStripMenuItem1.Enabled = false;
+                    //toolStripMenuItem9.Enabled = false;
+                    //toolStripMenuItem10.Enabled = false;
+                    //toolStripMenuItem11.Enabled = false;
+                    //toolStripMenuItem12.Enabled = false;
+                    //contextMenuStrip2.Enabled = false;
+                    //toolStripMenuItem2.Enabled = false;
 
 
 
@@ -1931,11 +1945,30 @@ public string sql10 =
         {
 
 
+            if (builtpath == null)
+            {
+                if (textBox6.Text == "")
+                { 
+                    builtpath = "--START OF SEARCH--" + Environment.NewLine + "[No Search Term Entered]" + Environment.NewLine + "--END OF SEARCH--";
+                }
+                if (textBox6.Text != "")
+                {
+                    builtpath = "--START OF SEARCH--" + Environment.NewLine + "'" + textBox6.Text + "'" + Environment.NewLine + "--END OF SEARCH--";
+                }
+
+
+                Clipboard.SetText(builtpath);
+                button7.Enabled = false;
+                button6.Enabled = true;
+                button7.Text = "Copied to Clipboard";
+                builtpath = null;
+            }
+
             if (builtpath != null)
             {
-                if (builtpath != "--START OF SEARCH--\r\n" + textBox6.Text)
+                if (builtpath != "--START OF SEARCH--\r\n" + textBox6.Text && dataGridView3.Rows.Count == 0)
                 {
-                    builtpath += Environment.NewLine+textBox6.Text;
+                    builtpath += Environment.NewLine+"'"+textBox6.Text +"'"+" < [Last Search Term]";
                 }
                 builtpath += Environment.NewLine + "--END OF SEARCH--";
                 Clipboard.SetText(builtpath);
@@ -1945,13 +1978,9 @@ public string sql10 =
                 builtpath = null;
             }
 
-      
 
-            if (builtpath == null)
-            {
-                return;
 
-            }
+        
         }
 
 
@@ -3150,14 +3179,14 @@ public string sql10 =
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
             this.label17.ForeColor = System.Drawing.Color.Black;
-            contextMenuStrip1.Enabled = false;
-            toolStripMenuItem1.Enabled = false;
-            toolStripMenuItem9.Enabled = false;
-            toolStripMenuItem10.Enabled = false;
-            toolStripMenuItem11.Enabled = false;
-            toolStripMenuItem12.Enabled = false;
-            contextMenuStrip2.Enabled = false;
-            toolStripMenuItem2.Enabled = false;
+            //contextMenuStrip1.Enabled = false;
+            //toolStripMenuItem1.Enabled = false;
+            //toolStripMenuItem9.Enabled = false;
+            //toolStripMenuItem10.Enabled = false;
+            //toolStripMenuItem11.Enabled = false;
+            //toolStripMenuItem12.Enabled = false;
+            //contextMenuStrip2.Enabled = false;
+            //toolStripMenuItem2.Enabled = false;
             sqlcomm = "";
 
             quer = richTextBox1.Text;
@@ -3802,14 +3831,14 @@ public string sql10 =
                         this.dataGridView5.ColumnHeadersVisible = false;
                         this.dataGridView6.ColumnHeadersVisible = false;
                         button3.Enabled = false;
-                        contextMenuStrip1.Enabled = false;
-                        toolStripMenuItem1.Enabled = false;
-                        toolStripMenuItem9.Enabled = false;
-                        toolStripMenuItem10.Enabled = false;
-                        toolStripMenuItem11.Enabled = false;
-                        toolStripMenuItem12.Enabled = false;
-                        contextMenuStrip2.Enabled = false;
-                        toolStripMenuItem2.Enabled = false;
+                    //    contextMenuStrip1.Enabled = false;
+                    //    toolStripMenuItem1.Enabled = false;
+                    //    toolStripMenuItem9.Enabled = false;
+                    //    toolStripMenuItem10.Enabled = false;
+                    //    toolStripMenuItem11.Enabled = false;
+                    //    toolStripMenuItem12.Enabled = false;
+                    //    contextMenuStrip2.Enabled = false;
+                    //    toolStripMenuItem2.Enabled = false;
                     }
 
 
@@ -4949,14 +4978,14 @@ public string sql10 =
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
             this.label17.ForeColor = System.Drawing.Color.Black;
-            contextMenuStrip1.Enabled = false;
-            toolStripMenuItem1.Enabled = false;
-            toolStripMenuItem9.Enabled = false;
-            toolStripMenuItem10.Enabled = false;
-            toolStripMenuItem11.Enabled = false;
-            toolStripMenuItem12.Enabled = false;
-            contextMenuStrip2.Enabled = false;
-            toolStripMenuItem2.Enabled = false;
+            //contextMenuStrip1.Enabled = false;
+            //toolStripMenuItem1.Enabled = false;
+            //toolStripMenuItem9.Enabled = false;
+            //toolStripMenuItem10.Enabled = false;
+            //toolStripMenuItem11.Enabled = false;
+            //toolStripMenuItem12.Enabled = false;
+            //contextMenuStrip2.Enabled = false;
+            //toolStripMenuItem2.Enabled = false;
             sqlcomm = "";
 
             quer = richTextBox2.Text;
@@ -6499,14 +6528,14 @@ public string sql10 =
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
             this.label17.ForeColor = System.Drawing.Color.Black;
-            contextMenuStrip1.Enabled = false;
-            toolStripMenuItem1.Enabled = false;
-            toolStripMenuItem9.Enabled = false;
-            toolStripMenuItem10.Enabled = false;
-            toolStripMenuItem11.Enabled = false;
-            toolStripMenuItem12.Enabled = false;
-            contextMenuStrip2.Enabled = false;
-            toolStripMenuItem2.Enabled = false;
+            //contextMenuStrip1.Enabled = false;
+            //toolStripMenuItem1.Enabled = false;
+            //toolStripMenuItem9.Enabled = false;
+            //toolStripMenuItem10.Enabled = false;
+            //toolStripMenuItem11.Enabled = false;
+            //toolStripMenuItem12.Enabled = false;
+            //contextMenuStrip2.Enabled = false;
+            //toolStripMenuItem2.Enabled = false;
             sqlcomm = "";
 
             quer = richTextBox2.Text;
@@ -9147,19 +9176,9 @@ public string sql10 =
             this.dataGridView6.ColumnHeadersVisible = false;
             this.dataGridView7.ColumnHeadersVisible = false;
             this.dataGridView8.ColumnHeadersVisible = false;
-            contextMenuStrip1.Enabled = false;
-            toolStripMenuItem1.Enabled = false;
-            toolStripMenuItem9.Enabled = false;
-            toolStripMenuItem10.Enabled = false;
-            toolStripMenuItem11.Enabled = false;
-            toolStripMenuItem12.Enabled = false;
-            contextMenuStrip2.Enabled = false;
-            toolStripMenuItem2.Enabled = false;
-            contextMenuStrip3.Enabled = false;
-            toolStripMenuItem3.Enabled = false;
-            CopyCell.Enabled = false;
-            CopyColumn.Enabled = false;
-            CopyRow.Enabled = false;
+            //CopyCell.Enabled = false;
+            //CopyColumn.Enabled = false;
+            //CopyRow.Enabled = false;
             button9.Text = "Copy Selected Definition to Clipboard";
 
             sqlcomm = "";
@@ -9598,6 +9617,16 @@ public string sql10 =
                         toolStripMenuItem10.Enabled = true;
                         toolStripMenuItem11.Enabled = true;
                         toolStripMenuItem12.Enabled = true;
+                        contextMenuStrip1.Enabled = true;
+                        toolStripMenuItem1.Enabled = true;
+                        toolStripMenuItem9.Enabled = true;
+                        toolStripMenuItem10.Enabled = true;
+                        toolStripMenuItem11.Enabled = true;
+                        toolStripMenuItem12.Enabled = true;
+                        contextMenuStrip2.Enabled = true;
+                        toolStripMenuItem2.Enabled = true;
+                        contextMenuStrip3.Enabled = true;
+                        toolStripMenuItem3.Enabled = true;
                         dta = dta.Copy();
                         dataGridView8.DataSource = dta;
                         this.dataGridView8.ColumnHeadersVisible = true;
@@ -9630,15 +9659,15 @@ public string sql10 =
                         button3.Enabled = false;
                         button9.Enabled = false;
                         button10.Enabled = false;
-                        contextMenuStrip1.Enabled = false;
-                        toolStripMenuItem9.Enabled = false;
-                        toolStripMenuItem10.Enabled = false;
-                        toolStripMenuItem1.Enabled = false;
-                        toolStripMenuItem10.Enabled = false;
-                        toolStripMenuItem11.Enabled = false;
-                        toolStripMenuItem12.Enabled = false;
-                        contextMenuStrip2.Enabled = false;
-                        toolStripMenuItem2.Enabled = false;
+                    //    contextMenuStrip1.Enabled = false;
+                    //    toolStripMenuItem9.Enabled = false;
+                    //    toolStripMenuItem10.Enabled = false;
+                    //    toolStripMenuItem1.Enabled = false;
+                    //    toolStripMenuItem10.Enabled = false;
+                    //    toolStripMenuItem11.Enabled = false;
+                    //    toolStripMenuItem12.Enabled = false;
+                    //    contextMenuStrip2.Enabled = false;
+                    //    toolStripMenuItem2.Enabled = false;
                     }
 
                 }
