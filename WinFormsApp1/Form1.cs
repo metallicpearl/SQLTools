@@ -22,7 +22,7 @@ using System.Windows;
 namespace WinFormsApp1
 {
 
-   
+
 
 
     /// <summary>
@@ -76,6 +76,11 @@ namespace WinFormsApp1
             //backgroundWorker4.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker4_ProgressChanged);
             backgroundWorker7.WorkerSupportsCancellation = true;
 
+            backgroundWorker8.DoWork += new DoWorkEventHandler(backgroundWorker8_DoWork);
+            backgroundWorker8.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker8_RunWorkerCompleted);
+            //backgroundWorker4.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker4_ProgressChanged);
+            backgroundWorker8.WorkerSupportsCancellation = true;
+
             textBox9.Visible = false;
             textBox10.Visible = false;
             autocomplete = false;
@@ -101,6 +106,20 @@ namespace WinFormsApp1
             inedit2 = true;
             inedit3 = true;
 
+            definitionmode = "Name";
+            radioButton18.Checked = true;
+            textBox15.Multiline = false;
+            builtjoinsequence = 1;
+            buildingjoins = false;
+            checkBox2.Checked = true;
+            checkBox2.Enabled = false;
+            checkBox2.BackColor = Color.Transparent;
+            comboBox1.Enabled = false;
+
+            currenttab = 1;
+            searchedfromgrid = false;
+            
+
 
             void dataGrid_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
             {
@@ -115,10 +134,26 @@ namespace WinFormsApp1
         }
 
 
+
+
         /// <summary>
         /// Non-SQL String declarations
         /// </summary>
+        public bool lowmemorymode;
+        public DataTable dtm1;
+        public DataTable dtm2;
+        public DataTable dtm3;
+        public DataTable dtm4;
+        public DataTable dtm5;
+        public DataTable dtm6;
+        public DataTable dtm7;
+        public DataTable dtm8;
+        public DataTable dtm9;
+        public DataTable dtm10;
 
+
+        public bool searchedfromgrid;
+        public int currenttab;
         public string resultas;
         public DataAdapter dataAdap;
         public DataTable dta;
@@ -126,6 +161,7 @@ namespace WinFormsApp1
         public DataTable dta3;
         public DataSet dsa;
         public DataTable initdat;
+        public DataTable tablenames;
         public string connex;
         public string sqlcomm;
         public string sqlcomm2;
@@ -205,20 +241,29 @@ namespace WinFormsApp1
         public bool inedit2;
         public bool inedit3;
         public bool tooltipshown;
+        public string lastlineused;
+        public string lastdefinitionsearched;
+        public string builtjoinpath;
+        public int builtjoinsequence;
+        public bool buildingjoins;
+        public string initialsearch;
+        public string tablelimit;
+        public bool colouring;
 
         public List<string> tablelist;
         public List<string> columnlist;
+        public List<string> tablelist2;
 
         public string erorrmessage;
         public string workingmessage;
-
+        public string definitionmode;
         /// <summary>
         /// SQL declarations
         /// </summary>
 
-        
 
-     
+
+
 
 
         public string sqlquery1 =
@@ -237,22 +282,35 @@ namespace WinFormsApp1
         public string sql1 =
          @"
                 
-                
+        SELECT 
+        c.TABLE_NAME AS 'Table Name',
+        c.COLUMN_NAME AS 'Column Name',
+		c.DATA_TYPE AS 'Data Type',
+		case when
+		string_agg(
+		case 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'UQ' then 'NULL' 
+		else null
+		end, ', ')
+		= 'Foreign Key, Primary Key' then 'Primary Key, Foreign Key' 
+		else
+		string_agg(
+		case 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'UQ' then 'NULL' 
+		else null
+		end, ', ')
+		end
+		[Constraint Type]
+        FROM INFORMATION_SCHEMA.COLUMNS c
+		left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE k ON k.COLUMN_NAME = c.COLUMN_NAME AND c.TABLE_NAME = k.TABLE_NAME
+		left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS t on t.CONSTRAINT_NAME = k.CONSTRAINT_NAME
 
-              SELECT 
-                c.TABLE_NAME AS 'Table Name',
-                c.COLUMN_NAME AS 'Column Name',
-				c.DATA_TYPE AS 'Data Type',
-				case 
-				when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key'
-				when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key'
-				end
-				AS 'Constraint Type'
-                FROM INFORMATION_SCHEMA.COLUMNS c
-				left join 
-				information_schema.constraint_column_usage k on k.column_name = c.column_name and c.table_name = k.table_name
-                WHERE
-                c.TABLE_NAME LIKE '%";
+        WHERE
+        c.TABLE_NAME LIKE  '%";
 
 
         public string sql2 =
@@ -265,9 +323,9 @@ namespace WinFormsApp1
               @"%' 
                 and
 				c.table_schema = 'dbo'
-                GROUP BY c.COLUMN_NAME, c.TABLE_NAME, c.DATA_TYPE, k.constraint_name, c.ordinal_position
+                GROUP BY c.COLUMN_NAME, c.TABLE_NAME, c.DATA_TYPE
                 ORDER BY 
-                c.Table_Name, c.ordinal_position
+                c.Table_Name
 
                 OPTION (RECOMPILE)
                 ";
@@ -276,20 +334,35 @@ namespace WinFormsApp1
         public string sql4 =
               @"
                 
-  SELECT 
-                c.TABLE_NAME AS 'Table Name',
-                c.COLUMN_NAME AS 'Column Name',
-				c.DATA_TYPE AS 'Data Type',
-				case 
-				when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key'
-				when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key'
-				end
-				AS 'Constraint Type'
-                FROM INFORMATION_SCHEMA.COLUMNS c
-				left join 
-				information_schema.constraint_column_usage k on k.column_name = c.column_name and c.table_name = k.table_name
-                WHERE
-                c.COLUMN_NAME LIKE '%";
+        SELECT 
+        c.TABLE_NAME AS 'Table Name',
+        c.COLUMN_NAME AS 'Column Name',
+		c.DATA_TYPE AS 'Data Type',
+		case when
+		string_agg(
+		case 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'UQ' then 'NULL' 
+		else null
+		end, ', ')
+		= 'Foreign Key, Primary Key' then 'Primary Key, Foreign Key' 
+		else
+		string_agg(
+		case 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'UQ' then 'NULL' 
+		else null
+		end, ', ')
+		end
+		[Constraint Type]
+        FROM INFORMATION_SCHEMA.COLUMNS c
+		left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE k ON k.COLUMN_NAME = c.COLUMN_NAME AND c.TABLE_NAME = k.TABLE_NAME
+		left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS t on t.CONSTRAINT_NAME = k.CONSTRAINT_NAME
+
+        WHERE
+        c.COLUMN_NAME LIKE  '%";
 
 
         public string sql5 =
@@ -365,6 +438,153 @@ namespace WinFormsApp1
                 ";
 
 
+        public string sql6c =
+                      @"'
+               				DECLARE @Results TABLE(ColumnName nvarchar(370), ColumnValue nvarchar(3630))
+
+                SET NOCOUNT ON
+
+                DECLARE @TableName nvarchar(256), @ColumnName nvarchar(128), @SearchStr2 nvarchar(110)
+                SET  @TableName = ''
+                SET @SearchStr2 = QUOTENAME('' + @SearchStr + '', '''')
+
+                WHILE @TableName IS NOT NULL
+
+                BEGIN
+                    SET @ColumnName = ''
+                    SET @TableName =
+                    (
+                        SELECT MIN(QUOTENAME(TABLE_SCHEMA) + '.' + QUOTENAME(TABLE_NAME))
+                        FROM     INFORMATION_SCHEMA.TABLES
+                        WHERE     TABLE_NAME = '"
+                ;
+
+
+        public string sql6d =
+
+            @"'
+
+                            AND    QUOTENAME(TABLE_SCHEMA) + '.' + QUOTENAME(TABLE_NAME) > @TableName
+                            AND    OBJECTPROPERTY(
+                                    OBJECT_ID(
+                                        QUOTENAME(TABLE_SCHEMA) + '.' + QUOTENAME(TABLE_NAME)
+                                         ), 'IsMSShipped'
+                                           ) = 0
+                    )
+
+                    WHILE(@TableName IS NOT NULL) AND(@ColumnName IS NOT NULL)
+
+                    BEGIN
+                        SET @ColumnName =
+                        (
+                            SELECT MIN(QUOTENAME(COLUMN_NAME))
+                            FROM INFORMATION_SCHEMA.COLUMNS
+							WHERE TABLE_SCHEMA = PARSENAME(@TableName, 2)
+                                AND TABLE_NAME = PARSENAME(@TableName, 1)
+                                AND DATA_TYPE IN('char', 'varchar', 'nchar', 'nvarchar', 'int', 'decimal')
+                                AND QUOTENAME(COLUMN_NAME) > @ColumnName
+                        )
+
+                        IF @ColumnName IS NOT NULL
+
+                        BEGIN
+                            INSERT INTO @Results
+                            EXEC
+                            (
+                                'SELECT ''' + @TableName + '.' + @ColumnName + ''', LEFT(' + @ColumnName + ', 3630) 
+                                FROM ' + @TableName + '(NOLOCK) ' +
+                                ' WHERE ' + @ColumnName + ' LIKE ' + @SearchStr2
+                            )
+                        END
+                    END
+                END
+
+                SELECT 
+                replace(replace(replace(replace(ColumnName,'[dbo].',''),'.',' > '),'[',''),']','') AS [Column Path],
+                ColumnValue AS [Column Value]
+
+                FROM @Results
+
+                GROUP BY ColumnName, ColumnValue
+
+                    OPTION (RECOMPILE)
+            ";
+
+
+
+        public string sql6e =
+                   @"'
+               				DECLARE @Results TABLE(ColumnName nvarchar(370), ColumnValue nvarchar(3630))
+
+                SET NOCOUNT ON
+
+                DECLARE @TableName nvarchar(256), @ColumnName nvarchar(128), @SearchStr2 nvarchar(110)
+                SET  @TableName = ''
+                SET @SearchStr2 = QUOTENAME('%' + @SearchStr + '%', '''')
+
+                WHILE @TableName IS NOT NULL
+
+                BEGIN
+                    SET @ColumnName = ''
+                    SET @TableName =
+                    (
+                        SELECT MIN(QUOTENAME(TABLE_SCHEMA) + '.' + QUOTENAME(TABLE_NAME))
+                        FROM     INFORMATION_SCHEMA.TABLES
+                        WHERE     TABLE_NAME = '"
+             ;
+
+
+        public string sql6f =
+
+            @"'
+
+                            AND    QUOTENAME(TABLE_SCHEMA) + '.' + QUOTENAME(TABLE_NAME) > @TableName
+                            AND    OBJECTPROPERTY(
+                                    OBJECT_ID(
+                                        QUOTENAME(TABLE_SCHEMA) + '.' + QUOTENAME(TABLE_NAME)
+                                         ), 'IsMSShipped'
+                                           ) = 0
+                    )
+
+                    WHILE(@TableName IS NOT NULL) AND(@ColumnName IS NOT NULL)
+
+                    BEGIN
+                        SET @ColumnName =
+                        (
+                            SELECT MIN(QUOTENAME(COLUMN_NAME))
+                            FROM INFORMATION_SCHEMA.COLUMNS
+							WHERE TABLE_SCHEMA = PARSENAME(@TableName, 2)
+                                AND TABLE_NAME = PARSENAME(@TableName, 1)
+                                AND DATA_TYPE IN('char', 'varchar', 'nchar', 'nvarchar', 'int', 'decimal')
+                                AND QUOTENAME(COLUMN_NAME) > @ColumnName
+                        )
+
+                        IF @ColumnName IS NOT NULL
+
+                        BEGIN
+                            INSERT INTO @Results
+                            EXEC
+                            (
+                                'SELECT ''' + @TableName + '.' + @ColumnName + ''', LEFT(' + @ColumnName + ', 3630) 
+                                FROM ' + @TableName + '(NOLOCK) ' +
+                                ' WHERE ' + @ColumnName + ' LIKE ' + @SearchStr2
+                            )
+                        END
+                    END
+                END
+
+                SELECT 
+                replace(replace(replace(replace(ColumnName,'[dbo].',''),'.',' > '),'[',''),']','') AS [Column Path],
+                ColumnValue AS [Column Value]
+
+                FROM @Results
+
+                GROUP BY ColumnName, ColumnValue
+
+                    OPTION (RECOMPILE)
+            ";
+
+
         public string sql7 =
                             @"
                 declare  
@@ -382,10 +602,10 @@ namespace WinFormsApp1
 
 SELECT
   
-	tab2.name AS [Referenced table],
-    col2.name AS [Referenced column],
-    tab1.name AS [Referencing table],
-    col1.name AS [Referencing column]
+	tab2.name AS [Referenced Table],
+    col2.name AS [Referenced Column],
+    tab1.name AS [Referencing Table],
+    col1.name AS [Referencing Column]
 
 FROM sys.foreign_key_columns fkc
 INNER JOIN sys.objects obj
@@ -405,20 +625,35 @@ INNER JOIN sys.columns col2
 
         public string sql1b =
  @"
-  SELECT 
-                c.TABLE_NAME AS 'Table Name',
-                c.COLUMN_NAME AS 'Column Name',
-				c.DATA_TYPE AS 'Data Type',
-				case 
-				when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key'
-				when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key'
-				end
-				AS 'Constraint Type'
-                FROM INFORMATION_SCHEMA.COLUMNS c
-				left join 
-				information_schema.constraint_column_usage k on k.column_name = c.column_name and c.table_name = k.table_name
-                WHERE
-                c.TABLE_NAME = '";
+        SELECT 
+        c.TABLE_NAME AS 'Table Name',
+        c.COLUMN_NAME AS 'Column Name',
+		c.DATA_TYPE AS 'Data Type',
+		case when
+		string_agg(
+		case 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'UQ' then 'NULL' 
+		else null
+		end, ', ')
+		= 'Foreign Key, Primary Key' then 'Primary Key, Foreign Key' 
+		else
+		string_agg(
+		case 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'UQ' then 'NULL' 
+		else null
+		end, ', ')
+		end
+		[Constraint Type]
+        FROM INFORMATION_SCHEMA.COLUMNS c
+		left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE k ON k.COLUMN_NAME = c.COLUMN_NAME AND c.TABLE_NAME = k.TABLE_NAME
+		left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS t on t.CONSTRAINT_NAME = k.CONSTRAINT_NAME
+
+        WHERE
+        c.TABLE_NAME = '";
 
 
         public string sql2b =
@@ -429,11 +664,11 @@ INNER JOIN sys.columns col2
 
         public string sql3b =
               @"' 
-                and
+               and
 				c.table_schema = 'dbo'
-                GROUP BY c.COLUMN_NAME, c.TABLE_NAME, c.DATA_TYPE, k.constraint_name, c.ordinal_position
+                GROUP BY c.COLUMN_NAME, c.TABLE_NAME, c.DATA_TYPE
                 ORDER BY 
-                c.Table_Name, c.ordinal_position
+                c.Table_Name
 
                 OPTION (RECOMPILE)
                 ";
@@ -441,20 +676,35 @@ INNER JOIN sys.columns col2
 
         public string sql4b =
               @"
-                 SELECT 
-                c.TABLE_NAME AS 'Table Name',
-                c.COLUMN_NAME AS 'Column Name',
-				c.DATA_TYPE AS 'Data Type',
-				case 
-				when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key'
-				when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key'
-				end
-				AS 'Constraint Type'
-                FROM INFORMATION_SCHEMA.COLUMNS c
-				left join 
-				information_schema.constraint_column_usage k on k.column_name = c.column_name and c.table_name = k.table_name
-                WHERE
-                c.COLUMN_NAME = '";
+        SELECT 
+        c.TABLE_NAME AS 'Table Name',
+        c.COLUMN_NAME AS 'Column Name',
+		c.DATA_TYPE AS 'Data Type',
+		case when
+		string_agg(
+		case 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'UQ' then 'NULL' 
+		else null
+		end, ', ')
+		= 'Foreign Key, Primary Key' then 'Primary Key, Foreign Key' 
+		else
+		string_agg(
+		case 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'FK' then 'Foreign Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'PK' then 'Primary Key' 
+		when substring(k.constraint_name,1,charindex('_',k.constraint_name)-1) = 'UQ' then 'NULL' 
+		else null
+		end, ', ')
+		end
+		[Constraint Type]
+        FROM INFORMATION_SCHEMA.COLUMNS c
+		left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE k ON k.COLUMN_NAME = c.COLUMN_NAME AND c.TABLE_NAME = k.TABLE_NAME
+		left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS t on t.CONSTRAINT_NAME = k.CONSTRAINT_NAME
+
+        WHERE
+        c.COLUMN_NAME = '";
 
 
         public string sql5b =
@@ -531,10 +781,10 @@ INNER JOIN sys.columns col2
             @"
 
 SELECT  
-	tab2.name AS [Referenced table],
-    col2.name AS [Referenced column],
-    tab1.name AS [Referencing table],
-    col1.name AS [Referencing column]
+	tab2.name AS [Referenced Table],
+    col2.name AS [Referenced Column],
+    tab1.name AS [Referencing Table],
+    col1.name AS [Referencing Column]
 
 FROM sys.foreign_key_columns fkc
 INNER JOIN sys.objects obj
@@ -595,8 +845,49 @@ LIKE '%";
    ";
 
 
+        public string sql9b =
+            @"
+    SELECT
+    v.name [Name],
+	case 
 
-public string sql10 =
+    when v.type = 'AF' then 'Aggregate Function'
+
+    when v.type = 'IF' then 'Inline Table-Valued Function'
+
+    when v.type = 'P' then 'Stored Procedure'
+
+    when v.type = 'TF' then 'Table-Valued Function'
+
+    when v.type = 'TR' then 'Trigger'
+
+    when v.type = 'U' then 'User Table'
+
+    when v.type = 'V' then 'View'
+
+    when v.type = 'X' then 'Extended Stored Procedure'
+
+	when v.type = 'FN' then 'Scalar Function'
+
+    end[Type],
+
+    ltrim(s.definition)[Definition]
+
+    FROM
+
+    sys.all_objects as v
+    join
+
+    sys.sql_modules s on s.object_id = v.object_id
+
+    where
+    v.schema_id = 1
+
+   ";
+
+
+
+        public string sql10 =
     @"
  and
 
@@ -664,11 +955,11 @@ public string sql10 =
 
 
 
-        public void workerbusy (object sender, EventArgs e)
+        public void workerbusy(object sender, EventArgs e)
         {
             var msg = "A SQL Connection is already open in another tab. Please re-run this when that process has finished.";
             var titl = "Cannot Start New SQL Process";
-            MessageBox.Show(msg,titl,MessageBoxButtons.OK,MessageBoxIcon.Information);
+            MessageBox.Show(msg, titl, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
 
@@ -687,6 +978,7 @@ public string sql10 =
                     string un = line.Split(',')[2];
                     string pw = line.Split(',')[3];
                     string auth = line.Split(',')[4];
+                    string lowmemmode = line.Split(',')[5];
 
                     textBox1.Text = srv;
                     textBox2.Text = db;
@@ -710,14 +1002,22 @@ public string sql10 =
 
                     }
 
+                    if (lowmemmode == "1")
+                    {
+                        lowmemorymode = true;
+                    }
 
+                    if (lowmemmode == "0")
+                    {
+                        lowmemorymode = false;
+                    }
 
                 }
             }
             catch (IOException e)
             {
-                var msg = "The override file format is incorrect or the file is not in the application folder. The application will still work, but you will need to provide connection details to connect to the SQL server."+Environment.NewLine+Environment.NewLine+"'ConnectionDetails.txt' comma-separated format:"+Environment.NewLine+"'Server,Database,Username,Password,Authentication type'."+Environment.NewLine+Environment.NewLine + "If using 'Windows' as the authentication type, Username and Password are blank.";
-                MessageBox.Show(msg,"Override File Issue",MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
+                var msg = "The override file format is incorrect or the file is not in the application folder. The application will still work, but you will need to provide connection details to connect to the SQL server." + Environment.NewLine + Environment.NewLine + "'ConnectionDetails.txt' comma-separated format:" + Environment.NewLine + "'Server,Database,Username,Password,Authentication type'." + Environment.NewLine + Environment.NewLine + "If using 'Windows' as the authentication type, Username and Password are blank."+Environment.NewLine+"To enable 'Low Memory Mode', place a '1' instead of '0' at the end of the file.";
+                MessageBox.Show(msg, "Override File Issue", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
             }
 
         }
@@ -738,14 +1038,19 @@ public string sql10 =
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
             this.label17.ForeColor = System.Drawing.Color.Black;
-            this.dataGridView1.ColumnHeadersVisible = false;
-            this.dataGridView2.ColumnHeadersVisible = false;
-            this.dataGridView3.ColumnHeadersVisible = false;
-            this.dataGridView4.ColumnHeadersVisible = false;
-            this.dataGridView5.ColumnHeadersVisible = false;
-            this.dataGridView6.ColumnHeadersVisible = false;
-            this.dataGridView7.ColumnHeadersVisible = false;
-            this.dataGridView8.ColumnHeadersVisible = false;
+
+            if (lowmemorymode == true)
+            {
+                this.dataGridView1.ColumnHeadersVisible = false;
+                this.dataGridView2.ColumnHeadersVisible = false;
+                this.dataGridView3.ColumnHeadersVisible = false;
+                this.dataGridView4.ColumnHeadersVisible = false;
+                this.dataGridView5.ColumnHeadersVisible = false;
+                this.dataGridView6.ColumnHeadersVisible = false;
+                this.dataGridView7.ColumnHeadersVisible = false;
+                this.dataGridView8.ColumnHeadersVisible = false;
+            }
+
             //contextMenuStrip1.Enabled = false;
             //toolStripMenuItem1.Enabled = false;
             //toolStripMenuItem9.Enabled = false;
@@ -759,9 +1064,9 @@ public string sql10 =
             //CopyCell.Enabled = false;
             //CopyColumn.Enabled = false;
             //CopyRow.Enabled = false;
-            
 
-            
+
+
 
             sqlcomm = "";
             endpressed = false;
@@ -783,7 +1088,7 @@ public string sql10 =
                 try
                 {
                     backgroundWorker1.RunWorkerAsync();
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -792,7 +1097,7 @@ public string sql10 =
             }
 
             inedit = true;
-          
+
 
         }
 
@@ -802,8 +1107,35 @@ public string sql10 =
             {
                 {
 
+                    if (lowmemorymode == true)
+                    {
+                        if (dta is not null)
+                        {
+                            dta.Clear();
+                        }
+
+                        if (dta2 is not null)
+                        {
+                            dta2.Clear();
+                        }
+
+                        dta = null;
+                        dta2 = null;
+                    }
+
                     BeginInvoke((MethodInvoker)delegate
                     {
+                        if (lowmemorymode == true)
+                        {
+                            dataGridView1.DataSource = null;
+                            dataGridView2.DataSource = null;
+                            dataGridView3.DataSource = null;
+                            dataGridView4.DataSource = null;
+                            dataGridView5.DataSource = null;
+                            dataGridView6.DataSource = null;
+                            dataGridView7.DataSource = null;
+                            dataGridView8.DataSource = null;
+                        }
                         this.Text = "SQL Tools - WORKING...";
                     });
 
@@ -1009,6 +1341,8 @@ public string sql10 =
 
         {
 
+
+
             {
 
                 BeginInvoke((MethodInvoker)delegate
@@ -1030,6 +1364,10 @@ public string sql10 =
 
                     SqlConnection cmd = new SqlConnection();
                     cmd.Close();
+
+                
+
+
                     if (dta != null && dta.Rows.Count > 0)
                     {
                         contextMenuStrip1.Enabled = true;
@@ -1039,7 +1377,25 @@ public string sql10 =
                         toolStripMenuItem11.Enabled = true;
                         toolStripMenuItem12.Enabled = true;
                         dta = dta.Copy();
-                        dataGridView1.DataSource = dta;
+
+                        if (lowmemorymode == false)
+                        {
+                            dtm1 = dta.Copy();
+                        }
+
+                        if (lowmemorymode == false)
+                        {
+                            dataGridView1.DataSource = dtm1;
+
+                        }
+
+                        if (lowmemorymode == true)
+                        {
+                            dataGridView1.DataSource = dta;
+
+                        }
+
+
                         this.dataGridView1.ColumnHeadersVisible = true;
                         textBox11.Visible = false;
                         textBox11.Text = "";
@@ -1055,6 +1411,13 @@ public string sql10 =
 
                             var chk = row.Cells[keytype].Value.ToString();
 
+
+                            if (chk == "Primary Key, Foreign Key")
+                            {
+                                row.DefaultCellStyle.BackColor = SystemColors.ControlDark;
+                                row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper() + " (Primary Key and Foreign Key)";
+                            }
+
                             if (chk == "Primary Key")
                             {
                                 row.DefaultCellStyle.BackColor = SystemColors.ControlDark;
@@ -1068,7 +1431,7 @@ public string sql10 =
                             }
                         }
 
-                  
+
 
                         dataGridView1.Columns[keytype].Visible = false;
 
@@ -1091,21 +1454,26 @@ public string sql10 =
                     {
                         //this.dataGridView1.ColumnHeadersVisible = false;
                         button3.Enabled = false;
-                    //    contextMenuStrip1.Enabled = false;
-                    //    toolStripMenuItem9.Enabled = false;
-                    //    toolStripMenuItem10.Enabled = false;
-                    //    toolStripMenuItem1.Enabled = false;
-                    //    toolStripMenuItem10.Enabled = false;
-                    //    toolStripMenuItem11.Enabled = false;
-                    //    toolStripMenuItem12.Enabled = false;
-                    //    contextMenuStrip2.Enabled = false;
-                    //    toolStripMenuItem2.Enabled = false;
+                        //    contextMenuStrip1.Enabled = false;
+                        //    toolStripMenuItem9.Enabled = false;
+                        //    toolStripMenuItem10.Enabled = false;
+                        //    toolStripMenuItem1.Enabled = false;
+                        //    toolStripMenuItem10.Enabled = false;
+                        //    toolStripMenuItem11.Enabled = false;
+                        //    toolStripMenuItem12.Enabled = false;
+                        //    contextMenuStrip2.Enabled = false;
+                        //    toolStripMenuItem2.Enabled = false;
                     }
 
                 }
             }
 
             busy = false;
+
+
+
+
+
         }
 
 
@@ -1116,16 +1484,20 @@ public string sql10 =
         async void startAsyncButton_Click2(object sender, EventArgs e)
 
         {
-            this.dataGridView1.ColumnHeadersVisible = false;
-            this.dataGridView2.ColumnHeadersVisible = false;
-            this.dataGridView3.ColumnHeadersVisible = false;
+
+            //if (lowmemorymode == true)
+            //{
+            //    this.dataGridView1.ColumnHeadersVisible = false;
+            //    this.dataGridView2.ColumnHeadersVisible = false;
+            //    this.dataGridView3.ColumnHeadersVisible = false;
+            //}
 
             button3.Enabled = false;
             button4.Enabled = false;
             button1.Enabled = false;
             button2.Enabled = false;
             button8.Enabled = false;
-           // //this.label17.Location = new System.Drawing.Point(268, 112);
+            // //this.label17.Location = new System.Drawing.Point(268, 112);
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
             this.label17.ForeColor = System.Drawing.Color.Black;
@@ -1138,6 +1510,15 @@ public string sql10 =
             //contextMenuStrip2.Enabled = false;
             //toolStripMenuItem2.Enabled = false;
 
+
+
+            if (comboBox1.Items.Count > 0)
+            {
+                tablelimit = comboBox1.SelectedItem.ToString();
+            }
+
+            comboBox1.Enabled = false;
+            checkBox1.Enabled = false;
 
             sqlcomm = "";
 
@@ -1175,8 +1556,39 @@ public string sql10 =
         {
 
             {
+
+                if (lowmemorymode == true)
+                {
+                    if (dta is not null)
+                    {
+                        dta.Clear();
+                    }
+
+                    if (dta2 is not null)
+                    {
+                        dta2.Clear();
+                    }
+
+                    dta = null;
+                    dta2 = null;
+                }
+
                 BeginInvoke((MethodInvoker)delegate
                 {
+                    if (lowmemorymode == true)
+                    {
+
+                        dataGridView1.DataSource = null;
+                        dataGridView2.DataSource = null;
+                        dataGridView3.DataSource = null;
+                        dataGridView4.DataSource = null;
+                        dataGridView5.DataSource = null;
+                        dataGridView6.DataSource = null;
+                        dataGridView7.DataSource = null;
+                        dataGridView8.DataSource = null;
+
+                    }
+
                     this.Text = "SQL Tools - WORKING...";
                 });
 
@@ -1201,15 +1613,38 @@ public string sql10 =
                         {
                             try
                             {
-                                if (radioButton6.Checked == true)
+                                if (checkBox1.Checked == false)
                                 {
-                                    sqlcomm = (sql5b + textBox8.Text + sql6b);
+
+                                    if (radioButton6.Checked == true)
+                                    {
+                                        sqlcomm = (sql5b + textBox8.Text + sql6b);
+                                    }
+
+                                    if (radioButton7.Checked == true)
+                                    {
+                                        sqlcomm = (sql5 + textBox8.Text + sql6);
+                                    }
                                 }
 
-                                if (radioButton7.Checked == true)
+
+
+
+
+                                if (checkBox1.Checked == true)
                                 {
-                                    sqlcomm = (sql5 + textBox8.Text + sql6);
+
+                                    if (radioButton6.Checked == true) //exact
+                                    {
+                                        sqlcomm = (sql5b + textBox8.Text + sql6c + tablelimit + sql6d);
+                                    }
+
+                                    if (radioButton7.Checked == true) //partial
+                                    {
+                                        sqlcomm = (sql5 + textBox8.Text + sql6e + tablelimit + sql6f);
+                                    }
                                 }
+
 
                                 SqlCommand cmd1 = new SqlCommand(sqlcomm, cmd);
                                 cmd1.CommandTimeout = 0;
@@ -1354,26 +1789,47 @@ public string sql10 =
                 button8.Enabled = true;
                 busy = false;
 
+                comboBox1.Enabled = true;
+                checkBox1.Enabled = true;
+
                 SqlConnection cmd = new SqlConnection();
                 cmd.Close();
                 if (dta != null && dta.Rows.Count > 0)
                 {
                     dta = dta.Copy();
-                    dataGridView2.DataSource = dta;
+
+                    if (lowmemorymode == false)
+                    {
+                        dtm2 = dta.Copy();
+                    }
+
+                    if (lowmemorymode == false)
+                    {
+                        dataGridView2.DataSource = dtm2;
+
+                    }
+
+                    if (lowmemorymode == true)
+                    {
+                        dataGridView2.DataSource = dta;
+
+                    }
                     this.dataGridView2.ColumnHeadersVisible = true;
                     textBox12.Visible = false;
-                    
+
+
+
 
 
                     if (dta.Rows.Count < 1)
                     {
-                        
+
                     }
                 }
 
                 if (dta is null || dta.Rows.Count == 0)
                 {
-                    
+
                     this.dataGridView2.ColumnHeadersVisible = false;
                     button3.Enabled = false;
                     textBox12.Text = "No Results.";
@@ -1384,17 +1840,17 @@ public string sql10 =
                 {
                     this.dataGridView2.ColumnHeadersVisible = false;
                     button3.Enabled = false;
-                //    contextMenuStrip1.Enabled = false;
-                //    toolStripMenuItem1.Enabled = false;
-                //    toolStripMenuItem9.Enabled = false;
-                //    toolStripMenuItem10.Enabled = false;
-                //    toolStripMenuItem11.Enabled = false;
-                //    toolStripMenuItem12.Enabled = false;
-                //    contextMenuStrip2.Enabled = false;
-                //    toolStripMenuItem2.Enabled = false;
+                    //    contextMenuStrip1.Enabled = false;
+                    //    toolStripMenuItem1.Enabled = false;
+                    //    toolStripMenuItem9.Enabled = false;
+                    //    toolStripMenuItem10.Enabled = false;
+                    //    toolStripMenuItem11.Enabled = false;
+                    //    toolStripMenuItem12.Enabled = false;
+                    //    contextMenuStrip2.Enabled = false;
+                    //    toolStripMenuItem2.Enabled = false;
                 }
             }
-            
+
         }
 
 
@@ -1404,17 +1860,21 @@ public string sql10 =
 
         async void startAsyncButton_Click3(object sender, EventArgs e)
         {
-            this.dataGridView1.ColumnHeadersVisible = false;
-            this.dataGridView2.ColumnHeadersVisible = false;
-            this.dataGridView3.ColumnHeadersVisible = false;
-            button3.Enabled = false;
-            button4.Enabled = false;
-            button1.Enabled = false;
-            button8.Enabled = false;
-            //textBox11.Text = "No Results.";
-            //label14.Visible = false;
-            button2.Enabled = false;
-            
+
+            if (lowmemorymode == true)
+            {
+                //this.dataGridView1.ColumnHeadersVisible = false;
+                //this.dataGridView2.ColumnHeadersVisible = false;
+                //this.dataGridView3.ColumnHeadersVisible = false;
+                button3.Enabled = false;
+                button4.Enabled = false;
+                button1.Enabled = false;
+                button8.Enabled = false;
+                //textBox11.Text = "No Results.";
+                //label14.Visible = false;
+                button2.Enabled = false;
+            }
+
             //this.label17.Location = new System.Drawing.Point(268, 112);
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
@@ -1429,65 +1889,127 @@ public string sql10 =
             //toolStripMenuItem2.Enabled = false;
             sqlcomm = "";
 
+
+
+
+            //if ((initialsearch is null || initialsearch == "") || (textBox6.Text != "[No Search Term Entered]"))
+            // {
+            if (searchedfromgrid == false)
+            {
+
+                if ((textBox6.Text == "" || textBox6.Text == null))
+                {
+                    textBox6.Text = "[No Search Term Entered]";
+                }
+
+                initialsearch = textBox6.Text;
+            }
+            //BeginInvoke((MethodInvoker)delegate
+            //{
+            //    textBox6.Text = "";
+            //});
+
+            //}
+
+
+            //MessageBox.Show(lastlineused);
+
             if (dta != null && dataGridView3.Rows.Count > 0)
             {
 
                 var r = dataGridView3.CurrentCell.RowIndex;
                 var c = dataGridView3.CurrentCell.ColumnIndex;
 
-                if (builtpath == null)// && dataGridView3.RowCount > 1)
+
+                if (builtpath is not null)
                 {
+
+                    char[] lastline = builtpath.ToString().ToCharArray();
+                    lastline.Reverse();
+                    string lastlineconverted = new string(lastline);
+                    int spaceindex = lastlineconverted.LastIndexOf(Environment.NewLine);
+                    int entirelength = builtpath.Length;
+                    if (spaceindex > -1)
+                    {
+                        lastlineused = lastlineconverted.Substring(spaceindex, (entirelength - spaceindex));
+                    }
+
+
+                    if (dataGridView3.SelectedRows.Count > 0)
+                    {
+                        int rowind = dataGridView3.SelectedRows[0].Index;
+                        if (builtjoinpath == null)
+                        {
+                            builtjoinpath = "--START OF SQL STATEMENT--" + Environment.NewLine + "select * from [" + dataGridView3.Rows[rowind].Cells[0].Value + "] [" + builtjoinsequence + "]";
+                            builtjoinsequence = builtjoinsequence + 1;
+                        }
+                    }
+
+                }
+
+
+
+
+                if (builtpath == null)
+                {
+
+                    if (dataGridView3.SelectedRows.Count > 0)
+                    {
+                        int rowind = dataGridView3.SelectedRows[0].Index;
+                        if (builtjoinpath == null)
+                        {
+                            builtjoinpath = "--START OF SQL STATEMENT--" + Environment.NewLine + "select * from [" + dataGridView3.Rows[rowind].Cells[0].Value + "] [" + builtjoinsequence + "]";
+                            builtjoinsequence = builtjoinsequence + 1;
+                        }
+                    }
+
 
                     builtpath = ("--START OF SEARCH--");
 
-                    if (textBox6.Text == "")
+                    if (textBox6.Text == "" && builtpath == null)
                     {
-                        builtpath += Environment.NewLine + "[Blank Search]";
+                        builtpath += Environment.NewLine + "[No Search Term Entered]" + " < [Last Search Term]";
                     }
+
+                    if (textBox6.Text != "" && builtpath == null)
+                    {
+                        builtpath += Environment.NewLine + "'" + initialsearch + "'" + " < [Last Search Term]";
+                    }
+
                 }
 
 
-                if (builtpath == null && dataGridView3 != null || Clipboard.GetData == null)
+                if ((builtpath == null && dataGridView3 != null) || Clipboard.GetData == null)
                 {
-                    //builtpath = ("--START OF SEARCH--" + Environment.NewLine + textBox6.Text + " [Initial Search Term]" + Environment.NewLine + "Table: " + dataGridView3.SelectedCells[0].Value + " | Column: " + dataGridView3.SelectedCells[1].Value);
-
+                    builtpath = ("--START OF SEARCH--" + Environment.NewLine + "'" + initialsearch + "'" + " < [Last Search Term]");
                 }
 
-                if (builtpath != null && dataGridView3.SelectedCells.Count != 0 && builtpath != "--START OF SEARCH--" + Environment.NewLine + "'" + textBox6.Text + "'" + "< [Initial Search Term]" + Environment.NewLine + "Result: " + "[" + dataGridView3.Rows[r].Cells[0].Value + " > " + dataGridView3.Rows[r].Cells[2].Value + "]" + " (" + dataGridView3.Rows[r].Cells[0].Value + "." + dataGridView3.Rows[r].Cells[1].Value + " > " + dataGridView3.Rows[r].Cells[2].Value + "." + dataGridView3.Rows[r].Cells[3].Value + ")")
+                if (builtpath != null && dataGridView3.SelectedCells.Count != 0 && builtpath != "--START OF SEARCH--" + Environment.NewLine + "'" + textBox6.Text + "'" + "< [Last Search Term]" + Environment.NewLine + "Result: " + "[" + dataGridView3.Rows[r].Cells[0].Value + " > " + dataGridView3.Rows[r].Cells[2].Value + "]" + " (" + dataGridView3.Rows[r].Cells[1].Value + " > " + dataGridView3.Rows[r].Cells[3].Value + ")")
 
 
                 {
 
+                    builtjoinpath += Environment.NewLine + "left join [" + dataGridView3.Rows[r].Cells[2].Value + "] [" + builtjoinsequence + "] on [" + builtjoinsequence + "].[" + dataGridView3.Rows[r].Cells[3].Value + "]";
+                    builtjoinpath += " = [" + (builtjoinsequence - 1) + "].[" + dataGridView3.Rows[r].Cells[1].Value + "]";
+                    builtjoinsequence = builtjoinsequence + 1;
 
 
                     if (dataGridView3.Rows.Count > 0 && builtpath == "--START OF SEARCH--")
                     {
-
-                        builtpath += Environment.NewLine + "'" + textBox6.Text + "'" + " < [Initial Search Term]";
+                        builtpath += Environment.NewLine + "'" + initialsearch + "'" + " < [Last Search Term]";
                     }
 
-                    if (textBox6.Text != "")
+                    if (textBox6.Text != "" && lastlineused != (Environment.NewLine + "Result: " + "[" + dataGridView3.Rows[r].Cells[0].Value + " > " + dataGridView3.Rows[r].Cells[2].Value + "]" + " (" + dataGridView3.Rows[r].Cells[1].Value + " > " + dataGridView3.Rows[r].Cells[3].Value + ")"))
                     {
 
                         builtpath +=
 
                         //dataGridView3.SelectedRows[0].Cells.ToString();
 
-                        Environment.NewLine + "Result: "+ "[" + dataGridView3.Rows[r].Cells[0].Value + " > "+ dataGridView3.Rows[r].Cells[2].Value + "]" + " (" + dataGridView3.Rows[r].Cells[0].Value + "." + dataGridView3.Rows[r].Cells[1].Value + " > " + dataGridView3.Rows[r].Cells[2].Value + "." + dataGridView3.Rows[r].Cells[3].Value+")";
+                        Environment.NewLine + "Result: " + "[" + dataGridView3.Rows[r].Cells[0].Value + " > " + dataGridView3.Rows[r].Cells[2].Value + "]" + " (" + dataGridView3.Rows[r].Cells[1].Value + " > " + dataGridView3.Rows[r].Cells[3].Value + ")";
                     }
                 }
 
-                //if (builtpath == null)
-                //{
-                //    builtpath += textBox6.Text;
-                //}
-
-                //if (builtpath == "")
-                //{
-
-                //    builtpath += textBox6.Text;
-
-                //}
 
 
                 if (builtpath == (Environment.NewLine).ToString())
@@ -1496,6 +2018,8 @@ public string sql10 =
                     builtpath = "'" + textBox6.Text + "'";
 
                 }
+
+
 
                 if (dta.Rows.Count < 1)
                 {
@@ -1522,7 +2046,7 @@ public string sql10 =
             {
                 try
                 {
-                   
+
                     backgroundWorker3.RunWorkerAsync();
                     textBox13.Visible = true;
                     textBox13.Text = "Working...";
@@ -1534,7 +2058,7 @@ public string sql10 =
             }
 
 
-           
+
         }
         void backgroundWorker3_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -1542,8 +2066,38 @@ public string sql10 =
 
             {
                 {
+
+                    if (lowmemorymode == true)
+                    {
+                        if (dta is not null)
+                        {
+                            dta.Clear();
+                        }
+
+                        if (dta2 is not null)
+                        {
+                            dta2.Clear();
+                        }
+
+                        dta = null;
+                        dta2 = null;
+                    }
+
+
                     BeginInvoke((MethodInvoker)delegate
                     {
+
+                        if (lowmemorymode == true)
+                        {
+                            dataGridView1.DataSource = null;
+                            dataGridView2.DataSource = null;
+                            dataGridView3.DataSource = null;
+                            dataGridView4.DataSource = null;
+                            dataGridView5.DataSource = null;
+                            dataGridView6.DataSource = null;
+                            dataGridView7.DataSource = null;
+                            dataGridView8.DataSource = null;
+                        }
                         this.Text = "SQL Tools - WORKING...";
                     });
 
@@ -1732,15 +2286,34 @@ public string sql10 =
                     textBox13.Visible = false;
                     contextMenuStrip2.Enabled = true;
                     toolStripMenuItem2.Enabled = true;
+                    toolStripMenuItem13.Enabled = true;
+                    toolStripMenuItem14.Enabled = true;
+                    toolStripMenuItem15.Enabled = true;
+                    toolStripMenuItem16.Enabled = true;
                     dta = dta.Copy();
-                    dataGridView3.DataSource = dta;
+
+                    if (lowmemorymode == false)
+                    {
+                        dtm3 = dta.Copy();
+                    }
+
+                    if (lowmemorymode == false)
+                    {
+                        dataGridView3.DataSource = dtm3;
+                    }
+
+                    if (lowmemorymode == true)
+                    {
+                        dataGridView3.DataSource = dta;
+
+                    }
                     this.dataGridView3.ColumnHeadersVisible = true;
                     relationshipsearchsuccess = true;
                     button7.Enabled = true;
-                    button7.Text = "Search Term History to Clipboard";
+                    button7.Text = "Copy to Clipboard";
+                    checkBox2.Enabled = true;
+                    checkBox2_CheckedChanged(sender, e);
 
-
-                  
 
                 }
 
@@ -1753,6 +2326,12 @@ public string sql10 =
                     relationshipsearchsuccess = false;
                     textBox13.Visible = true;
                     textBox13.Text = "No Results.";
+
+                    if (builtpath == "" || builtpath == null)
+                    {
+                        checkBox2.Enabled = false;
+                        checkBox2.BackColor = Color.Transparent;
+                    }
                 }
 
                 if (textBox13.Text == "No Results.")
@@ -1771,10 +2350,19 @@ public string sql10 =
 
 
                 }
-
+                searchedfromgrid = false;
 
             }
             busy = false;
+
+            dataGridView3.ClearSelection();
+
+            if (textBox6.Text == "[No Search Term Entered]" && initialsearch is null)
+            {
+                textBox6.Text = "";
+            }
+
+            textBox6_Click(sender, e);
 
         }
 
@@ -1791,7 +2379,7 @@ public string sql10 =
 
             if (dataGridView1.RowCount > 0)
             {
-               
+
 
                 int index = new int();
 
@@ -1820,8 +2408,10 @@ public string sql10 =
 
             if (dataGridView1.RowCount > 0 || dataGridView3.RowCount > 0)
             {
-               
 
+
+                searchedfromgrid = true;
+                //initialsearch = "";
                 int index = new int();
                 var rowindex = dataGridView3.CurrentCell.RowIndex;
                 var colindex = dataGridView3.CurrentCell.ColumnIndex;
@@ -1849,7 +2439,7 @@ public string sql10 =
 
                     if (colindex == 1 || colindex == 3)
                     {
-                        var holding2 = dataGridView3.Rows[rowindex].Cells[colindex-1].Value;
+                        var holding2 = dataGridView3.Rows[rowindex].Cells[colindex - 1].Value;
                         textBox6.Text = holding2.ToString();
                         tabControl1.SelectedIndex = 2;
                         startAsyncButton_Click3(sender, e);
@@ -1857,7 +2447,7 @@ public string sql10 =
                     }
 
 
-                   
+
                 }
             }
 
@@ -1873,7 +2463,7 @@ public string sql10 =
 
             if (dataGridView1.RowCount > 0)
             {
-               
+
 
                 int index = new int();
 
@@ -1885,7 +2475,7 @@ public string sql10 =
                 var holding = dataGridView1.SelectedCells[index].Value;
                 if (holding != null)
                 {
-                    
+
                     textBox5.Text = holding.ToString();
                     tabControl1.SelectedIndex = 0;
                     radioButton3.Checked = true;
@@ -1906,7 +2496,7 @@ public string sql10 =
 
             if (dataGridView1.RowCount > 0)
             {
-                
+
 
                 int index = new int();
 
@@ -1930,7 +2520,7 @@ public string sql10 =
             }
 
             else
-            return;
+                return;
 
         }
 
@@ -1945,42 +2535,70 @@ public string sql10 =
         {
 
 
-            if (builtpath == null)
-            {
-                if (textBox6.Text == "")
-                { 
-                    builtpath = "--START OF SEARCH--" + Environment.NewLine + "[No Search Term Entered]" + Environment.NewLine + "--END OF SEARCH--";
-                }
-                if (textBox6.Text != "")
-                {
-                    builtpath = "--START OF SEARCH--" + Environment.NewLine + "'" + textBox6.Text + "'" + Environment.NewLine + "--END OF SEARCH--";
-                }
-
-
-                Clipboard.SetText(builtpath);
-                button7.Enabled = false;
-                button6.Enabled = true;
-                button7.Text = "Copied to Clipboard";
-                builtpath = null;
-            }
 
             if (builtpath != null)
             {
-                if (builtpath != "--START OF SEARCH--\r\n" + textBox6.Text && dataGridView3.Rows.Count == 0)
+                if (initialsearch == "")
                 {
-                    builtpath += Environment.NewLine+"'"+textBox6.Text +"'"+" < [Last Search Term]";
+                    initialsearch = "[No Search Term Entered]";
+                }
+
+                if (builtpath.Contains("< [Last Search Term]") == false)// && dataGridView3.Rows.Count == 0)
+                {
+                    builtpath += Environment.NewLine + "'" + initialsearch + "'" + " < [Last Search Term]";
                 }
                 builtpath += Environment.NewLine + "--END OF SEARCH--";
+
                 Clipboard.SetText(builtpath);
-                button7.Enabled = false;
-                button6.Enabled = true;
-                button7.Text = "Copied to Clipboard";
-                builtpath = null;
+
+                if (builtjoinpath != null)
+                {
+                    builtjoinpath += Environment.NewLine + "--END OF SQL STATEMENT--";
+                }
+                if (checkBox2.Checked == true)
+                {
+                    builtpath += Environment.NewLine + Environment.NewLine + builtjoinpath;
+                }
+
+
+            }
+
+            if (builtpath == null)
+            {
+                if (initialsearch == "" && searchedfromgrid == false)
+                {
+                    builtpath = "--START OF SEARCH--" + Environment.NewLine + "[No Search Term Entered]" + " < [Last Search Term]" + Environment.NewLine + "--END OF SEARCH--";
+                }
+                if (((textBox6.Text != "" || initialsearch != "") || (textBox6.Text != null || initialsearch != null)) && searchedfromgrid == false)
+                {
+                    builtpath = "--START OF SEARCH--" + Environment.NewLine + "'" + initialsearch + "'" + " < [Last Search Term]" + Environment.NewLine + "--END OF SEARCH--";
+                }
+
+
+
+                //button7.Enabled = false;
+                //checkBox2.Enabled = false;
+                //checkBox2.BackColor = Color.Transparent;
+                //button6.Enabled = true;
+                //button7.Text = "Copied to Clipboard";
+                //builtjoinpath = null;
+                //builtjoinsequence = 1;
             }
 
 
 
-        
+
+            Clipboard.SetText(builtpath);
+            button7.Enabled = false;
+            checkBox2.Enabled = false;
+            checkBox2.BackColor = Color.Transparent;
+            button6.Enabled = true;
+            button7.Text = "Copied to Clipboard";
+            builtpath = null;
+            builtjoinpath = null;
+            builtjoinsequence = 1;
+
+
         }
 
 
@@ -2002,6 +2620,7 @@ public string sql10 =
                     var newline = System.Environment.NewLine;
                     var tab = "\t";
                     var clipboard_string = new StringBuilder();
+
 
 
 
@@ -2055,18 +2674,26 @@ public string sql10 =
                     var tab = "\t";
                     var clipboard_string = new StringBuilder();
 
+                    dataGridView1.Columns[3].Visible = false;
+
 
 
                     foreach (DataGridViewRow row in dataGridView1.Rows)
                     {
-                        for (int i = 0; i < row.Cells.Count; i++)
+
+                        for (int i = 0; i < row.Cells.Count - 1; i++)
                         {
-                            if (i == (row.Cells.Count - 1))
+
+
+                            if (i == (row.Cells.Count - 2))
                                 clipboard_string.Append("[" + row.Cells[i].Value + "]" + newline);
                             else
                                 clipboard_string.Append("[" + row.Cells[i].Value + "]" + ",");
+
                         }
                     }
+
+
                     button3.Enabled = false;
                     button3.Text = "Results Copied";
 
@@ -2344,6 +2971,7 @@ public string sql10 =
         private void differentiatesearch(object sender, EventArgs e)
         {
             builtpath = null;
+            builtjoinpath = null;
             startAsyncButton_Click3(sender, e);
         }
 
@@ -2381,22 +3009,19 @@ public string sql10 =
 
             int positionOfcarett = caretposition;
 
-          
+
             index = richTextBox1.Find(findText, index, RichTextBoxFinds.WholeWord);
             if (index > -1)
             {
-
+                colouring = true;
                 richTextBox1.Select(positionOfcarett, -findText.Length);
                 richTextBox1.SelectionColor = Color.Blue;
                 richTextBox1.DeselectAll();
                 richTextBox1.SelectionLength = 0;
                 richTextBox1.ForeColor = Color.Black;
                 richTextBox1.SelectionStart = positionOfcarett;
-
-
-
                 index++;
-           
+                colouring = false;
 
             }
 
@@ -2439,7 +3064,7 @@ public string sql10 =
             }
 
 
-            }
+        }
 
 
 
@@ -2462,21 +3087,21 @@ public string sql10 =
             inedit = isint;
 
             if (richTextBox1.Text.Length > 1 && richTextBox1.Text.Length >= lastchar && isint == false)
-                {
+            {
 
-                    int currentcaretposition = richTextBox1.SelectionStart;
+                int currentcaretposition = richTextBox1.SelectionStart;
 
-                    var chk = richTextBox1.Text.Substring(lastchar, 1);
-                    string stringoriginal = richTextBox1.Text.Substring(0, lastchar + 1);
-                    char[] stringarray = stringoriginal.ToString().ToCharArray();
-                    Array.Reverse(stringarray);
-                    string stringreverse = new string(stringarray);
-                    int stringreverselen = stringreverse.Length;
-                    richTextBox1.SelectionColor = Color.Black;
+                var chk = richTextBox1.Text.Substring(lastchar, 1);
+                string stringoriginal = richTextBox1.Text.Substring(0, lastchar + 1);
+                char[] stringarray = stringoriginal.ToString().ToCharArray();
+                Array.Reverse(stringarray);
+                string stringreverse = new string(stringarray);
+                int stringreverselen = stringreverse.Length;
+                richTextBox1.SelectionColor = Color.Black;
                 if (richTextBox1.Text.Length == currentcaretposition)
                 {
                     richTextBox1.SelectionStart = nextchar;
-                    
+
                 }
 
             }
@@ -2491,7 +3116,7 @@ public string sql10 =
                 richTextBox1.SelectionStart = nextchar;
                 richTextBox1.SelectionColor = Color.Black;
                 richTextBox1.ScrollToCaret();
-                textbacktoblack(sender, e);   
+                textbacktoblack(sender, e);
             }
 
 
@@ -2611,9 +3236,9 @@ public string sql10 =
 
 
         private void textbacktoblack(object sender, EventArgs e)
-            {
+        {
             richTextBox1.SelectionColor = Color.Black;
-            }
+        }
 
         private void textbacktoblack2(object sender, EventArgs e)
         {
@@ -2643,7 +3268,7 @@ public string sql10 =
 
             if (e.KeyCode == Keys.Back)
             {
-                
+
                 if (richTextBox1.Text.Length > 0)
                 {
                     string txt;
@@ -2657,7 +3282,7 @@ public string sql10 =
                         }
                     }
                 }
-              
+
 
             }
 
@@ -2815,9 +3440,9 @@ public string sql10 =
                 }
 
 
-                if ((
+                if (
 
-                   e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return || e.KeyCode == Keys.F5) &&
+                   //e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return || e.KeyCode == Keys.F5) &&
                    richTextBox1.TextLength > 1 &&
                    f5pressed == false && inedit == true
                    )
@@ -3159,12 +3784,16 @@ public string sql10 =
 
             dataGridView4.Visible = true;
 
-            this.dataGridView1.ColumnHeadersVisible = false;
-            this.dataGridView2.ColumnHeadersVisible = false;
-            this.dataGridView3.ColumnHeadersVisible = false;
-            this.dataGridView4.ColumnHeadersVisible = false;
-            this.dataGridView5.ColumnHeadersVisible = false;
-            this.dataGridView6.ColumnHeadersVisible = false;
+            if (lowmemorymode == true)
+            {
+
+                this.dataGridView1.ColumnHeadersVisible = false;
+                this.dataGridView2.ColumnHeadersVisible = false;
+                this.dataGridView3.ColumnHeadersVisible = false;
+                this.dataGridView4.ColumnHeadersVisible = false;
+                this.dataGridView5.ColumnHeadersVisible = false;
+                this.dataGridView6.ColumnHeadersVisible = false;
+            }
             button3.Enabled = false;
             button4.Enabled = false;
             button1.Enabled = false;
@@ -3204,7 +3833,7 @@ public string sql10 =
                 {
                     backgroundWorker4.RunWorkerAsync();
 
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -3223,8 +3852,38 @@ public string sql10 =
 
         private void backgroundWorker4_DoWork(object sender, DoWorkEventArgs e)
         {
+
+            if (lowmemorymode == true)
+            {
+                if (dta is not null)
+                {
+                    dta.Clear();
+                }
+
+                if (dta2 is not null)
+                {
+                    dta2.Clear();
+                }
+
+                dta = null;
+                dta2 = null;
+            }
+
+
             BeginInvoke((MethodInvoker)delegate
             {
+
+                if (lowmemorymode == true)
+                {
+                    dataGridView1.DataSource = null;
+                    dataGridView2.DataSource = null;
+                    dataGridView3.DataSource = null;
+                    dataGridView4.DataSource = null;
+                    dataGridView5.DataSource = null;
+                    dataGridView6.DataSource = null;
+                    dataGridView7.DataSource = null;
+                    dataGridView8.DataSource = null;
+                }
                 this.Text = "SQL Tools - WORKING...";
             });
 
@@ -3235,7 +3894,10 @@ public string sql10 =
 
             BeginInvoke((MethodInvoker)delegate
             {
-                dataGridView4.DataSource = null;
+                if (lowmemorymode == true)
+                {
+                    dataGridView4.DataSource = null;
+                }
                 groupBox8.Text = "Results";
                 textBox14.Text = "Working...";
 
@@ -3369,7 +4031,7 @@ public string sql10 =
 
                                 if (ex.Message != null)
                                 {
-                                  
+
 
                                     BeginInvoke((MethodInvoker)delegate
                                     {
@@ -3377,8 +4039,8 @@ public string sql10 =
                                         dataGridView4.Rows.Clear();
                                         dataGridView4.Visible = false;
                                         //errortextbox.Visible = true;
-                                        errormessage = Environment.NewLine+msg;
-                                        groupBox8.Text = "Error";
+                                        errormessage = Environment.NewLine + msg;
+                                        // groupBox8.Text = "Error";
 
 
                                     });
@@ -3400,7 +4062,7 @@ public string sql10 =
                         {
                             dataGridView4.Rows.Clear();
                             errormessage = msg;
-                            groupBox8.Text = "Error";
+                            //groupBox8.Text = "Error";
                         });
                     }
 
@@ -3412,94 +4074,114 @@ public string sql10 =
         public void HideTabeHaders(object sender, EventArgs e)
         {
 
+            currenttab = tabControl1.SelectedIndex;
+
             if (dataGridView1.DataSource is null)
             {
-                dataGridView1.ColumnHeadersVisible = false;
-                this.dataGridView1.ColumnHeadersVisible = false;
-                dataGridView1.AllowUserToAddRows = false;
-              
-                textBox11.Visible = true;
-                textBox12.Visible = true;
-                textBox13.Visible = true;
-                textBox14.Visible = true;
-                textBox10.Visible = true;
-                textBox9.Visible = true;
-                textBox16.Visible = true;
 
-                textBox5.Text = "";
-                textBox7.Text = "";
-                textBox8.Text = "";
-                textBox6.Text = "";
-                textBox15.Text = "";
+                if (lowmemorymode == true)
 
-                textBox11.Text = "";
-                textBox12.Text = "";
-                textBox13.Text = "";
-                textBox14.Text = "";
-                textBox10.Text = "";
-                textBox9.Text = "";
-                textBox16.Text = "";
-                textBox15.Text = "";
-                richTextBox1.Text = "";
-                richTextBox2.Text = "";
-                richTextBox4.Text = "";
+                {
+                    dataGridView1.ColumnHeadersVisible = false;
+                    this.dataGridView1.ColumnHeadersVisible = false;
+                    dataGridView1.AllowUserToAddRows = false;
 
-                button3.Enabled = false;
-                button6.Enabled = false;
-                button7.Enabled = false;
-                button9.Enabled = false;
-                button10.Enabled = false;
+                    textBox11.Visible = true;
+                    textBox12.Visible = true;
+                    textBox13.Visible = true;
+                    textBox14.Visible = true;
+                    textBox10.Visible = true;
+                    textBox9.Visible = true;
+                    textBox16.Visible = true;
 
-                button3.Text = "Results to Clipboard";
-                button7.Text = "Search Term History to Clipboard";
-                button6.Text = "Clear Clipboard";
-                button9.Text = "Copy Selected Definition to Clipboard";
-                button10.Text = "Clear Clipboard";
+                    textBox5.Text = "";
+                    textBox7.Text = "";
+                    textBox8.Text = "";
+                    textBox6.Text = "";
+                    textBox15.Text = "";
 
+                    textBox11.Text = "";
+                    textBox12.Text = "";
+                    textBox13.Text = "";
+                    textBox14.Text = "";
+                    textBox10.Text = "";
+                    textBox9.Text = "";
+                    textBox16.Text = "";
+                    textBox15.Text = "";
+                    richTextBox1.Text = "";
+                    richTextBox2.Text = "";
+                    richTextBox4.Text = "";
 
+                    button3.Enabled = false;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    checkBox2.Enabled = false;
+                    checkBox2.BackColor = Color.Transparent;
+                    button9.Enabled = false;
+                    button10.Enabled = false;
 
+                    button3.Text = "Results to Clipboard";
+                    button7.Text = "Results to Clipboard";
+                    button6.Text = "Clear Clipboard";
+                    button9.Text = "Results to Clipboard";
+                    button10.Text = "Clear Clipboard";
+
+                    groupBox5.Text = "Results";
+                    groupBox4.Text = "Results";
+                    groupBox3.Text = "Results";
+                    groupBox10.Text = "Results";
+                    groupBox8.Text = "Results";
+                    groupBox11.Text = "Results";
+                    groupBox12.Text = "Results";
+
+                }
 
             }
 
             if (dataGridView2.DataSource is null)
             {
-                dataGridView2.ColumnHeadersVisible = false;
-                this.dataGridView2.ColumnHeadersVisible = false;
-                dataGridView2.AllowUserToAddRows = false;
-                textBox11.Visible = true;
-                textBox12.Visible = true;
-                textBox13.Visible = true;
-                textBox14.Visible = true;
-                textBox10.Visible = true;
-                textBox9.Visible = true;
-                textBox16.Visible = true;
+                if (lowmemorymode == true)
+                {
 
-                textBox5.Text = "";
-                textBox7.Text = "";
-                textBox8.Text = "";
-                textBox6.Text = "";
-                textBox15.Text = "";
+                    dataGridView2.ColumnHeadersVisible = false;
+                    this.dataGridView2.ColumnHeadersVisible = false;
+                    dataGridView2.AllowUserToAddRows = false;
+                    textBox11.Visible = true;
+                    textBox12.Visible = true;
+                    textBox13.Visible = true;
+                    textBox14.Visible = true;
+                    textBox10.Visible = true;
+                    textBox9.Visible = true;
+                    textBox16.Visible = true;
 
-                textBox11.Text = "";
-                textBox12.Text = "";
-                textBox13.Text = "";
-                textBox14.Text = "";
-                textBox10.Text = "";
-                textBox9.Text = "";
-                textBox16.Text = "";
+                    textBox5.Text = "";
+                    textBox7.Text = "";
+                    textBox8.Text = "";
+                    textBox6.Text = "";
+                    textBox15.Text = "";
 
-                button3.Enabled = false;
-                button6.Enabled = false;
-                button7.Enabled = false;
-                button9.Enabled = false;
-                button10.Enabled = false;
+                    textBox11.Text = "";
+                    textBox12.Text = "";
+                    textBox13.Text = "";
+                    textBox14.Text = "";
+                    textBox10.Text = "";
+                    textBox9.Text = "";
+                    textBox16.Text = "";
 
-                button3.Text = "Results to Clipboard";
-                button7.Text = "Search Term History to Clipboard";
-                button6.Text = "Clear Clipboard";
-                button9.Text = "Copy Selected Definition to Clipboard";
-                button10.Text = "Clear Clipboard";
+                    button3.Enabled = false;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    checkBox2.Enabled = false;
+                    checkBox2.BackColor = Color.Transparent;
+                    button9.Enabled = false;
+                    button10.Enabled = false;
 
+                    button3.Text = "Results to Clipboard";
+                    button7.Text = "Results to Clipboard";
+                    button6.Text = "Clear Clipboard";
+                    button9.Text = "Results to Clipboard";
+                    button10.Text = "Clear Clipboard";
+                }
 
             }
 
@@ -3507,95 +4189,106 @@ public string sql10 =
 
             if (dataGridView4.DataSource is null)
             {
-                dataGridView4.ColumnHeadersVisible = false;
-                this.dataGridView4.ColumnHeadersVisible = false;
-                dataGridView4.AllowUserToAddRows = false;
-                textBox11.Visible = true;
-                textBox12.Visible = true;
-                textBox13.Visible = true;
-                textBox14.Visible = true;
-                textBox10.Visible = true;
-                textBox9.Visible = true;
-                textBox16.Visible = true;
+                if (lowmemorymode == true)
+                {
+                    dataGridView4.ColumnHeadersVisible = false;
+                    this.dataGridView4.ColumnHeadersVisible = false;
+                    dataGridView4.AllowUserToAddRows = false;
+                    textBox11.Visible = true;
+                    textBox12.Visible = true;
+                    textBox13.Visible = true;
+                    textBox14.Visible = true;
+                    textBox10.Visible = true;
+                    textBox9.Visible = true;
+                    textBox16.Visible = true;
 
-                textBox5.Text = "";
-                textBox7.Text = "";
-                textBox8.Text = "";
-                textBox6.Text = "";
-                textBox15.Text = "";
+                    textBox5.Text = "";
+                    textBox7.Text = "";
+                    textBox8.Text = "";
+                    textBox6.Text = "";
+                    textBox15.Text = "";
 
-                textBox11.Text = "";
-                textBox12.Text = "";
-                textBox13.Text = "";
-                textBox14.Text = "";
-                textBox10.Text = "";
-                textBox9.Text = "";
-                textBox16.Text = "";
+                    textBox11.Text = "";
+                    textBox12.Text = "";
+                    textBox13.Text = "";
+                    textBox14.Text = "";
+                    textBox10.Text = "";
+                    textBox9.Text = "";
+                    textBox16.Text = "";
 
-                button3.Enabled = false;
-                button6.Enabled = false;
-                button7.Enabled = false;
-                button9.Enabled = false;
-                button10.Enabled = false;
+                    button3.Enabled = false;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    checkBox2.Enabled = false;
+                    checkBox2.BackColor = Color.Transparent;
+                    button9.Enabled = false;
+                    button10.Enabled = false;
 
-                button3.Text = "Results to Clipboard";
-                button7.Text = "Search Term History to Clipboard";
-                button6.Text = "Clear Clipboard";
-                button9.Text = "Copy Selected Definition to Clipboard";
-                button10.Text = "Clear Clipboard";
-
+                    button3.Text = "Results to Clipboard";
+                    button7.Text = "Results to Clipboard";
+                    button6.Text = "Clear Clipboard";
+                    button9.Text = "Results to Clipboard";
+                    button10.Text = "Clear Clipboard";
+                }
             }
 
 
 
             if (dataGridView6.DataSource is null)
             {
-                dataGridView6.ColumnHeadersVisible = false;
-                this.dataGridView6.ColumnHeadersVisible = false;
-                dataGridView6.ReadOnly = true;
-                dataGridView6.AllowUserToAddRows = false;
-                textBox11.Visible = true;
-                textBox12.Visible = true;
-                textBox13.Visible = true;
-                textBox14.Visible = true;
-                textBox10.Visible = true;
-                textBox9.Visible = true;
-                textBox16.Visible = true;
+                if (lowmemorymode == true)
+                {
+                    dataGridView6.ColumnHeadersVisible = false;
+                    this.dataGridView6.ColumnHeadersVisible = false;
+                    dataGridView6.ReadOnly = true;
+                    dataGridView6.AllowUserToAddRows = false;
+                    textBox11.Visible = true;
+                    textBox12.Visible = true;
+                    textBox13.Visible = true;
+                    textBox14.Visible = true;
+                    textBox10.Visible = true;
+                    textBox9.Visible = true;
+                    textBox16.Visible = true;
 
-                textBox5.Text = "";
-                textBox7.Text = "";
-                textBox8.Text = "";
-                textBox6.Text = "";
-                textBox15.Text = "";
+                    textBox5.Text = "";
+                    textBox7.Text = "";
+                    textBox8.Text = "";
+                    textBox6.Text = "";
+                    textBox15.Text = "";
 
-                textBox11.Text = "";
-                textBox12.Text = "";
-                textBox13.Text = "";
-                textBox14.Text = "";
-                textBox10.Text = "";
-                textBox9.Text = "";
-                textBox16.Text = "";
+                    textBox11.Text = "";
+                    textBox12.Text = "";
+                    textBox13.Text = "";
+                    textBox14.Text = "";
+                    textBox10.Text = "";
+                    textBox9.Text = "";
+                    textBox16.Text = "";
 
-                button3.Enabled = false;
-                button6.Enabled = false;
-                button7.Enabled = false;
-                button9.Enabled = false;
-                button10.Enabled = false;
+                    button3.Enabled = false;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    checkBox2.Enabled = false;
+                    checkBox2.BackColor = Color.Transparent;
+                    button9.Enabled = false;
+                    button10.Enabled = false;
 
-                button3.Text = "Results to Clipboard";
-                button7.Text = "Search Term History to Clipboard";
-                button6.Text = "Clear Clipboard";
-                button9.Text = "Copy Selected Definition to Clipboard";
-                button10.Text = "Clear Clipboard";
+                    button3.Text = "Results to Clipboard";
+                    button7.Text = "Results to Clipboard";
+                    button6.Text = "Clear Clipboard";
+                    button9.Text = "Results to Clipboard";
+                    button10.Text = "Clear Clipboard";
+                }
 
             }
 
             if (dataGridView7.DataSource is null)
             {
-                dataGridView7.ColumnHeadersVisible = false;
-                this.dataGridView7.ColumnHeadersVisible = false;
-                dataGridView7.ReadOnly = true;
-                dataGridView7.AllowUserToAddRows = false;
+                if (lowmemorymode == true)
+                {
+                    dataGridView7.ColumnHeadersVisible = false;
+                    this.dataGridView7.ColumnHeadersVisible = false;
+                    dataGridView7.ReadOnly = true;
+                    dataGridView7.AllowUserToAddRows = false;
                     textBox11.Visible = true;
                     textBox12.Visible = true;
                     textBox13.Visible = true;
@@ -3610,34 +4303,39 @@ public string sql10 =
                     textBox6.Text = "";
                     textBox15.Text = "";
 
-                textBox11.Text = "";
-                textBox12.Text = "";
-                textBox13.Text = "";
-                textBox14.Text = "";
-                textBox10.Text = "";
-                textBox9.Text = "";
-                textBox16.Text = "";
+                    textBox11.Text = "";
+                    textBox12.Text = "";
+                    textBox13.Text = "";
+                    textBox14.Text = "";
+                    textBox10.Text = "";
+                    textBox9.Text = "";
+                    textBox16.Text = "";
 
-                button3.Enabled = false;
-                button6.Enabled = false;
-                button7.Enabled = false;
-                button9.Enabled = false;
-                button10.Enabled = false;
+                    button3.Enabled = false;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    checkBox2.Enabled = false;
+                    checkBox2.BackColor = Color.Transparent;
+                    button9.Enabled = false;
+                    button10.Enabled = false;
 
-                button3.Text = "Results to Clipboard";
-                button7.Text = "Search Term History to Clipboard";
-                button6.Text = "Clear Clipboard";
-                button9.Text = "Copy Selected Definition to Clipboard";
-                button10.Text = "Clear Clipboard";
+                    button3.Text = "Results to Clipboard";
+                    button7.Text = "Results to Clipboard";
+                    button6.Text = "Clear Clipboard";
+                    button9.Text = "Results to Clipboard";
+                    button10.Text = "Clear Clipboard";
+                }
 
             }
 
             if (dataGridView8.DataSource is null)
             {
-                dataGridView8.ColumnHeadersVisible = false;
-                this.dataGridView8.ColumnHeadersVisible = false;
-                dataGridView8.ReadOnly = true;
-                dataGridView8.AllowUserToAddRows = false;
+                if (lowmemorymode == true)
+                {
+                    dataGridView8.ColumnHeadersVisible = false;
+                    this.dataGridView8.ColumnHeadersVisible = false;
+                    dataGridView8.ReadOnly = true;
+                    dataGridView8.AllowUserToAddRows = false;
                     textBox11.Visible = true;
                     textBox12.Visible = true;
                     textBox13.Visible = true;
@@ -3652,71 +4350,78 @@ public string sql10 =
                     textBox6.Text = "";
                     textBox15.Text = "";
 
-                textBox11.Text = "";
-                textBox12.Text = "";
-                textBox13.Text = "";
-                textBox14.Text = "";
-                textBox10.Text = "";
-                textBox9.Text = "";
-                textBox16.Text = "";
+                    textBox11.Text = "";
+                    textBox12.Text = "";
+                    textBox13.Text = "";
+                    textBox14.Text = "";
+                    textBox10.Text = "";
+                    textBox9.Text = "";
+                    textBox16.Text = "";
 
-                button3.Enabled = false;
-                button6.Enabled = false;
-                button7.Enabled = false;
-                button9.Enabled = false;
-                button10.Enabled = false;
+                    button3.Enabled = false;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    checkBox2.Enabled = false;
+                    checkBox2.BackColor = Color.Transparent;
+                    button9.Enabled = false;
+                    button10.Enabled = false;
 
-                button3.Text = "Results to Clipboard";
-                button7.Text = "Search Term History to Clipboard";
-                button6.Text = "Clear Clipboard";
-                button9.Text = "Copy Selected Definition to Clipboard";
-                button10.Text = "Clear Clipboard";
-
+                    button3.Text = "Results to Clipboard";
+                    button7.Text = "Results to Clipboard";
+                    button6.Text = "Clear Clipboard";
+                    button9.Text = "Results to Clipboard";
+                    button10.Text = "Clear Clipboard";
+                }
 
             }
 
             if (dataGridView3.DataSource is null)
             {
-                dataGridView3.ColumnHeadersVisible = false;
-                this.dataGridView3.ColumnHeadersVisible = false;
-                dataGridView3.ReadOnly = true;
-                dataGridView3.AllowUserToAddRows = false;
-                textBox11.Visible = true;
-                textBox12.Visible = true;
-                textBox13.Visible = true;
-                textBox14.Visible = true;
-                textBox10.Visible = true;
-                textBox9.Visible = true;
-                textBox16.Visible = true;
+                if (lowmemorymode == true)
+                {
+                    dataGridView3.ColumnHeadersVisible = false;
+                    this.dataGridView3.ColumnHeadersVisible = false;
+                    dataGridView3.ReadOnly = true;
+                    dataGridView3.AllowUserToAddRows = false;
+                    textBox11.Visible = true;
+                    textBox12.Visible = true;
+                    textBox13.Visible = true;
+                    textBox14.Visible = true;
+                    textBox10.Visible = true;
+                    textBox9.Visible = true;
+                    textBox16.Visible = true;
 
-                textBox5.Text = "";
-                textBox7.Text = "";
-                textBox8.Text = "";
-                textBox6.Text = "";
-                textBox15.Text = "";
+                    textBox5.Text = "";
+                    textBox7.Text = "";
+                    textBox8.Text = "";
+                    textBox6.Text = "";
+                    textBox15.Text = "";
 
-                textBox11.Text = "";
-                textBox12.Text = "";
-                textBox13.Text = "";
-                textBox14.Text = "";
-                textBox10.Text = "";
-                textBox9.Text = "";
-                textBox16.Text = "";
+                    textBox11.Text = "";
+                    textBox12.Text = "";
+                    textBox13.Text = "";
+                    textBox14.Text = "";
+                    textBox10.Text = "";
+                    textBox9.Text = "";
+                    textBox16.Text = "";
 
-                button3.Enabled = false;
-                button6.Enabled = false;
-                button7.Enabled = false;
-                button9.Enabled = false;
-                button10.Enabled = false;
+                    button3.Enabled = false;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    checkBox2.Enabled = false;
+                    checkBox2.BackColor = Color.Transparent;
+                    button9.Enabled = false;
+                    button10.Enabled = false;
 
-                button3.Text = "Results to Clipboard";
-                button7.Text = "Search Term History to Clipboard";
-                button6.Text = "Clear Clipboard";
-                button9.Text = "Copy Selected Definition to Clipboard";
-                button10.Text = "Clear Clipboard";
+                    button3.Text = "Results to Clipboard";
+                    button7.Text = "Results to Clipboard";
+                    button6.Text = "Clear Clipboard";
+                    button9.Text = "Results to Clipboard";
+                    button10.Text = "Clear Clipboard";
+
+                }
 
             }
-
         }
 
         async void backgroundWorker4_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -3731,33 +4436,44 @@ public string sql10 =
                         this.Text = "SQL Tools";
                     });
 
-                    if (dataGridView6.Rows.Count > 0)
+                    if (lowmemorymode == true)
                     {
-                        dataGridView6.Rows.Clear();
-                        textBox9.Visible = true;
-                        textBox10.Visible = true;
-                        richTextBox2.Text = "";
-                        richTextBox4.Text = "";
+
+                        if (dataGridView6.Rows.Count > 0)
+                        {
+
+                            dataGridView6.Rows.Clear();
+
+                            textBox9.Visible = true;
+                            textBox10.Visible = true;
+                            richTextBox2.Text = "";
+                            richTextBox4.Text = "";
+                        }
+
+                        if (dataGridView7.Rows.Count > 0)
+                        {
+
+                            dataGridView7.Rows.Clear();
+
+                            textBox9.Visible = true;
+                            textBox10.Visible = true;
+                            richTextBox2.Text = "";
+                            richTextBox4.Text = "";
+                        }
                     }
 
-                    if (dataGridView7.Rows.Count > 0)
+
+                    if (lowmemorymode == true)
                     {
-                        dataGridView7.Rows.Clear();
                         textBox9.Visible = true;
                         textBox10.Visible = true;
-                        richTextBox2.Text = "";
-                        richTextBox4.Text = "";
+                        textBox9.Text = "";
+                        textBox10.Text = "";
+
+
+                        dataGridView6.ColumnHeadersVisible = false;
+                        dataGridView7.ColumnHeadersVisible = false;
                     }
-
-
-                    textBox9.Visible = true;
-                    textBox10.Visible = true;
-                    textBox9.Text = "";
-                    textBox10.Text = "";
-
-
-                    dataGridView6.ColumnHeadersVisible = false;
-                    dataGridView7.ColumnHeadersVisible = false;
 
                     f5pressed = false;
                     ctp = "ctp4";
@@ -3785,11 +4501,31 @@ public string sql10 =
                         toolStripMenuItem11.Enabled = true;
                         toolStripMenuItem12.Enabled = true;
                         dta = dta.Copy();
+
                         dataGridView4.DataSource = null;
                         dataGridView4.Refresh();
-                        dataGridView4.DataSource = dta;
+
+                        if (lowmemorymode == false)
+                        {
+                            dtm4 = dta.Copy();
+                        }
+
+                        if (lowmemorymode == false)
+                        {
+                            dataGridView4.DataSource = dtm4;
+                        }
+
+                        if (lowmemorymode == true)
+                        {
+                           
+                       
+                            dataGridView4.DataSource = dta;
+                  
+                        }
+
                         contextMenuStrip3.Enabled = true;
                         toolStripMenuItem3.Enabled = true;
+
 
 
 
@@ -3803,7 +4539,7 @@ public string sql10 =
 
 
                         if (dta.Rows.Count > 0)
-                       {
+                        {
                             dataGridView4.ColumnHeadersVisible = true;
                             contextMenuStrip3.Enabled = true;
                             toolStripMenuItem3.Enabled = true;
@@ -3816,9 +4552,12 @@ public string sql10 =
 
                     if (dta is null)
                     {
-                        this.dataGridView4.ColumnHeadersVisible = false;
-                        this.dataGridView5.ColumnHeadersVisible = false;
-                        this.dataGridView6.ColumnHeadersVisible = false;
+                        if (lowmemorymode == true)
+                        {
+                            this.dataGridView4.ColumnHeadersVisible = false;
+                            this.dataGridView5.ColumnHeadersVisible = false;
+                            this.dataGridView6.ColumnHeadersVisible = false;
+                        }
                         button3.Enabled = false;
                         textBox14.Visible = true;
                         textBox14.Text = "No Results." + changederror;
@@ -3827,18 +4566,21 @@ public string sql10 =
 
                     if (busy == true && dataGridView4.Visible == true)
                     {
-                        this.dataGridView4.ColumnHeadersVisible = false;
-                        this.dataGridView5.ColumnHeadersVisible = false;
-                        this.dataGridView6.ColumnHeadersVisible = false;
+                        if (lowmemorymode == true)
+                        {
+                            this.dataGridView4.ColumnHeadersVisible = false;
+                            this.dataGridView5.ColumnHeadersVisible = false;
+                            this.dataGridView6.ColumnHeadersVisible = false;
+                        }
                         button3.Enabled = false;
-                    //    contextMenuStrip1.Enabled = false;
-                    //    toolStripMenuItem1.Enabled = false;
-                    //    toolStripMenuItem9.Enabled = false;
-                    //    toolStripMenuItem10.Enabled = false;
-                    //    toolStripMenuItem11.Enabled = false;
-                    //    toolStripMenuItem12.Enabled = false;
-                    //    contextMenuStrip2.Enabled = false;
-                    //    toolStripMenuItem2.Enabled = false;
+                        //    contextMenuStrip1.Enabled = false;
+                        //    toolStripMenuItem1.Enabled = false;
+                        //    toolStripMenuItem9.Enabled = false;
+                        //    toolStripMenuItem10.Enabled = false;
+                        //    toolStripMenuItem11.Enabled = false;
+                        //    toolStripMenuItem12.Enabled = false;
+                        //    contextMenuStrip2.Enabled = false;
+                        //    toolStripMenuItem2.Enabled = false;
                     }
 
 
@@ -3851,14 +4593,14 @@ public string sql10 =
                         dataGridView4.ScrollBars = ScrollBars.None;
                         dataGridView4.ColumnHeadersVisible = false;
                         busy = false;
-                        
+
                     }
 
 
                     if (dta != null && datacleared == false && dta.Rows.Count == 0)
                     {
-                        
-                        
+
+
                         dataGridView4.Visible = false;
                         dataGridView4.ScrollBars = ScrollBars.None;
                         dataGridView4.ColumnHeadersVisible = false;
@@ -3873,9 +4615,9 @@ public string sql10 =
                 }
 
                 dataGridView6.ResumeLayout();
-            
+
             }
-            
+
         }
 
         private void groupBox8_Enter(object sender, EventArgs e)
@@ -3936,7 +4678,7 @@ public string sql10 =
             string wrd = richTextBox1.SelectedText.ToString();
 
 
-  
+
 
             if (!beforetext.Contains("\n"))
             {
@@ -4101,8 +4843,8 @@ public string sql10 =
             catch (Exception ex)
             {
                 richTextBox1.Select(caretposition, 1);
-                MessageBox.Show("Suggestions failed to initialise.", "Error", MessageBoxButtons.OK,MessageBoxIcon.Error);
-                
+                MessageBox.Show("Suggestions failed to initialise.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             }
 
 
@@ -4152,7 +4894,7 @@ public string sql10 =
 
             }
 
-    
+
 
 
             if (e.KeyData == Keys.Enter)
@@ -4342,14 +5084,14 @@ public string sql10 =
             index = richTextBox2.Find(findText, index, RichTextBoxFinds.WholeWord);
             if (index > -1)
             {
-
+                colouring = true;
                 richTextBox2.Select(positionOfcarett, -findText.Length);
                 richTextBox2.SelectionColor = Color.Blue;
                 richTextBox2.DeselectAll();
                 richTextBox2.SelectionLength = 0;
                 richTextBox2.ForeColor = Color.Black;
                 richTextBox2.SelectionStart = positionOfcarett;
-
+                colouring = false;
 
 
                 index++;
@@ -4467,13 +5209,13 @@ public string sql10 =
 
             if (e.KeyCode == Keys.Back)
             {
-                len = len -2;
+                len = len - 2;
             }
 
             if (len > -1)
             {
                 richTextBox4.Enabled = true;
-               
+
             }
 
             if (len <= -1)
@@ -4526,7 +5268,7 @@ public string sql10 =
 
             if (e.KeyCode == Keys.F5 && busy == false)
             {
-                
+
                 dataGridView6.DataSource = null;
                 dataGridView7.DataSource = null;
                 //richTextBox2.Enabled = false;
@@ -4625,11 +5367,11 @@ public string sql10 =
                 }
 
 
-                if ((
+                if (
 
-                   e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return || e.KeyCode == Keys.F5) &&
+                   //e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return || e.KeyCode == Keys.F5) &&
                    richTextBox2.TextLength > 1 &&
-                   f5pressed == false && inedit2 == true 
+                   f5pressed == false && inedit2 == true
                    )
                 {
 
@@ -4956,20 +5698,24 @@ public string sql10 =
             textBox10.Visible = false;
             dataGridView5.Visible = true;
 
-            this.dataGridView1.ColumnHeadersVisible = false;
-            this.dataGridView2.ColumnHeadersVisible = false;
-            this.dataGridView3.ColumnHeadersVisible = false;
-            this.dataGridView4.ColumnHeadersVisible = false;
-            this.dataGridView5.ColumnHeadersVisible = false;
-            this.dataGridView6.ColumnHeadersVisible = false;
-            this.dataGridView7.ColumnHeadersVisible = false;
-            this.dataGridView8.ColumnHeadersVisible = false;
+            if (lowmemorymode == true)
+            {
+                this.dataGridView1.ColumnHeadersVisible = false;
+                this.dataGridView2.ColumnHeadersVisible = false;
+                this.dataGridView3.ColumnHeadersVisible = false;
+                this.dataGridView4.ColumnHeadersVisible = false;
+                this.dataGridView5.ColumnHeadersVisible = false;
+                this.dataGridView6.ColumnHeadersVisible = false;
+                this.dataGridView7.ColumnHeadersVisible = false;
+                this.dataGridView8.ColumnHeadersVisible = false;
+            }
+
             button3.Enabled = false;
             button4.Enabled = false;
             button1.Enabled = false;
             button8.Enabled = false;
             //label18.Visible = true;
-           
+
             //textBox11.Text = "No Results.";
             //label14.Visible = false;
             button2.Enabled = false;
@@ -4993,27 +5739,27 @@ public string sql10 =
 
 
 
-           
-                if (busy == true)
-                {
-                    workerbusy(sender, e);
-                    return;
-                }
 
-                if (busy != true)
-                {
-                    try
-                    {
-                        backgroundWorker5.RunWorkerAsync();
-                        
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    }
-                }
+            if (busy == true)
+            {
+                workerbusy(sender, e);
+                return;
+            }
 
-            
+            if (busy != true)
+            {
+                try
+                {
+                    backgroundWorker5.RunWorkerAsync();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
+
+
 
 
         }
@@ -5021,8 +5767,39 @@ public string sql10 =
 
         private void backgroundWorker5_DoWork(object sender, DoWorkEventArgs e)
         {
+            if (lowmemorymode == true)
+            {
+                if (dta is not null)
+                {
+                    dta.Clear();
+                }
+
+                if (dta2 is not null)
+                {
+                    dta2.Clear();
+                }
+
+                dta = null;
+                dta2 = null;
+            }
+
+
             BeginInvoke((MethodInvoker)delegate
             {
+                {
+
+                    if (lowmemorymode == true)
+                    {
+                        dataGridView1.DataSource = null;
+                        dataGridView2.DataSource = null;
+                        dataGridView3.DataSource = null;
+                        dataGridView4.DataSource = null;
+                        dataGridView5.DataSource = null;
+                        dataGridView6.DataSource = null;
+                        dataGridView7.DataSource = null;
+                        dataGridView8.DataSource = null;
+                    }
+                }
                 this.Text = "SQL Tools - WORKING...";
             });
             //errormessage = "";
@@ -5051,7 +5828,7 @@ public string sql10 =
 
             BeginInvoke((MethodInvoker)delegate
             {
-                
+
                 groupBox8.Text = "Results";
                 textBox9.Visible = false;
             });
@@ -5169,7 +5946,7 @@ public string sql10 =
                                         }
 
                                     }
-                                    
+
                                 }
 
 
@@ -5265,8 +6042,8 @@ public string sql10 =
 
                                 }
 
-                                
-                            } 
+
+                            }
 
                             catch (Exception ex)
 
@@ -5292,7 +6069,7 @@ public string sql10 =
                     }
                     catch (Exception ex)
                     {
-                        errormessage = Environment.NewLine+"Please enter valid connection details.";
+                        errormessage = Environment.NewLine + "Please enter valid connection details.";
                         //MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
 
                         BeginInvoke((MethodInvoker)delegate
@@ -5302,7 +6079,7 @@ public string sql10 =
                             dataGridView7.Rows.Clear();
                             //textBox9.Visible = true;
                             //textBox9.Text = msg;
-                            groupBox8.Text = "Error";
+                            //groupBox8.Text = "Error";
                             datacleared = false;
                         });
                     }
@@ -5316,9 +6093,13 @@ public string sql10 =
         {
             if (dataGridView4.DataSource is null)
             {
-                dataGridView4.ColumnHeadersVisible = false;
-                this.dataGridView5.ColumnHeadersVisible = false;
-                this.dataGridView6.ColumnHeadersVisible = false;
+
+                if (lowmemorymode == true)
+                {
+                    dataGridView4.ColumnHeadersVisible = false;
+                    this.dataGridView5.ColumnHeadersVisible = false;
+                    this.dataGridView6.ColumnHeadersVisible = false;
+                }
                 dataGridView4.ReadOnly = true;
                 dataGridView4.AllowUserToAddRows = false;
                 dataGridView4.ScrollBars = ScrollBars.None;
@@ -5377,10 +6158,31 @@ public string sql10 =
                         toolStripMenuItem12.Enabled = true;
                         dataGridView5.ScrollBars = ScrollBars.Both;
                         dta = dta.Copy();
+
                         dataGridView5.DataSource = null;
                         dataGridView5.Refresh();
-                        dataGridView5.DataSource = dta;
-                        
+
+                        if (lowmemorymode == false)
+                        {
+                            dtm5 = dta.Copy();
+                        }
+
+                        if (lowmemorymode == false)
+                        {
+                            dataGridView5.DataSource = dtm5;
+                        }
+
+                        if (lowmemorymode == true)
+                        {
+
+                           
+                            dataGridView5.DataSource = dta;
+
+                        }
+
+
+                
+
                         groupBox11.Text = "Results";
                         groupBox12.Text = "Results";
 
@@ -5391,26 +6193,26 @@ public string sql10 =
                             dataGridView5.ScrollBars = ScrollBars.None;
                             //textBox10.Visible = false;
                             textBox10.Visible = true;
-                            textBox10.Text = Environment.NewLine+ changederror;
+                            textBox10.Text = Environment.NewLine + changederror;
                         }
 
 
                         if (dta.Rows.Count > 0)
                         {
                             textBox10.Visible = false;
-                            
+
                         }
 
                     }
 
                     if (dta is null)
                     {
-                        
+
                         this.dataGridView5.ColumnHeadersVisible = false;
                         this.dataGridView6.ColumnHeadersVisible = false;
                         button3.Enabled = false;
                         textBox10.Visible = true;
-                        textBox10.Text = Environment.NewLine+ changederror;
+                        textBox10.Text = Environment.NewLine + changederror;
                     }
 
                     if (busy == true)
@@ -5896,14 +6698,14 @@ public string sql10 =
             index = richTextBox4.Find(findText, index, RichTextBoxFinds.WholeWord);
             if (index > -1)
             {
-
+                colouring = true;
                 richTextBox4.Select(positionOfcarett, -findText.Length);
                 richTextBox4.SelectionColor = Color.Blue;
                 richTextBox4.DeselectAll();
                 richTextBox4.SelectionLength = 0;
                 richTextBox4.ForeColor = Color.Black;
                 richTextBox4.SelectionStart = positionOfcarett;
-
+                colouring = false;
 
 
                 index++;
@@ -5976,6 +6778,13 @@ public string sql10 =
 
         private void richTextBox4_KeyDown3(object sender, KeyEventArgs e)
         {
+
+            //if (colouring == true)
+            //{
+            //    e.Handled = true;
+            //    string hold = e.ToString();
+            //    richTextBox4.Text = richTextBox4 + hold;
+            //}
 
             if (e.KeyCode == Keys.Back)
             {
@@ -6056,13 +6865,13 @@ public string sql10 =
 
             if (e.KeyCode == Keys.F5 && busy == false)
             {
-                
+
                 dataGridView6.DataSource = null;
                 dataGridView7.DataSource = null;
                 richTextBox2.Enabled = false;
                 richTextBox4.Enabled = false;
                 richTextBox5_KeyDowns2(sender, e);
-                tabControl3.SelectedTab = tabPage9;
+                tabControl3.SelectedTab = tabPage10;
 
 
             }
@@ -6158,9 +6967,9 @@ public string sql10 =
                 }
 
 
-                if ((
+                if (
 
-                   e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return || e.KeyCode == Keys.F5) &&
+                   //e.KeyCode != Keys.Space || //e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return || e.KeyCode == Keys.F5) &&
                    richTextBox4.TextLength > 1 &&
                    f5pressed == false && inedit3 == true
                    )
@@ -6459,6 +7268,7 @@ public string sql10 =
 
                         if (procwords.Contains(lwup))
                         {
+                            colouring = true;
                             laswor = seclas;
                             dotextstuff3(sender, e);
 
@@ -6476,10 +7286,10 @@ public string sql10 =
         }
 
 
-        private void richTextBox5_KeyDowns2 (object sender, EventArgs e)
+        private void richTextBox5_KeyDowns2(object sender, EventArgs e)
 
         {
-            
+
 
 
             textBox9.Visible = false;
@@ -6503,14 +7313,19 @@ public string sql10 =
                     datacleared = true;
                 }
             }
-            this.dataGridView1.ColumnHeadersVisible = false;
-            this.dataGridView2.ColumnHeadersVisible = false;
-            this.dataGridView3.ColumnHeadersVisible = false;
-            this.dataGridView4.ColumnHeadersVisible = false;
-            this.dataGridView5.ColumnHeadersVisible = false;
-            this.dataGridView6.ColumnHeadersVisible = false;
-            this.dataGridView7.ColumnHeadersVisible = false;
-            this.dataGridView8.ColumnHeadersVisible = false;
+
+            if (lowmemorymode == true)
+            {
+
+                this.dataGridView1.ColumnHeadersVisible = false;
+                this.dataGridView2.ColumnHeadersVisible = false;
+                this.dataGridView3.ColumnHeadersVisible = false;
+                this.dataGridView4.ColumnHeadersVisible = false;
+                this.dataGridView5.ColumnHeadersVisible = false;
+                this.dataGridView6.ColumnHeadersVisible = false;
+                this.dataGridView7.ColumnHeadersVisible = false;
+                this.dataGridView8.ColumnHeadersVisible = false;
+            }
 
             dataGridView6.Rows.Clear();
             dataGridView7.Rows.Clear();
@@ -6519,7 +7334,7 @@ public string sql10 =
             button4.Enabled = false;
             button1.Enabled = false;
             button8.Enabled = false;
-           
+
             //textBox11.Text = "No Results.";
             //label14.Visible = false;
             button2.Enabled = false;
@@ -6552,7 +7367,7 @@ public string sql10 =
                 try
                 {
                     backgroundWorker6.RunWorkerAsync();
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -6567,8 +7382,38 @@ public string sql10 =
 
         private void backgroundWorker6_DoWork(object sender, DoWorkEventArgs e)
         {
+            if (lowmemorymode == true)
+            {
+                if (dta is not null)
+                {
+                    dta.Clear();
+                }
+
+                if (dta2 is not null)
+                {
+                    dta2.Clear();
+                }
+
+                dta = null;
+                dta2 = null;
+            }
+
             BeginInvoke((MethodInvoker)delegate
             {
+                {
+
+                    if (lowmemorymode == true)
+                    {
+                        dataGridView1.DataSource = null;
+                        dataGridView2.DataSource = null;
+                        dataGridView3.DataSource = null;
+                        dataGridView4.DataSource = null;
+                        dataGridView5.DataSource = null;
+                        dataGridView6.DataSource = null;
+                        dataGridView7.DataSource = null;
+                        dataGridView8.DataSource = null;
+                    }
+                }
                 this.Text = "SQL Tools - WORKING...";
             });
             //busy = true;
@@ -6684,7 +7529,7 @@ public string sql10 =
 
                             adapter.SelectCommand = cmd1;
 
-                            
+
 
                             DataTable ds = new DataTable();
                             adapter.Fill(ds);
@@ -6728,7 +7573,7 @@ public string sql10 =
                                 BeginInvoke((MethodInvoker)delegate
                                 {
 
-                                   
+
                                 });
                             }
 
@@ -6737,12 +7582,12 @@ public string sql10 =
 
                             foreach (DataColumn dc in ds.Columns)
                             {
-                                
-                                
+
+
 
                                 foreach (DataRow dr in ds.Rows)
                                 {
-                                   
+
 
                                     {
 
@@ -6755,15 +7600,15 @@ public string sql10 =
 
 
                                     }
-                                    
+
                                 }
 
-                               
+
 
                                 return;
                             }
 
-                            
+
 
                         }
 
@@ -6784,11 +7629,11 @@ public string sql10 =
 
                             var msg = ex.Message;
 
-                     
-                                safesqlexceptionhandler(sender, e);
+
+                            safesqlexceptionhandler(sender, e);
 
                             busy = false;
-                            
+
                         }
 
                     }
@@ -6797,7 +7642,7 @@ public string sql10 =
 
                     finally
                     {
-                        
+
                         dataGridView5.Rows.Clear();
                         dataGridView6.Rows.Clear();
                         dataGridView7.Rows.Clear();
@@ -6836,7 +7681,7 @@ public string sql10 =
                 {
                     BeginInvoke((MethodInvoker)delegate
                     {
-                
+
                     });
                 }
 
@@ -6927,12 +7772,12 @@ public string sql10 =
                             {
                                 BeginInvoke((MethodInvoker)delegate
                                 {
-                                
+
                                 });
                             }
 
 
-                                if (dta2 != null)
+                            if (dta2 != null)
                             {
                                 dta2.Clear();
 
@@ -6970,14 +7815,14 @@ public string sql10 =
 
 
                                     }
-                                    
+
                                 }
-                                
+
                                 return;
                             }
 
                         }
-                       
+
                     }
                     catch (SqlException ex2)
 
@@ -7046,7 +7891,7 @@ public string sql10 =
 
                 if (dta != null)
                 {
-             
+
 
                 }
             });
@@ -7158,12 +8003,12 @@ public string sql10 =
                                 }
                                 datacleared = false;
                             }
-                            
+
                             //return;
                         }
 
                     }
-                    
+
                 }
                 catch (SqlException ex2)
 
@@ -7191,16 +8036,16 @@ public string sql10 =
                 }
 
 
-           
 
-          
+
+
 
                 finally
                 {
                     if (busy == true)
                     {
                         workerbusy(sender, e);
-                        
+
                     }
                     dataGridView5.Rows.Clear();
                     dataGridView6.Rows.Clear();
@@ -7221,7 +8066,10 @@ public string sql10 =
         {
             if (dataGridView4.DataSource is null)
             {
-                dataGridView4.ColumnHeadersVisible = false;
+                if (lowmemorymode == true)
+                {
+                    dataGridView4.ColumnHeadersVisible = false;
+                }
                 dataGridView4.ReadOnly = true;
                 dataGridView4.AllowUserToAddRows = false;
                 dataGridView4.ScrollBars = ScrollBars.None;
@@ -7246,14 +8094,29 @@ public string sql10 =
                     });
 
 
+                    string ds;
+
+                    if (lowmemorymode == true)
+                    {
+                        ds = "dta";
+                    }
+
+                    if (lowmemorymode == true)
+                    {
+                        ds = "dtm6";
+                    }
+
                     //dataGridView5.DataSource = null;
                     //dataGridView6.DataSource = null;
 
                     dataGridView6.Rows.Clear();
                     dataGridView7.Rows.Clear();
 
-                    dataGridView6.ColumnHeadersVisible = false;
-                    dataGridView7.ColumnHeadersVisible = false;
+                    if (lowmemorymode == true)
+                    {
+                        dataGridView6.ColumnHeadersVisible = false;
+                        dataGridView7.ColumnHeadersVisible = false;
+                    }
 
                     f5pressed = false;
                     ctp = "ctp4";
@@ -7264,20 +8127,23 @@ public string sql10 =
                     button4.Enabled = true;
                     button8.Enabled = true;
 
-                    textBox14.Visible = true;
+                    if (lowmemorymode == true)
+                    {
+                        textBox14.Visible = true;
+                    }
                     textBox14.Text = "";
 
                     busy = false;
 
                     if (dataGridView6 == null)
                     {
-                        
+
                         contextMenuStrip5.Enabled = false;
                     }
 
                     if (dataGridView7 == null)
                     {
-                        
+
                         contextMenuStrip4.Enabled = false;
                     }
 
@@ -7290,9 +8156,15 @@ public string sql10 =
                     cmd.Close();
                     if (dta != null)
                     {
-                        
+
 
                         dta = dta.Copy();
+
+                        if (lowmemorymode == false)
+                        {
+                            dtm6 = dta.Copy();
+                        }
+
                         dataGridView6.DataBindings.Clear();
                         dataGridView7.DataBindings.Clear();
 
@@ -7301,26 +8173,41 @@ public string sql10 =
 
 
                         dataGridView7.DataSource = null;
-                        dataGridView7.Refresh();
-                        dataGridView7.DataSource = dta;
+
+                        if (lowmemorymode == true)
+                        {
+                            dataGridView7.Refresh();
+                            dataGridView7.DataSource = dta;
+                        }
+
+                        if (lowmemorymode == false)
+                        {
+                            dataGridView7.Refresh();
+                            dataGridView7.DataSource = dtm6;
+                        }
+
                         //dataGridView7.ScrollBars = ScrollBars.Both;
                         dataGridView7.Visible = true;
                         contextMenuStrip4.Enabled = true;
                         toolStripMenuItem3.Enabled = true;
                         toolStripMenuItem3.Visible = true;
-                        
+
 
 
                         if (dta.Rows.Count < 1 & errormessage == null)
                         {
                             datacleared = false;
-                            
+
                             dataGridView7.ScrollBars = ScrollBars.None;
                             textBox9.Visible = true;
-                            textBox9.Text = "No Results"+ changederror;
+                            textBox9.Text = "No Results" + changederror;
                             this.dataGridView7.ColumnHeadersVisible = false;
-                            dataGridView7.DataSource = null;
-                            dataGridView7.Refresh();
+
+                            if (lowmemorymode == true)
+                            {
+                                dataGridView7.DataSource = null;
+                                dataGridView7.Refresh();
+                            }
 
                         }
 
@@ -7342,11 +8229,15 @@ public string sql10 =
                             button3.Enabled = false;
                             textBox9.Visible = true;
                             textBox9.Text = "No Results.";
-                            dataGridView7.DataSource = null;
-                            dataGridView7.Refresh();
-                            datacleared = true;
+                           
+                                dataGridView7.DataSource = null;
+                                dataGridView7.Refresh();
+                                datacleared = true;
+                            
+
+                      
                             textBox9.Visible = false;
-                            textBox9.Text = Environment.NewLine+errormessage;
+                            textBox9.Text = Environment.NewLine + errormessage;
 
 
                         }
@@ -7385,7 +8276,7 @@ public string sql10 =
                             dataGridView7.DataSource = null;
                             dataGridView7.Refresh();
                             textBox9.Visible = true;
-                            textBox9.Text = "No Results."+ changederror;
+                            textBox9.Text = "No Results." + changederror;
                             textBox10.Visible = true;
                             textBox10.Text = "No Results." + changederror;
                         }
@@ -7400,12 +8291,27 @@ public string sql10 =
 
                         dataGridView6.ScrollBars = ScrollBars.Both;
                         dta2 = dta2.Copy();
+
+                        if (lowmemorymode == false)
+                        {
+                            dtm7 = dta2.Copy();
+                        }
+
                         dataGridView6.DataSource = null;
                         dataGridView6.Refresh();
-                        dataGridView6.DataSource = dta2;
-                        
+
+                        if (lowmemorymode == true)
+                        {
+                            dataGridView6.DataSource = dta2;
+                        }
+
+                        if (lowmemorymode == false)
+                        {
+                            dataGridView6.DataSource = dtm7;
+                        }
+
                         dataGridView6.Visible = true;
-                        
+
 
                         if (dta2.Rows.Count < 1 & errormessage == "")
                         {
@@ -7435,7 +8341,7 @@ public string sql10 =
                             this.dataGridView6.ColumnHeadersVisible = false;
                             button3.Enabled = false;
                             textBox10.Visible = true;
-                            textBox10.Text = "No Results."+ changederror;
+                            textBox10.Text = "No Results." + changederror;
                             dataGridView6.DataSource = null;
                             dataGridView6.Refresh();
                         }
@@ -7463,7 +8369,7 @@ public string sql10 =
                             this.dataGridView6.ColumnHeadersVisible = false;
                             button3.Enabled = false;
                             textBox10.Visible = true;
-                            textBox10.Text = "No Results."+ changederror;
+                            textBox10.Text = "No Results." + changederror;
 
                         }
 
@@ -7487,7 +8393,7 @@ public string sql10 =
 
 
 
-                    
+
                     richTextBox4.Enabled = true;
                     richTextBox2.Enabled = true;
                     errormessage = "";
@@ -7506,7 +8412,19 @@ public string sql10 =
                         busy = false;
                     }
 
-                    dataGridView6.DataSource = dta2;
+                    if (lowmemorymode == true)
+                    {
+
+                        dataGridView6.DataSource = dta2;
+                    }
+
+
+                    if (lowmemorymode == false)
+                    {
+
+                        dataGridView6.DataSource = dtm7;
+                    }
+
                     //dataGridView6.ReadOnly = false;
 
 
@@ -7786,7 +8704,7 @@ public string sql10 =
 
             }
 
-  
+
 
 
             if (e.KeyData == Keys.Enter)
@@ -7974,19 +8892,19 @@ public string sql10 =
             }
 
 
-            
 
-                if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape)
-                {
-                    listBox2.Hide();
-                    richTextBox4.SelectionStart = caretposition;
-                    richTextBox4.DeselectAll();
-                    richTextBox4.Focus();
-                    richTextBox4.Refresh();
 
-                }
+            if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape)
+            {
+                listBox2.Hide();
+                richTextBox4.SelectionStart = caretposition;
+                richTextBox4.DeselectAll();
+                richTextBox4.Focus();
+                richTextBox4.Refresh();
 
-            
+            }
+
+
         }
 
 
@@ -8974,7 +9892,7 @@ public string sql10 =
             dataGridView6.SelectionMode = DataGridViewSelectionMode.CellSelect;
             dataGridView4.SelectionMode = DataGridViewSelectionMode.CellSelect;
 
-     
+
         }
 
         void safesqlexceptionhandler(object sender, EventArgs e)
@@ -8985,7 +9903,7 @@ public string sql10 =
                 dataGridView6.Rows.Clear();
                 dataGridView7.Rows.Clear();
 
-                var errorrepl = ""; 
+                var errorrepl = "";
 
                 if (errormessage is not null)
                 {
@@ -8997,13 +9915,13 @@ public string sql10 =
                     changederror = "";
                 }
 
-                
+
                 textBox9.Visible = true;
                 textBox9.Text = errorrepl;
                 textBox10.Visible = true;
-                textBox10.Text = errorrepl;  
-                groupBox11.Text = "Error";
-                groupBox12.Text = "Error";
+                textBox10.Text = errorrepl;
+                //groupBox11.Text = "Error";
+                //groupBox12.Text = "Error";
 
 
 
@@ -9029,8 +9947,10 @@ public string sql10 =
 
             //if (dataGridView3.Rows.Count < 1 || dataGridView3.Visible == false)
             //{
-                button7.Enabled = false;
-                button7.Text = "Search Term History to Clipboard";
+            button7.Enabled = false;
+            checkBox2.Enabled = false;
+            checkBox2.BackColor = Color.Transparent;
+            button7.Text = "Results to Clipboard";
             //}
 
         }
@@ -9058,11 +9978,11 @@ public string sql10 =
                 if (holding != null)
                 {
 
-                    richTextBox1.Text = ("select distinct("+holding.ToString()+") from "+holding2.ToString());
+                    richTextBox1.Text = ("select distinct(" + holding.ToString() + ") from " + holding2.ToString());
                     tabControl1.SelectedIndex = 4;
                     tabControl2.SelectedIndex = 0;
                     richTextBox1_KeyDowns(sender, e);
-                
+
                 }
             }
 
@@ -9080,12 +10000,12 @@ public string sql10 =
 
                 if (dataGridView1.Columns[0].Name == "Column Name")
                 {
-            
+
                     tabindex = 1;
                 }
                 if (dataGridView1.Columns[1].Name == "Column Name")
                 {
-                 
+
                     tabindex = 0;
                 }
                 var holding2 = dataGridView1.SelectedCells[tabindex].Value;
@@ -9113,7 +10033,7 @@ public string sql10 =
 
 
         {
-           
+
 
             int keytype = dataGridView1.Columns.IndexOf(dataGridView1.Columns["Constraint Type"]);
             int datatype = dataGridView1.Columns.IndexOf(dataGridView1.Columns["Data Type"]);
@@ -9168,18 +10088,21 @@ public string sql10 =
             this.label17.Text = "Not Connected";
             this.label17.TextAlign = ContentAlignment.TopRight;
             this.label17.ForeColor = System.Drawing.Color.Black;
-            this.dataGridView1.ColumnHeadersVisible = false;
-            this.dataGridView2.ColumnHeadersVisible = false;
-            this.dataGridView3.ColumnHeadersVisible = false;
-            this.dataGridView4.ColumnHeadersVisible = false;
-            this.dataGridView5.ColumnHeadersVisible = false;
-            this.dataGridView6.ColumnHeadersVisible = false;
-            this.dataGridView7.ColumnHeadersVisible = false;
-            this.dataGridView8.ColumnHeadersVisible = false;
+            if (lowmemorymode == true)
+            {
+                this.dataGridView1.ColumnHeadersVisible = false;
+                this.dataGridView2.ColumnHeadersVisible = false;
+                this.dataGridView3.ColumnHeadersVisible = false;
+                this.dataGridView4.ColumnHeadersVisible = false;
+                this.dataGridView5.ColumnHeadersVisible = false;
+                this.dataGridView6.ColumnHeadersVisible = false;
+                this.dataGridView7.ColumnHeadersVisible = false;
+                this.dataGridView8.ColumnHeadersVisible = false;
+            }
             //CopyCell.Enabled = false;
             //CopyColumn.Enabled = false;
             //CopyRow.Enabled = false;
-            button9.Text = "Copy Selected Definition to Clipboard";
+            button9.Text = "Results to Clipboard";
 
             sqlcomm = "";
             endpressed = false;
@@ -9218,10 +10141,37 @@ public string sql10 =
         {
             {
                 {
+                    if (lowmemorymode == true)
+                    {
+                        if (dta is not null)
+                        {
+                            dta.Clear();
+                        }
+
+                        if (dta2 is not null)
+                        {
+                            dta2.Clear();
+                        }
+
+                        dta = null;
+                        dta2 = null;
+                    }
 
 
                     BeginInvoke((MethodInvoker)delegate
                     {
+
+                        if (lowmemorymode == true)
+                        {
+                            dataGridView1.DataSource = null;
+                            dataGridView2.DataSource = null;
+                            dataGridView3.DataSource = null;
+                            dataGridView4.DataSource = null;
+                            dataGridView5.DataSource = null;
+                            dataGridView6.DataSource = null;
+                            dataGridView7.DataSource = null;
+                            dataGridView8.DataSource = null;
+                        }
                         this.Text = "SQL Tools - WORKING...";
                     });
 
@@ -9245,10 +10195,18 @@ public string sql10 =
                         {
                             SqlConnection cmd = new SqlConnection(connex);
 
-                            if (textBox15.Text == "")
+                            if (definitionmode == "Name")
                             {
 
-                               
+                                BeginInvoke((MethodInvoker)delegate
+                                {
+                                    copyalldefnames.Enabled = false;
+
+                                });
+                                if (textBox15.Text == "")
+                                {
+
+
                                     if (radioButton16.Checked == true)
 
                                     {
@@ -9305,139 +10263,347 @@ public string sql10 =
 
                                     if (radioButton17.Checked == true)
                                     {
-                                    definitionsearch = "and v.type = 'FN'";
+                                        definitionsearch = "and v.type = 'FN'";
                                     }
                                 }
 
 
-                            if (textBox15.Text != "" && radioButton6.Checked == true)
-                            {
-
-
-                                if (radioButton16.Checked == true)
-
+                                if (textBox15.Text != "" && radioButton6.Checked == true)
                                 {
-                                    definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U', 'FN') and v.[name] = '"+textBox15.Text+"'";
+
+
+                                    if (radioButton16.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U', 'FN') and v.[name] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton10.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'AF' and v.[name] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton15.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'X' and v.[name] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton11.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'IF' and v.[name] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton12.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'P' and v.[name] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton13.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'TF' and v.[name] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton9.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'TR' and v.[name] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton8.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'U' and v.[name] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton14.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'V' and v.[name] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton17.Checked == true)
+                                    {
+                                        definitionsearch = "and v.type = 'FN' and v.[name] = '" + textBox15.Text + "'";
+                                    }
+
                                 }
 
-                                if (radioButton10.Checked == true)
-
+                                if (textBox15.Text != "" && radioButton7.Checked == true)
                                 {
-                                    definitionsearch = "and v.type = 'AF' and v.[name] = '" + textBox15.Text + "'";
+
+
+                                    if (radioButton16.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U', 'FN') and v.[name] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton10.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'AF' and v.[name] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton15.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'X' and v.[name] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton11.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'IF' and v.[name] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton12.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'P' and v.[name] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton13.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'TF' and v.[name] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton9.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'TR' and v.[name] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton8.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'U' and v.[name] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton14.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'V' and v.[name] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton17.Checked == true)
+                                    {
+                                        definitionsearch = "and v.type = 'FN' and v.[name] like '%" + textBox15.Text + "%'";
+                                    }
+
                                 }
-
-                                if (radioButton15.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'X' and v.[name] = '" + textBox15.Text + "'";
-                                }
-
-                                if (radioButton11.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'IF' and v.[name] = '" + textBox15.Text + "'";
-                                }
-
-                                if (radioButton12.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'P' and v.[name] = '" + textBox15.Text + "'";
-                                }
-
-                                if (radioButton13.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'TF' and v.[name] = '"+textBox15.Text+"'";
-                                }
-
-                                if (radioButton9.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'TR' and v.[name] = '" + textBox15.Text + "'";
-                                }
-
-                                if (radioButton8.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'U' and v.[name] = '" + textBox15.Text + "'";
-                                }
-
-                                if (radioButton14.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'V' and v.[name] = '" + textBox15.Text + "'";
-                                }
-
-                                if (radioButton17.Checked == true)
-                                {
-                                    definitionsearch = "and v.type = 'FN' and v.[name] = '" + textBox15.Text + "'";
-                                }
-
                             }
 
-                            if (textBox15.Text != "" && radioButton7.Checked == true)
+                            if (definitionmode == "Definition")
                             {
-
-
-                                if (radioButton16.Checked == true)
-
+                                BeginInvoke((MethodInvoker)delegate
                                 {
-                                    definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U', 'FN') and v.[name] like '%" + textBox15.Text + "%'";
+
+                                    copyalldefnames.Enabled = true;
+
+                                    lastdefinitionsearched = textBox15.Text;
+
+                                });
+
+                                if (textBox15.Text == "")
+                                {
+
+
+                                    if (radioButton16.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U', 'FN')";
+                                    }
+
+                                    if (radioButton10.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'AF'";
+                                    }
+
+                                    if (radioButton15.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'X'";
+                                    }
+
+                                    if (radioButton11.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'IF'";
+                                    }
+
+                                    if (radioButton12.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'P'";
+                                    }
+
+                                    if (radioButton13.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'TF'";
+                                    }
+
+                                    if (radioButton9.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'TR'";
+                                    }
+
+                                    if (radioButton8.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'U'";
+                                    }
+
+                                    if (radioButton14.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'V'";
+                                    }
+
+                                    if (radioButton17.Checked == true)
+                                    {
+                                        definitionsearch = "and v.type = 'FN'";
+                                    }
                                 }
 
-                                if (radioButton10.Checked == true)
 
+                                if (textBox15.Text != "" && radioButton6.Checked == true)
                                 {
-                                    definitionsearch = "and v.type = 'AF' and v.[name] like '%" + textBox15.Text + "%'";
+
+
+                                    if (radioButton16.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U', 'FN') and s.[definition] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton10.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'AF' and s.[definition] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton15.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'X' and s.[definition] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton11.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'IF' and s.[definition] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton12.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'P' and s.[definition] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton13.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'TF' and s.[definition] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton9.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'TR' and s.[definition] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton8.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'U' and s.[definition] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton14.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'V' and s.[definition] = '" + textBox15.Text + "'";
+                                    }
+
+                                    if (radioButton17.Checked == true)
+                                    {
+                                        definitionsearch = "and v.type = 'FN' and s.[definition] = '" + textBox15.Text + "'";
+                                    }
+
                                 }
 
-                                if (radioButton15.Checked == true)
-
+                                if (textBox15.Text != "" && radioButton7.Checked == true)
                                 {
-                                    definitionsearch = "and v.type = 'X' and v.[name] like '%" + textBox15.Text + "%'";
+
+
+                                    if (radioButton16.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type in ('IF', 'P', 'AF', 'TR', 'TF', 'V', 'X', 'U', 'FN') and s.[definition] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton10.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'AF' and s.[definition] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton15.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'X' and s.[definition] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton11.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'IF' and s.[definition] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton12.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'P' and s.[definition] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton13.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'TF' and s.[definition] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton9.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'TR' and s.[definition] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton8.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'U' and s.[definition] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton14.Checked == true)
+
+                                    {
+                                        definitionsearch = "and v.type = 'V' and s.[definition] like '%" + textBox15.Text + "%'";
+                                    }
+
+                                    if (radioButton17.Checked == true)
+                                    {
+                                        definitionsearch = "and v.type = 'FN' and s.[definition] like '%" + textBox15.Text + "%'";
+                                    }
+
                                 }
-
-                                if (radioButton11.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'IF' and v.[name] like '%" + textBox15.Text + "%'";
-                                }
-
-                                if (radioButton12.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'P' and v.[name] like '%" + textBox15.Text + "%'";
-                                }
-
-                                if (radioButton13.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'TF' and v.[name] like '%" + textBox15.Text + "%'";
-                                }
-
-                                if (radioButton9.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'TR' and v.[name] like '%" + textBox15.Text + "%'";
-                                }
-
-                                if (radioButton8.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'U' and v.[name] like '%" + textBox15.Text + "%'";
-                                }
-
-                                if (radioButton14.Checked == true)
-
-                                {
-                                    definitionsearch = "and v.type = 'V' and v.[name] like '%" + textBox15.Text + "%'";
-                                }
-
-                                if (radioButton17.Checked == true)
-                                {
-                                    definitionsearch = "and v.type = 'FN' and v.[name] like '%" + textBox15.Text + "%'";
-                                }
-
                             }
 
                             try
@@ -9447,6 +10613,10 @@ public string sql10 =
                                 sqlcomm = sql9 + definitionsearch + sql10;
 
                                 SqlCommand cmd1 = new SqlCommand(sqlcomm, cmd);
+
+
+
+
                                 SqlDataAdapter adapter = new SqlDataAdapter();
                                 static void OpenAndSetArithAbort(SqlConnection cmd)
                                 {
@@ -9551,8 +10721,20 @@ public string sql10 =
                                     return;
 
                                 {
+
+
+
                                     string msg = ex.Message;
-                                    MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
+
+                                    if (msg.Contains("Incorrect syntax"))
+
+                                    {
+                                        MessageBox.Show("There is an issue with your syntax - please remove any disallowed SQL characters." + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
+                                    }
+
+                                    else
+
+                                        MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
 
                                 }
                             }
@@ -9565,7 +10747,8 @@ public string sql10 =
                         }
                         catch (Exception ex)
                         {
-                            string msg = "Please enter valid connection details.";
+                            string msg = //"Please enter valid connection details.";
+                                ex.ToString();
                             MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
                         }
                 }
@@ -9628,12 +10811,29 @@ public string sql10 =
                         contextMenuStrip3.Enabled = true;
                         toolStripMenuItem3.Enabled = true;
                         dta = dta.Copy();
-                        dataGridView8.DataSource = dta;
+
+                        if (lowmemorymode == false)
+                        {
+                            dtm8 = dta.Copy();
+                        
+                        }
+
+                        if (lowmemorymode == false)
+                        {
+                            dataGridView8.DataSource = dtm8;
+                        }
+
+                        if (lowmemorymode == true)
+                        {
+                            dataGridView8.DataSource = dta;
+                        }
+
+                       
                         this.dataGridView8.ColumnHeadersVisible = true;
                         textBox16.Visible = false;
                         textBox16.Text = "";
                         button9.Enabled = true;
-                        
+
 
 
 
@@ -9659,15 +10859,15 @@ public string sql10 =
                         button3.Enabled = false;
                         button9.Enabled = false;
                         button10.Enabled = false;
-                    //    contextMenuStrip1.Enabled = false;
-                    //    toolStripMenuItem9.Enabled = false;
-                    //    toolStripMenuItem10.Enabled = false;
-                    //    toolStripMenuItem1.Enabled = false;
-                    //    toolStripMenuItem10.Enabled = false;
-                    //    toolStripMenuItem11.Enabled = false;
-                    //    toolStripMenuItem12.Enabled = false;
-                    //    contextMenuStrip2.Enabled = false;
-                    //    toolStripMenuItem2.Enabled = false;
+                        //    contextMenuStrip1.Enabled = false;
+                        //    toolStripMenuItem9.Enabled = false;
+                        //    toolStripMenuItem10.Enabled = false;
+                        //    toolStripMenuItem1.Enabled = false;
+                        //    toolStripMenuItem10.Enabled = false;
+                        //    toolStripMenuItem11.Enabled = false;
+                        //    toolStripMenuItem12.Enabled = false;
+                        //    contextMenuStrip2.Enabled = false;
+                        //    toolStripMenuItem2.Enabled = false;
                     }
 
                 }
@@ -9678,7 +10878,7 @@ public string sql10 =
 
         private void checkdef(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)// && definitionmode == "Name")
             {
                 button8.PerformClick();
                 e.Handled = true;
@@ -9690,11 +10890,11 @@ public string sql10 =
         private void DefToClipboard(object sender, EventArgs e)
         {
 
-                button9.Enabled = false;
-                button10.Enabled = true;
-                button9.Text = "Copied to Clipboard";
+            button9.Enabled = false;
+            button10.Enabled = true;
+            button9.Text = "Copied to Clipboard";
 
-            
+
             int coldef = dataGridView8.Columns["Definition"].Index;
             int coltype = dataGridView8.Columns["Type"].Index;
             int colname = dataGridView8.Columns["Name"].Index;
@@ -9705,9 +10905,9 @@ public string sql10 =
             var namevalue = dataGridView8.Rows[row].Cells[colname].Value.ToString();
             var typevalue = dataGridView8.Rows[row].Cells[coltype].Value.ToString();
 
-            string topaste = namevalue.ToUpper() + " - " + typevalue + Environment.NewLine + "------------"+ Environment.NewLine+defvalue + Environment.NewLine + "------------";
+            string topaste = namevalue.ToUpper() + " - " + typevalue + Environment.NewLine + "------------" + Environment.NewLine + defvalue + Environment.NewLine + "------------";
             Clipboard.SetText(topaste);
-            
+
         }
 
 
@@ -9739,32 +10939,605 @@ public string sql10 =
             ClearClipboard(sender, e);
             button10.Enabled = false;
             button9.Enabled = true;
-            button9.Text = "Copy Selected Definition to Clipboard";
+            button9.Text = "Results to Clipboard";
         }
 
         private void TabChangeWarnings(object sender, EventArgs e)
         {
-
-
-
-
-            if (tooltipshown == false)
+            if (lowmemorymode == true)
             {
 
-                MessageBox.Show("Switching to a new tab will clear any results from other tabs." + Environment.NewLine + "Switching tabs won't stop any queries from running in the current tab.", "Before switching tabs...", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                tooltipshown = true;
+                if (tooltipshown == false)
+                {
+
+                    MessageBox.Show("'Low Memory Mode' is enabled. Therefore, switching to a new tab will clear any results from other tabs." + Environment.NewLine + "Switching tabs won't stop any queries from running in the current tab.", "Before switching tabs...", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    tooltipshown = true;
+
+                }
 
             }
 
 
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label13_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabPage8_Click(object sender, EventArgs e)
+        {
 
 
+        }
+
+        private void groupBox15_Enter(object sender, EventArgs e)
+        {
+            //here
+        }
+
+        private void radioButton19_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton18.Checked == true)
+            {
+                definitionmode = "Name";
+                //textBox15.Multiline = false;
+            }
+
+            if (radioButton19.Checked == true)
+            {
+                definitionmode = "Definition";
+                //textBox15.Multiline = true;
+            }
+        }
+
+        private void radioButton18_CheckedChanged(object sender, EventArgs e)
+        {
+            radioButton19_CheckedChanged(sender, e);
+        }
+
+        private void CopDefinitionList(object sender, EventArgs e)
+        {
+            string s = "Definition searched:" + Environment.NewLine + "'" + lastdefinitionsearched + "'" + Environment.NewLine + Environment.NewLine + "Results:" + Environment.NewLine;
+
+            int coldef = dataGridView8.Columns["Name"].Index;
+
+            foreach (DataGridViewRow dr in dataGridView8.Rows)
+            {
+                s += dr.Cells[coldef].Value + Environment.NewLine;
+            }
+
+            Clipboard.SetText(s);
+
+            button9.Enabled = false;
+            button10.Enabled = true;
+            button9.Text = "Copied to Clipboard";
+        }
+
+        private void CopyDefResults(object sender, EventArgs e)
+        {
+            string s = "";
+
+            int name = dataGridView8.Columns["Name"].Index;
+            int def = dataGridView8.Columns["Definition"].Index;
+            int type = dataGridView8.Columns["Type"].Index;
+
+            foreach (DataGridViewRow dr in dataGridView8.Rows)
+            {
+                s += dr.Cells[name].Value + "," + dr.Cells[type].Value + "," + dr.Cells[def].Value + Environment.NewLine+Environment.NewLine;
+            }
+
+            s = s.ToString().Substring(0, s.Length - 1);
+
+            Clipboard.SetText(s);
+
+            button9.Enabled = false;
+            button10.Enabled = true;
+            button9.Text = "Copied to Clipboard";
         }
 
 
 
 
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox2.Checked == true)
+            {
+                checkBox2.BackColor = Color.LightGreen;
+                checkBox2.Text = "Including SQL";
+            }
+
+            if (checkBox2.Checked == false)
+            {
+                checkBox2.BackColor = Color.IndianRed;
+                checkBox2.Text = "Excluding SQL";
+            }
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked == true)
+            {
+                comboBox1.Enabled = true;
+            }
+
+            if (checkBox1.Checked == false)
+            {
+                comboBox1.Enabled = false;
+            }
+        }
+
+
+        private void backgroundWorker8_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            {
+                if (lowmemorymode == true)
+                {
+                    if (dta is not null)
+                    {
+                        dta.Clear();
+                    }
+
+                    if (dta2 is not null)
+                    {
+                        dta2.Clear();
+                    }
+
+                    dta = null;
+                    dta2 = null;
+                }
+
+
+                if (tablenames is not null)
+                {
+                    tablenames.Clear();
+                }
+
+                //tablenames = null;
+
+                BeginInvoke((MethodInvoker)delegate
+                {
+
+                    this.Text = "SQL Tools - WORKING...";
+                });
+
+                if (radioButton1.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; username=", "; password=", "; Trusted_Connection=True;");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.ins).ToString();
+                }
+
+                else if (radioButton2.Checked == true)
+                {
+                    Form1 connectionstring = new Form1("Server=", "; Database=", "; User Id=", "; Password=", ";");
+                    connex = (connectionstring.s + textBox1.Text + connectionstring.d + textBox2.Text + connectionstring.u + textBox3.Text + connectionstring.p + textBox4.Text + connectionstring.ins).ToString();
+
+                }
+
+                BackgroundWorker worker = sender as BackgroundWorker;
+                if (worker != null)
+
+                    try
+                    {
+                        SqlConnection cmd = new SqlConnection(connex);
+
+
+                        try
+                        {
+
+
+                            sqlcomm = "select distinct(c.TABLE_NAME) from INFORMATION_SCHEMA.COLUMNS c";
+
+                            SqlCommand cmd1 = new SqlCommand(sqlcomm, cmd);
+
+                            SqlDataAdapter adapter = new SqlDataAdapter();
+                            static void OpenAndSetArithAbort(SqlConnection cmd)
+                            {
+
+                                using (SqlCommand cmd2 = cmd.CreateCommand())
+                                {
+                                    cmd2.CommandType = CommandType.Text;
+                                    cmd2.CommandText = "SET ARITHABORT ON";
+                                    cmd2.CommandTimeout = 0;
+
+                                    cmd.Open();
+
+
+                                    cmd2.ExecuteNonQuery();
+                                }
+
+                                return;
+                            }
+
+                            OpenAndSetArithAbort(cmd);
+
+                            if (cmd.State == ConnectionState.Open)
+
+                            {
+                                BeginInvoke((MethodInvoker)delegate
+                                {
+                                    label17.Text = "Connected";
+                                    ////this.label17.Location = new System.Drawing.Point(288, 112);
+                                    this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                    textBox16.Visible = true;
+                                    textBox16.Text = "Working...";
+                                }
+                             );
+
+
+                                if (cmd == null)
+
+                                {
+                                    BeginInvoke((MethodInvoker)delegate
+                                    {
+                                        label17.Text = "Connection Failed";
+                                        ////this.label17.Location = new System.Drawing.Point(288, 112);
+                                        this.label17.ForeColor = System.Drawing.Color.DarkRed;
+                                    }
+                                 );
+
+                                }
+
+                            }
+                            adapter.SelectCommand = cmd1;
+                            DataTable ds = new DataTable();
+                            adapter.Fill(ds);
+
+                            int ind = ds.Columns.IndexOf("RowVersion");
+                            if (ind != -1)
+                            {
+                                ds.Columns.RemoveAt(ind);
+                            }
+
+                            int ind2 = ds.Columns.IndexOf("TimeStamp");
+                            if (ind2 != -1)
+                            {
+                                ds.Columns.RemoveAt(ind2);
+                            }
+
+
+
+                            //
+
+                            {
+                                foreach (DataRow dr in ds.Rows)
+                                {
+                                    var a = dr["Table_Name"].ToString();
+                                    tablenames = dr.Table;
+                                    //tablenames.Columns.Add("TableName");
+                                    //tablenames.Rows.Add(a);
+                                    tablenames.AcceptChanges();
+                                }
+
+
+
+                                if (worker.CancellationPending == true)
+                                {
+                                    e.Result = null;
+                                    cmd.Close();
+                                    return;
+                                }
+
+                                if (worker.CancellationPending == false)
+                                {
+                                    e.Result = true;
+                                    return;
+                                }
+
+                            }
+                            return;
+
+
+
+                        }
+
+                        catch (Exception ex)
+
+                        {
+
+                            if (worker.CancellationPending == true)
+
+                                return;
+
+                            {
+
+
+
+                                string msg = ex.Message;
+
+                                if (msg.Contains("Incorrect syntax"))
+
+                                {
+                                    MessageBox.Show("There is an issue with your syntax - please remove any disallowed SQL characters." + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
+                                }
+
+                                else
+
+                                    MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
+
+                            }
+                        }
+                        finally
+                        {
+                            cmd.Close();
+                        }
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        string msg = //"Please enter valid connection details.";
+                            ex.ToString();
+                        MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
+                    }
+            }
+            return;
+
+        }
+
+
+        private void backgroundWorker8_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            {
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    this.Text = "SQL Tools";
+                });
+
+
+                ctp = "ctp1";
+                button3.Enabled = true;
+                button3.Text = "Results to Clipboard";
+                //textBox16.Visible = false;
+                button2.Enabled = true;
+                button1.Enabled = true;
+                button4.Enabled = true;
+                button8.Enabled = true;
+                ctp = "ctp1";
+
+
+                SqlConnection cmd = new SqlConnection();
+                cmd.Close();
+                if (tablenames != null && tablenames.Rows.Count > 0)
+                {
+
+                    tablenames = tablenames.Copy();
+                    tablenames.AcceptChanges();
+
+                    List<string> tables = new List<string>();
+
+                    foreach (DataRow row in tablenames.Rows)
+                    {
+
+                        var val = row;
+
+                        var a = row[0].ToString();
+
+                        tables.Add(a);
+                    }
+
+                    comboBox1.DataSource = tables.ToArray();
+
+
+                    if (tablenames.Rows.Count < 1)
+                    {
+                        //textBox16.Visible = false;
+                    }
+                }
+
+                if (tablenames is null || tablenames.Rows.Count == 0)
+                {
+                    string nr = "No Tables Retrieved";
+
+                    comboBox1.Items.Add(nr);
+                }
+
+
+
+            }
+
+            busy = false;
+        }
+
+
+        private void ComboClick(object sender, EventArgs e)
+        {
+
+            if (comboBox1.SelectedItem != null)
+            {
+                tablelimit = comboBox1.SelectedItem.ToString();
+            }
+
+            if (backgroundWorker8.IsBusy == false)
+            {
+                backgroundWorker8.RunWorkerAsync();
+            }
+
+        }
+
+        private void Check1Click(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked == false)
+            {
+                comboBox1.Enabled = false;
+
+            }
+
+
+            if (checkBox1.Checked == true)
+            {
+                comboBox1.Enabled = true;
+
+            }
+        }
+
+        private void ignorespacert1(object sender, KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.Space)
+            {
+                richTextBox1_KeyDown(sender, e);
+            }
+
+        }
+
+
+        private void ignorespacert2(object sender, KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.Space)
+            {
+                richTextBox2_KeyDown2(sender, e);
+            }
+
+        }
+
+        private void ignorespacert4(object sender, KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.Space)
+            {
+                richTextBox4_KeyDown3(sender, e);
+            }
+
+        }
+
+        private void toolStripMenuItem13_Click(object sender, EventArgs e)
+        {
+
+
+            if (dataGridView3.RowCount > 0)
+            {
+
+
+            int index;
+            var rowindex = dataGridView3.CurrentCell.RowIndex;
+            var colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referenced Table"]);
+            var holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
+                if (holding != null)
+                {
+
+                    tabControl1.SelectedIndex = 0;
+                    textBox5.Text = holding.ToString();
+                    tabControl1.SelectedIndex = 0;
+                    radioButton3.Checked = true;
+                    radioButton6.Checked = true;
+                    Set_Search_Table(sender, e);
+                    passtobgworker(sender, e);
+                    actualclick = true;
+                }
+
+                else
+                return;
+            }   
+       
+        }
+
+        private void toolStripMenuItem14_Click(object sender, EventArgs e)
+        {
+            if (dataGridView3.RowCount > 0)
+            {
+
+
+                int index;
+                var rowindex = dataGridView3.CurrentCell.RowIndex;
+                var colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referencing Table"]);
+                var holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
+                if (holding != null)
+                {
+
+                    tabControl1.SelectedIndex = 0;
+                    textBox5.Text = holding.ToString();
+                    tabControl1.SelectedIndex = 0;
+                    radioButton3.Checked = true;
+                    radioButton6.Checked = true;
+                    Set_Search_Table(sender, e);
+                    passtobgworker(sender, e);
+                    actualclick = true;
+                }
+
+                else
+                    return;
+            }
+        }
+
+        private void toolStripMenuItem15_Click(object sender, EventArgs e)
+        {
+            if (dataGridView3.RowCount > 0)
+            {
+
+
+                int index;
+                var rowindex = dataGridView3.CurrentCell.RowIndex;
+                var colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referenced Column"]);
+                var holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
+                if (holding != null)
+                {
+
+                    tabControl1.SelectedIndex = 0;
+                    textBox6.Text = holding.ToString();
+                    tabControl1.SelectedIndex = 0;
+                    radioButton4.Checked = true;
+                    radioButton6.Checked = true;
+                    Set_Search_Table(sender, e);
+                    passtobgworker(sender, e);
+                    actualclick = true;
+                }
+
+                else
+                    return;
+            }
+        }
+
+        private void toolStripMenuItem16_Click(object sender, EventArgs e)
+        {
+            if (dataGridView3.RowCount > 0)
+            {
+
+
+                int index;
+                var rowindex = dataGridView3.CurrentCell.RowIndex;
+                var colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referencing Column"]);
+                var holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
+                if (holding != null)
+                {
+
+                    tabControl1.SelectedIndex = 0;
+                    textBox6.Text = holding.ToString();
+                    tabControl1.SelectedIndex = 0;
+                    radioButton4.Checked = true;
+                    radioButton6.Checked = true;
+                    Set_Search_Table(sender, e);
+                    passtobgworker(sender, e);
+                    actualclick = true;
+                }
+
+                else
+                    return;
+            }
+        }
+
+        private void textBox6_Click(object sender, EventArgs e)
+        {
+            if (textBox6.Text == "[No Search Term Entered]")
+            {
+                textBox6.Clear();
+            }
+        }
     }
 
     static class StringReverse
@@ -9783,7 +11556,12 @@ public string sql10 =
             return Int32.TryParse(value, out intValue);
         }
 
+
     }
+
+
+
+
 
 
 }

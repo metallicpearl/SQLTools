@@ -81,18 +81,25 @@
             this.button5 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripMenuItem();
             this.button4 = new System.Windows.Forms.Button();
             this.label20 = new System.Windows.Forms.Label();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label9 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.textBox12 = new System.Windows.Forms.TextBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
@@ -122,6 +129,10 @@
             this.label6 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.groupBox15 = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.radioButton19 = new System.Windows.Forms.RadioButton();
+            this.radioButton18 = new System.Windows.Forms.RadioButton();
             this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
@@ -136,7 +147,6 @@
             this.radioButton8 = new System.Windows.Forms.RadioButton();
             this.radioButton9 = new System.Windows.Forms.RadioButton();
             this.radioButton10 = new System.Windows.Forms.RadioButton();
-            this.label11 = new System.Windows.Forms.Label();
             this.button8 = new System.Windows.Forms.Button();
             this.textBox15 = new System.Windows.Forms.TextBox();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
@@ -144,6 +154,8 @@
             this.dataGridView8 = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip6 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copySelectedRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CopyDefinitionList = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyalldefnames = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -191,6 +203,7 @@
             this.radioButton7 = new System.Windows.Forms.RadioButton();
             this.radioButton6 = new System.Windows.Forms.RadioButton();
             this.backgroundWorker7 = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorker8 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.tabPageBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pageBindingSource)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -210,6 +223,7 @@
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage8.SuspendLayout();
+            this.groupBox15.SuspendLayout();
             this.groupBox14.SuspendLayout();
             this.groupBox10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView8)).BeginInit();
@@ -428,6 +442,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.checkBox2);
             this.tabPage3.Controls.Add(this.button6);
             this.tabPage3.Controls.Add(this.button7);
             this.tabPage3.Controls.Add(this.groupBox5);
@@ -443,15 +458,32 @@
             this.tabPage3.Text = "Table Relationships";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // checkBox2
+            // 
+            this.checkBox2.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBox2.BackColor = System.Drawing.Color.PaleGreen;
+            this.checkBox2.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox2.Checked = true;
+            this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.checkBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.checkBox2.Location = new System.Drawing.Point(526, 17);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(117, 27);
+            this.checkBox2.TabIndex = 20;
+            this.checkBox2.Text = "Including SQL";
+            this.checkBox2.UseVisualStyleBackColor = false;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            // 
             // button6
             // 
             this.button6.Enabled = false;
             this.button6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button6.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button6.Location = new System.Drawing.Point(793, 16);
+            this.button6.Location = new System.Drawing.Point(803, 16);
             this.button6.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(142, 29);
+            this.button6.Size = new System.Drawing.Size(128, 29);
             this.button6.TabIndex = 14;
             this.button6.Text = "Clear Clipboard";
             this.button6.UseVisualStyleBackColor = true;
@@ -462,17 +494,18 @@
             this.button7.Enabled = false;
             this.button7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button7.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button7.Location = new System.Drawing.Point(528, 16);
+            this.button7.Location = new System.Drawing.Point(645, 16);
             this.button7.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(260, 29);
+            this.button7.Size = new System.Drawing.Size(159, 29);
             this.button7.TabIndex = 13;
-            this.button7.Text = "Search Term History to Clipboard";
+            this.button7.Text = "Results to Clipboard";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.builtpathcopy);
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.groupBox16);
             this.groupBox5.Controls.Add(this.textBox13);
             this.groupBox5.Controls.Add(this.dataGridView3);
             this.groupBox5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
@@ -484,6 +517,15 @@
             this.groupBox5.TabIndex = 12;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Results";
+            // 
+            // groupBox16
+            // 
+            this.groupBox16.Location = new System.Drawing.Point(528, -42);
+            this.groupBox16.Name = "groupBox16";
+            this.groupBox16.Size = new System.Drawing.Size(118, 38);
+            this.groupBox16.TabIndex = 18;
+            this.groupBox16.TabStop = false;
+            this.groupBox16.Text = "groupBox16";
             // 
             // textBox13
             // 
@@ -555,9 +597,13 @@
             this.contextMenuStrip2.Enabled = false;
             this.contextMenuStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem2});
+            this.toolStripMenuItem2,
+            this.toolStripMenuItem13,
+            this.toolStripMenuItem14,
+            this.toolStripMenuItem15,
+            this.toolStripMenuItem16});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(412, 28);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(412, 124);
             // 
             // toolStripMenuItem2
             // 
@@ -567,11 +613,43 @@
             this.toolStripMenuItem2.Text = "Find Other Database Tables Referencing This Table";
             this.toolStripMenuItem2.Click += new System.EventHandler(this.clickmenu2);
             // 
+            // toolStripMenuItem13
+            // 
+            this.toolStripMenuItem13.Enabled = false;
+            this.toolStripMenuItem13.Name = "toolStripMenuItem13";
+            this.toolStripMenuItem13.Size = new System.Drawing.Size(411, 24);
+            this.toolStripMenuItem13.Text = "Search For Referenced Table in Table Finder";
+            this.toolStripMenuItem13.Click += new System.EventHandler(this.toolStripMenuItem13_Click);
+            // 
+            // toolStripMenuItem14
+            // 
+            this.toolStripMenuItem14.Enabled = false;
+            this.toolStripMenuItem14.Name = "toolStripMenuItem14";
+            this.toolStripMenuItem14.Size = new System.Drawing.Size(411, 24);
+            this.toolStripMenuItem14.Text = "Search For Referencing Table in Table Finder";
+            this.toolStripMenuItem14.Click += new System.EventHandler(this.toolStripMenuItem14_Click);
+            // 
+            // toolStripMenuItem15
+            // 
+            this.toolStripMenuItem15.Enabled = false;
+            this.toolStripMenuItem15.Name = "toolStripMenuItem15";
+            this.toolStripMenuItem15.Size = new System.Drawing.Size(411, 24);
+            this.toolStripMenuItem15.Text = "Search For Referenced Column in Column Finder";
+            this.toolStripMenuItem15.Click += new System.EventHandler(this.toolStripMenuItem15_Click);
+            // 
+            // toolStripMenuItem16
+            // 
+            this.toolStripMenuItem16.Enabled = false;
+            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(411, 24);
+            this.toolStripMenuItem16.Text = "Search For Referencing Column in Column Finder";
+            this.toolStripMenuItem16.Click += new System.EventHandler(this.toolStripMenuItem16_Click);
+            // 
             // button4
             // 
             this.button4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button4.ForeColor = System.Drawing.Color.Green;
-            this.button4.Location = new System.Drawing.Point(436, 16);
+            this.button4.Location = new System.Drawing.Point(434, 16);
             this.button4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(86, 29);
@@ -596,11 +674,13 @@
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(323, 27);
             this.textBox6.TabIndex = 9;
+            this.textBox6.Click += new System.EventHandler(this.textBox6_Click);
             this.textBox6.KeyDown += new System.Windows.Forms.KeyEventHandler(this.checkenter3);
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.label9);
+            this.tabPage2.Controls.Add(this.comboBox1);
+            this.tabPage2.Controls.Add(this.checkBox1);
             this.tabPage2.Controls.Add(this.groupBox4);
             this.tabPage2.Controls.Add(this.button2);
             this.tabPage2.Controls.Add(this.label8);
@@ -614,16 +694,27 @@
             this.tabPage2.Text = "Value Finder";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // label9
+            // comboBox1
             // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-            this.label9.ForeColor = System.Drawing.Color.Red;
-            this.label9.Location = new System.Drawing.Point(536, 23);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(390, 17);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "WARNING: THIS CAN TAKE SEVERAL MINUTES TO COMPLETE.";
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(634, 18);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(211, 28);
+            this.comboBox1.TabIndex = 10;
+            this.comboBox1.Click += new System.EventHandler(this.ComboClick);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(465, 22);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(169, 24);
+            this.checkBox1.TabIndex = 9;
+            this.checkBox1.Text = "Limit Search to Table";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkBox1.Click += new System.EventHandler(this.Check1Click);
             // 
             // groupBox4
             // 
@@ -705,7 +796,7 @@
             // 
             this.button2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button2.ForeColor = System.Drawing.Color.Green;
-            this.button2.Location = new System.Drawing.Point(436, 16);
+            this.button2.Location = new System.Drawing.Point(850, 18);
             this.button2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(86, 29);
@@ -717,7 +808,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(14, 21);
+            this.label8.Location = new System.Drawing.Point(17, 22);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(96, 20);
             this.label8.TabIndex = 5;
@@ -725,7 +816,7 @@
             // 
             // textBox8
             // 
-            this.textBox8.Location = new System.Drawing.Point(111, 17);
+            this.textBox8.Location = new System.Drawing.Point(119, 19);
             this.textBox8.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(323, 27);
@@ -836,6 +927,7 @@
             this.dataGridView1.GridColor = System.Drawing.Color.Gainsboro;
             this.dataGridView1.Location = new System.Drawing.Point(7, 27);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
@@ -931,18 +1023,20 @@
             // label27
             // 
             this.label27.AutoSize = true;
+            this.label27.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label27.Location = new System.Drawing.Point(297, 19);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(14, 20);
+            this.label27.Size = new System.Drawing.Size(13, 20);
             this.label27.TabIndex = 6;
             this.label27.Text = "|";
             // 
             // label26
             // 
             this.label26.AutoSize = true;
+            this.label26.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label26.Location = new System.Drawing.Point(129, 19);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(14, 20);
+            this.label26.Size = new System.Drawing.Size(13, 20);
             this.label26.TabIndex = 5;
             this.label26.Text = "|";
             // 
@@ -1030,10 +1124,10 @@
             // 
             // tabPage8
             // 
+            this.tabPage8.Controls.Add(this.groupBox15);
             this.tabPage8.Controls.Add(this.button10);
             this.tabPage8.Controls.Add(this.button9);
             this.tabPage8.Controls.Add(this.groupBox14);
-            this.tabPage8.Controls.Add(this.label11);
             this.tabPage8.Controls.Add(this.button8);
             this.tabPage8.Controls.Add(this.textBox15);
             this.tabPage8.Controls.Add(this.groupBox10);
@@ -1043,13 +1137,64 @@
             this.tabPage8.TabIndex = 4;
             this.tabPage8.Text = "Definitions";
             this.tabPage8.UseVisualStyleBackColor = true;
+            this.tabPage8.Click += new System.EventHandler(this.tabPage8_Click);
+            // 
+            // groupBox15
+            // 
+            this.groupBox15.Controls.Add(this.label11);
+            this.groupBox15.Controls.Add(this.radioButton19);
+            this.groupBox15.Controls.Add(this.radioButton18);
+            this.groupBox15.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.groupBox15.Location = new System.Drawing.Point(7, 1);
+            this.groupBox15.Name = "groupBox15";
+            this.groupBox15.Size = new System.Drawing.Size(195, 48);
+            this.groupBox15.TabIndex = 19;
+            this.groupBox15.TabStop = false;
+            this.groupBox15.Text = "Search By";
+            this.groupBox15.Enter += new System.EventHandler(this.groupBox15_Enter);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label11.Location = new System.Drawing.Point(78, 18);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(13, 20);
+            this.label11.TabIndex = 4;
+            this.label11.Text = "|";
+            // 
+            // radioButton19
+            // 
+            this.radioButton19.AutoSize = true;
+            this.radioButton19.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.radioButton19.Location = new System.Drawing.Point(93, 18);
+            this.radioButton19.Name = "radioButton19";
+            this.radioButton19.Size = new System.Drawing.Size(96, 24);
+            this.radioButton19.TabIndex = 1;
+            this.radioButton19.TabStop = true;
+            this.radioButton19.Text = "Definition";
+            this.radioButton19.UseVisualStyleBackColor = true;
+            this.radioButton19.CheckedChanged += new System.EventHandler(this.radioButton19_CheckedChanged);
+            // 
+            // radioButton18
+            // 
+            this.radioButton18.AutoSize = true;
+            this.radioButton18.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.radioButton18.Location = new System.Drawing.Point(10, 18);
+            this.radioButton18.Name = "radioButton18";
+            this.radioButton18.Size = new System.Drawing.Size(70, 24);
+            this.radioButton18.TabIndex = 0;
+            this.radioButton18.TabStop = true;
+            this.radioButton18.Text = "Name";
+            this.radioButton18.UseVisualStyleBackColor = true;
+            this.radioButton18.CheckedChanged += new System.EventHandler(this.radioButton18_CheckedChanged);
             // 
             // button10
             // 
             this.button10.Enabled = false;
             this.button10.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button10.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button10.Location = new System.Drawing.Point(812, 16);
+            this.button10.Location = new System.Drawing.Point(814, 16);
             this.button10.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(124, 29);
@@ -1064,14 +1209,14 @@
             this.button9.FlatAppearance.BorderSize = 5;
             this.button9.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button9.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button9.Location = new System.Drawing.Point(526, 16);
+            this.button9.Location = new System.Drawing.Point(655, 16);
             this.button9.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(286, 29);
+            this.button9.Size = new System.Drawing.Size(161, 29);
             this.button9.TabIndex = 17;
-            this.button9.Text = "Copy Selected Definition to Clipboard";
+            this.button9.Text = "Results to Clipboard";
             this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.DefToClipboard);
+            this.button9.Click += new System.EventHandler(this.CopyDefResults);
             // 
             // groupBox14
             // 
@@ -1228,20 +1373,11 @@
             this.radioButton10.Text = "Aggregate Function";
             this.radioButton10.UseVisualStyleBackColor = true;
             // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(12, 21);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(97, 20);
-            this.label11.TabIndex = 14;
-            this.label11.Text = "Object Name";
-            // 
             // button8
             // 
             this.button8.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button8.ForeColor = System.Drawing.Color.Green;
-            this.button8.Location = new System.Drawing.Point(436, 16);
+            this.button8.Location = new System.Drawing.Point(561, 16);
             this.button8.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(86, 29);
@@ -1252,10 +1388,10 @@
             // 
             // textBox15
             // 
-            this.textBox15.Location = new System.Drawing.Point(111, 17);
+            this.textBox15.Location = new System.Drawing.Point(208, 17);
             this.textBox15.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox15.Name = "textBox15";
-            this.textBox15.Size = new System.Drawing.Size(323, 27);
+            this.textBox15.Size = new System.Drawing.Size(354, 27);
             this.textBox15.TabIndex = 12;
             this.textBox15.KeyDown += new System.Windows.Forms.KeyEventHandler(this.checkdef);
             // 
@@ -1276,7 +1412,7 @@
             this.textBox16.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.textBox16.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textBox16.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.textBox16.Location = new System.Drawing.Point(6, 20);
+            this.textBox16.Location = new System.Drawing.Point(6, 24);
             this.textBox16.Multiline = true;
             this.textBox16.Name = "textBox16";
             this.textBox16.ReadOnly = true;
@@ -1342,16 +1478,32 @@
             // 
             this.contextMenuStrip6.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip6.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copySelectedRowToolStripMenuItem});
+            this.copySelectedRowToolStripMenuItem,
+            this.CopyDefinitionList,
+            this.copyalldefnames});
             this.contextMenuStrip6.Name = "contextMenuStrip6";
-            this.contextMenuStrip6.Size = new System.Drawing.Size(207, 28);
+            this.contextMenuStrip6.Size = new System.Drawing.Size(343, 76);
             // 
             // copySelectedRowToolStripMenuItem
             // 
             this.copySelectedRowToolStripMenuItem.Name = "copySelectedRowToolStripMenuItem";
-            this.copySelectedRowToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            this.copySelectedRowToolStripMenuItem.Size = new System.Drawing.Size(342, 24);
             this.copySelectedRowToolStripMenuItem.Text = "Copy Selected Row";
             this.copySelectedRowToolStripMenuItem.Click += new System.EventHandler(this.DefCopyOut);
+            // 
+            // CopyDefinitionList
+            // 
+            this.CopyDefinitionList.Name = "CopyDefinitionList";
+            this.CopyDefinitionList.Size = new System.Drawing.Size(342, 24);
+            this.CopyDefinitionList.Text = "Copy Selected Definition to Clipboard";
+            this.CopyDefinitionList.Click += new System.EventHandler(this.DefToClipboard);
+            // 
+            // copyalldefnames
+            // 
+            this.copyalldefnames.Name = "copyalldefnames";
+            this.copyalldefnames.Size = new System.Drawing.Size(342, 24);
+            this.copyalldefnames.Text = "Copy All Definition Names to Clipboard";
+            this.copyalldefnames.Click += new System.EventHandler(this.CopDefinitionList);
             // 
             // tabPage4
             // 
@@ -1525,7 +1677,8 @@
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             this.richTextBox1.Click += new System.EventHandler(this.lbhide);
-            this.richTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox1_KeyDown);
+            this.richTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ignorespacert1);
+            this.richTextBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.richTextBox1_KeyDown);
             // 
             // lb
             // 
@@ -1605,7 +1758,8 @@
             this.richTextBox4.Size = new System.Drawing.Size(879, 128);
             this.richTextBox4.TabIndex = 1;
             this.richTextBox4.Text = "";
-            this.richTextBox4.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox4_KeyDown3);
+            this.richTextBox4.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ignorespacert4);
+            this.richTextBox4.KeyUp += new System.Windows.Forms.KeyEventHandler(this.richTextBox4_KeyDown3);
             // 
             // listBox2
             // 
@@ -1649,7 +1803,8 @@
             this.richTextBox2.Size = new System.Drawing.Size(879, 128);
             this.richTextBox2.TabIndex = 1;
             this.richTextBox2.Text = "";
-            this.richTextBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox2_KeyDown2);
+            this.richTextBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ignorespacert2);
+            this.richTextBox2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.richTextBox2_KeyDown2);
             // 
             // listBox1
             // 
@@ -1991,7 +2146,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(205, 15);
+            this.label15.Location = new System.Drawing.Point(204, 15);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(13, 20);
             this.label15.TabIndex = 2;
@@ -2051,6 +2206,7 @@
             this.RightToLeftLayout = true;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SQL Tools";
+            this.Load += new System.EventHandler(this.Form1_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.tabPageBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pageBindingSource)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -2079,6 +2235,8 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage8.ResumeLayout(false);
             this.tabPage8.PerformLayout();
+            this.groupBox15.ResumeLayout(false);
+            this.groupBox15.PerformLayout();
             this.groupBox14.ResumeLayout(false);
             this.groupBox14.PerformLayout();
             this.groupBox10.ResumeLayout(false);
@@ -2154,7 +2312,6 @@
         private Label label20;
         private TextBox textBox6;
         private TabPage tabPage2;
-        private Label label9;
         private GroupBox groupBox4;
         private DataGridView dataGridView2;
         private Button button2;
@@ -2238,7 +2395,6 @@
         private TextBox textBox14;
         private TabPage tabPage8;
         private GroupBox groupBox10;
-        private Label label11;
         private Button button8;
         private TextBox textBox15;
         private Button button9;
@@ -2260,6 +2416,21 @@
         private ContextMenuStrip contextMenuStrip6;
         private ToolStripMenuItem copySelectedRowToolStripMenuItem;
         private RadioButton radioButton17;
+        private GroupBox groupBox15;
+        private RadioButton radioButton19;
+        private RadioButton radioButton18;
+        private Label label11;
+        private ToolStripMenuItem CopyDefinitionList;
+        private ToolStripMenuItem copyalldefnames;
+        private CheckBox checkBox2;
+        private GroupBox groupBox16;
+        private CheckBox checkBox1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker8;
+        private ComboBox comboBox1;
+        private ToolStripMenuItem toolStripMenuItem13;
+        private ToolStripMenuItem toolStripMenuItem14;
+        private ToolStripMenuItem toolStripMenuItem15;
+        private ToolStripMenuItem toolStripMenuItem16;
     }
 
 
