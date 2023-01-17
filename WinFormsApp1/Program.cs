@@ -1,9 +1,3 @@
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Forms;
-
 namespace WinFormsApp1
 {
     internal static class Program
@@ -16,10 +10,10 @@ namespace WinFormsApp1
         {
             ApplicationConfiguration.Initialize();
 
-          
-                
+
+
             Application.Run(new Form1());
-            
+
         }
     }
 }

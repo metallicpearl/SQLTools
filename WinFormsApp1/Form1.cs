@@ -1,26 +1,20 @@
-using System;
-using System.Threading;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.Data.SqlClient;
-using Dapper;
-using DapperExtensions;
-using System.Data.Common;
-using System.IO;
 using System.Data;
-using ADO.Net;
-using System.Diagnostics;
-using System.Windows.Input;
-using WindowsInput;
-using WindowsInput.Native;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Text;
-using System.Timers;
+using System.IO;
 using System.Linq;
-using System.Windows;
+using System.Text.RegularExpressions;
+
+
 
 namespace WinFormsApp1
 {
+
+
+
+
 
 
 
@@ -118,13 +112,16 @@ namespace WinFormsApp1
 
             currenttab = 1;
             searchedfromgrid = false;
-            
+            lowmemorymode = false;
+            button11.Enabled = true;
 
 
             void dataGrid_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
             {
                 if (e.Column.CellType == typeof(DataGridViewImageCell))
+                {
                     dataGridView7.Columns.Remove(e.Column);
+                }
             }
 
 
@@ -151,7 +148,16 @@ namespace WinFormsApp1
         public DataTable dtm9;
         public DataTable dtm10;
 
-
+        public int stringpos;
+        public string fulltext;
+        public string fulltext2;
+        public string[] formatspaces;
+        public string[] splitspaces;
+        public string searchtype;
+        public string valuesearchstring;
+        public string sqlversion;
+        public bool withinbrackets;
+        public string formatstring;
         public bool searchedfromgrid;
         public int currenttab;
         public string resultas;
@@ -171,7 +177,7 @@ namespace WinFormsApp1
         public string f4v;
         public string f5v;
         public string f6v;
-        private static AutoResetEvent event_1 = new AutoResetEvent(true);
+        private static readonly AutoResetEvent event_1 = new AutoResetEvent(true);
         public string hold;
         public static string f1v;
         public static string f2v;
@@ -312,8 +318,27 @@ namespace WinFormsApp1
         WHERE
         c.TABLE_NAME LIKE  '%";
 
+        public string sql1legacy =
+       @"
+                
+        SELECT 
+        c.TABLE_NAME AS 'Table Name',
+        c.COLUMN_NAME AS 'Column Name',
+		c.DATA_TYPE AS 'Data Type'
+        FROM INFORMATION_SCHEMA.COLUMNS c
+		left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE k ON k.COLUMN_NAME = c.COLUMN_NAME AND c.TABLE_NAME = k.TABLE_NAME
+		left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS t on t.CONSTRAINT_NAME = k.CONSTRAINT_NAME
+
+        WHERE
+        c.TABLE_NAME LIKE  '%";
+
 
         public string sql2 =
+              @"%' 
+                AND 
+                c.COLUMN_NAME LIKE '%";
+
+        public string sql2legacy =
               @"%' 
                 AND 
                 c.COLUMN_NAME LIKE '%";
@@ -321,6 +346,17 @@ namespace WinFormsApp1
 
         public string sql3 =
               @"%' 
+                and
+				c.table_schema = 'dbo'
+                GROUP BY c.COLUMN_NAME, c.TABLE_NAME, c.DATA_TYPE
+                ORDER BY 
+                c.Table_Name
+
+                OPTION (RECOMPILE)
+                ";
+
+        public string sql3legacy =
+          @"%' 
                 and
 				c.table_schema = 'dbo'
                 GROUP BY c.COLUMN_NAME, c.TABLE_NAME, c.DATA_TYPE
@@ -357,6 +393,21 @@ namespace WinFormsApp1
 		end, ', ')
 		end
 		[Constraint Type]
+        FROM INFORMATION_SCHEMA.COLUMNS c
+		left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE k ON k.COLUMN_NAME = c.COLUMN_NAME AND c.TABLE_NAME = k.TABLE_NAME
+		left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS t on t.CONSTRAINT_NAME = k.CONSTRAINT_NAME
+
+        WHERE
+        c.COLUMN_NAME LIKE  '%";
+
+
+        public string sql4legacy =
+        @"
+                
+        SELECT 
+        c.TABLE_NAME AS 'Table Name',
+        c.COLUMN_NAME AS 'Column Name',
+		c.DATA_TYPE AS 'Data Type'
         FROM INFORMATION_SCHEMA.COLUMNS c
 		left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE k ON k.COLUMN_NAME = c.COLUMN_NAME AND c.TABLE_NAME = k.TABLE_NAME
 		left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS t on t.CONSTRAINT_NAME = k.CONSTRAINT_NAME
@@ -656,14 +707,46 @@ INNER JOIN sys.columns col2
         c.TABLE_NAME = '";
 
 
+        public string sql1blegacy =
+@"
+        SELECT 
+        c.TABLE_NAME AS 'Table Name',
+        c.COLUMN_NAME AS 'Column Name',
+		c.DATA_TYPE AS 'Data Type'
+        FROM INFORMATION_SCHEMA.COLUMNS c
+		left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE k ON k.COLUMN_NAME = c.COLUMN_NAME AND c.TABLE_NAME = k.TABLE_NAME
+		left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS t on t.CONSTRAINT_NAME = k.CONSTRAINT_NAME
+
+        WHERE
+        c.TABLE_NAME = '";
+
+
+
         public string sql2b =
               @"' 
                 AND 
                 c.COLUMN_NAME = '";
 
 
+        public string sql2blegacy =
+        @"' 
+                AND 
+                c.COLUMN_NAME = '";
+
+
         public string sql3b =
               @"' 
+               and
+				c.table_schema = 'dbo'
+                GROUP BY c.COLUMN_NAME, c.TABLE_NAME, c.DATA_TYPE
+                ORDER BY 
+                c.Table_Name
+
+                OPTION (RECOMPILE)
+                ";
+
+        public string sql3blegacy =
+      @"' 
                and
 				c.table_schema = 'dbo'
                 GROUP BY c.COLUMN_NAME, c.TABLE_NAME, c.DATA_TYPE
@@ -699,6 +782,20 @@ INNER JOIN sys.columns col2
 		end, ', ')
 		end
 		[Constraint Type]
+        FROM INFORMATION_SCHEMA.COLUMNS c
+		left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE k ON k.COLUMN_NAME = c.COLUMN_NAME AND c.TABLE_NAME = k.TABLE_NAME
+		left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS t on t.CONSTRAINT_NAME = k.CONSTRAINT_NAME
+
+        WHERE
+        c.COLUMN_NAME = '";
+
+
+        public string sql4blegacy =
+             @"
+        SELECT 
+        c.TABLE_NAME AS 'Table Name',
+        c.COLUMN_NAME AS 'Column Name',
+		c.DATA_TYPE AS 'Data Type'
         FROM INFORMATION_SCHEMA.COLUMNS c
 		left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE k ON k.COLUMN_NAME = c.COLUMN_NAME AND c.TABLE_NAME = k.TABLE_NAME
 		left join INFORMATION_SCHEMA.TABLE_CONSTRAINTS t on t.CONSTRAINT_NAME = k.CONSTRAINT_NAME
@@ -957,8 +1054,8 @@ LIKE '%";
 
         public void workerbusy(object sender, EventArgs e)
         {
-            var msg = "A SQL Connection is already open in another tab. Please re-run this when that process has finished.";
-            var titl = "Cannot Start New SQL Process";
+            string? msg = "A SQL Connection is already open in another tab. Please re-run this when that process has finished.";
+            string? titl = "Cannot Start New SQL Process";
             MessageBox.Show(msg, titl, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -969,7 +1066,7 @@ LIKE '%";
             try
             {
                 // Open the text file using a stream reader.
-                using (var sr = new StreamReader("ConnectionDetails.txt"))
+                using (StreamReader? sr = new StreamReader("ConnectionDetails.txt"))
                 {
 
                     string line = sr.ReadLine();
@@ -978,7 +1075,6 @@ LIKE '%";
                     string un = line.Split(',')[2];
                     string pw = line.Split(',')[3];
                     string auth = line.Split(',')[4];
-                    string lowmemmode = line.Split(',')[5];
 
                     textBox1.Text = srv;
                     textBox2.Text = db;
@@ -1002,21 +1098,12 @@ LIKE '%";
 
                     }
 
-                    if (lowmemmode == "1")
-                    {
-                        lowmemorymode = true;
-                    }
-
-                    if (lowmemmode == "0")
-                    {
-                        lowmemorymode = false;
-                    }
 
                 }
             }
-            catch (IOException e)
+            catch (IOException)
             {
-                var msg = "The override file format is incorrect or the file is not in the application folder. The application will still work, but you will need to provide connection details to connect to the SQL server." + Environment.NewLine + Environment.NewLine + "'ConnectionDetails.txt' comma-separated format:" + Environment.NewLine + "'Server,Database,Username,Password,Authentication type'." + Environment.NewLine + Environment.NewLine + "If using 'Windows' as the authentication type, Username and Password are blank."+Environment.NewLine+"To enable 'Low Memory Mode', place a '1' instead of '0' at the end of the file.";
+                string? msg = "The override file format is incorrect or the file is not in the application folder. The application will still work, but you will need to provide connection details to connect to the SQL server." + Environment.NewLine + Environment.NewLine + "'ConnectionDetails.txt' comma-separated format:" + Environment.NewLine + "'Server,Database,Username,Password,Authentication type'." + Environment.NewLine + Environment.NewLine + "If using 'Windows' as the authentication type, Username and Password are blank." + Environment.NewLine + "To enable 'Low Memory Mode', place a '1' instead of '0' at the end of the file.";
                 MessageBox.Show(msg, "Override File Issue", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
             }
 
@@ -1035,20 +1122,20 @@ LIKE '%";
             button10.Enabled = false;
             button9.Enabled = false;
             //this.label17.Location = new System.Drawing.Point(127, 111);
-            this.label17.Text = "Not Connected";
-            this.label17.TextAlign = ContentAlignment.TopRight;
-            this.label17.ForeColor = System.Drawing.Color.Black;
+            label17.Text = "Not Connected";
+            label17.TextAlign = ContentAlignment.TopRight;
+            label17.ForeColor = System.Drawing.Color.Black;
 
             if (lowmemorymode == true)
             {
-                this.dataGridView1.ColumnHeadersVisible = false;
-                this.dataGridView2.ColumnHeadersVisible = false;
-                this.dataGridView3.ColumnHeadersVisible = false;
-                this.dataGridView4.ColumnHeadersVisible = false;
-                this.dataGridView5.ColumnHeadersVisible = false;
-                this.dataGridView6.ColumnHeadersVisible = false;
-                this.dataGridView7.ColumnHeadersVisible = false;
-                this.dataGridView8.ColumnHeadersVisible = false;
+                dataGridView1.ColumnHeadersVisible = false;
+                dataGridView2.ColumnHeadersVisible = false;
+                dataGridView3.ColumnHeadersVisible = false;
+                dataGridView4.ColumnHeadersVisible = false;
+                dataGridView5.ColumnHeadersVisible = false;
+                dataGridView6.ColumnHeadersVisible = false;
+                dataGridView7.ColumnHeadersVisible = false;
+                dataGridView8.ColumnHeadersVisible = false;
             }
 
             //contextMenuStrip1.Enabled = false;
@@ -1107,8 +1194,7 @@ LIKE '%";
             {
                 {
 
-                    if (lowmemorymode == true)
-                    {
+                   
                         if (dta is not null)
                         {
                             dta.Clear();
@@ -1121,7 +1207,7 @@ LIKE '%";
 
                         dta = null;
                         dta2 = null;
-                    }
+                    
 
                     BeginInvoke((MethodInvoker)delegate
                     {
@@ -1136,7 +1222,9 @@ LIKE '%";
                             dataGridView7.DataSource = null;
                             dataGridView8.DataSource = null;
                         }
-                        this.Text = "SQL Tools - WORKING...";
+                        Text = "SQL Tools - WORKING...";
+                        textBox11.Text = "Working...";
+                        
                     });
 
                     if (radioButton1.Checked == true)
@@ -1152,16 +1240,29 @@ LIKE '%";
 
                     }
 
+
+
                     BackgroundWorker worker = sender as BackgroundWorker;
                     if (worker != null)
-
+                    {
                         try
                         {
-                            SqlConnection cmd = new SqlConnection(connex);
+                            SqlConnection cmd = new SqlConnection(connex); 
 
+                            cmd.Open();
+                            sqlversion = cmd.ServerVersion;
+                            cmd.Close();
+
+                            string verstring = sqlversion.Substring(0, sqlversion.IndexOf("."));
+                            int version = Convert.ToInt32(verstring);
+
+                           
+
+                        
+                          
                             try
                             {
-                                if (radioButton7.Checked == true)
+                                if (radioButton7.Checked == true && (version >= 14))
 
                                 {
 
@@ -1180,7 +1281,7 @@ LIKE '%";
                                 }
 
 
-                                if (radioButton6.Checked == true)
+                                if (radioButton6.Checked == true && (version >= 14))
 
                                 {
 
@@ -1199,6 +1300,49 @@ LIKE '%";
                                 }
 
 
+                                {
+
+                                    if (radioButton7.Checked == true && (version < 14))
+
+                                    {
+
+                                        if (radioButton3.Checked == true)
+                                        {
+                                            sqlcomm = (sql1legacy + textBox5.Text.ToString() + sql3legacy);
+                                        }
+                                        if (radioButton4.Checked == true)
+                                        {
+                                            sqlcomm = (sql4legacy + textBox7.Text.ToString() + sql3legacy);
+                                        }
+                                        if (radioButton5.Checked == true)
+                                        {
+                                            sqlcomm = (sql1legacy + textBox5.Text.ToString() + sql2legacy + textBox7.Text.ToString() + sql3legacy);
+                                        }
+                                    }
+
+
+                                    if (radioButton6.Checked == true && (version < 14))
+
+                                    {
+
+                                        if (radioButton3.Checked == true)
+                                        {
+                                            sqlcomm = (sql1blegacy + textBox5.Text.ToString() + sql3blegacy);
+                                        }
+                                        if (radioButton4.Checked == true)
+                                        {
+                                            sqlcomm = (sql4blegacy + textBox7.Text.ToString() + sql3blegacy);
+                                        }
+                                        if (radioButton5.Checked == true)
+                                        {
+                                            sqlcomm = (sql1blegacy + textBox5.Text.ToString() + sql2blegacy + textBox7.Text.ToString() + sql3blegacy);
+                                        }
+                                    }
+
+                                }
+
+
+
                                 SqlCommand cmd1 = new SqlCommand(sqlcomm, cmd);
                                 SqlDataAdapter adapter = new SqlDataAdapter();
                                 static void OpenAndSetArithAbort(SqlConnection cmd)
@@ -1211,7 +1355,6 @@ LIKE '%";
                                         cmd2.CommandTimeout = 0;
 
                                         cmd.Open();
-
 
                                         cmd2.ExecuteNonQuery();
                                     }
@@ -1228,7 +1371,7 @@ LIKE '%";
                                     {
                                         label17.Text = "Connected";
                                         ////this.label17.Location = new System.Drawing.Point(288, 112);
-                                        this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                        label17.ForeColor = System.Drawing.Color.DarkGreen;
                                         textBox11.Visible = true;
                                         textBox11.Text = "Working...";
                                     }
@@ -1242,7 +1385,7 @@ LIKE '%";
                                         {
                                             label17.Text = "Connection Failed";
                                             ////this.label17.Location = new System.Drawing.Point(288, 112);
-                                            this.label17.ForeColor = System.Drawing.Color.DarkRed;
+                                            label17.ForeColor = System.Drawing.Color.DarkRed;
                                         }
                                      );
 
@@ -1301,14 +1444,18 @@ LIKE '%";
                             {
 
                                 if (worker.CancellationPending == true)
-
+                                {
                                     return;
+                                }
 
                                 {
                                     string msg = ex.Message;
                                     MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
 
                                 }
+
+                                
+
                             }
                             finally
                             {
@@ -1317,11 +1464,12 @@ LIKE '%";
 
 
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             string msg = "Please enter valid connection details.";
                             MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
                         }
+                    }
                 }
                 return;
             }
@@ -1347,7 +1495,7 @@ LIKE '%";
 
                 BeginInvoke((MethodInvoker)delegate
                 {
-                    this.Text = "SQL Tools";
+                    Text = "SQL Tools";
                 });
 
                 {
@@ -1365,7 +1513,7 @@ LIKE '%";
                     SqlConnection cmd = new SqlConnection();
                     cmd.Close();
 
-                
+
 
 
                     if (dta != null && dta.Rows.Count > 0)
@@ -1396,45 +1544,64 @@ LIKE '%";
                         }
 
 
-                        this.dataGridView1.ColumnHeadersVisible = true;
+                        dataGridView1.ColumnHeadersVisible = true;
                         textBox11.Visible = false;
                         textBox11.Text = "";
 
-                        int keytype = dataGridView1.Columns.IndexOf(dataGridView1.Columns["Constraint Type"]);
-                        int datatype = dataGridView1.Columns.IndexOf(dataGridView1.Columns["Data Type"]);
-                        dataGridView1.Columns[datatype].SortMode = DataGridViewColumnSortMode.NotSortable;
+                       
 
-                        foreach (DataGridViewRow row in dataGridView1.Rows)
+                        string verstring = sqlversion.Substring(0, sqlversion.IndexOf("."));
+                        int version = Convert.ToInt32(verstring);
+
+                        if (version >= 14)
+
                         {
+                            int keytype = dataGridView1.Columns.IndexOf(dataGridView1.Columns["Constraint Type"]);
+                            int datatype = dataGridView1.Columns.IndexOf(dataGridView1.Columns["Data Type"]);
+                            dataGridView1.Columns[datatype].SortMode = DataGridViewColumnSortMode.NotSortable;
 
-                            row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper();
-
-                            var chk = row.Cells[keytype].Value.ToString();
-
-
-                            if (chk == "Primary Key, Foreign Key")
+                            foreach (DataGridViewRow row in dataGridView1.Rows)
                             {
-                                row.DefaultCellStyle.BackColor = SystemColors.ControlDark;
-                                row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper() + " (Primary Key and Foreign Key)";
+
+                                row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper();
+
+                                string? chk = row.Cells[keytype].Value.ToString();
+
+
+                                if (chk == "Primary Key, Foreign Key")
+                                {
+                                    row.DefaultCellStyle.BackColor = SystemColors.ControlDark;
+                                    row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper() + " (Primary Key and Foreign Key)";
+                                }
+
+                                if (chk == "Primary Key")
+                                {
+                                    row.DefaultCellStyle.BackColor = SystemColors.ControlDark;
+                                    row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper() + " (Primary Key)";
+                                }
+
+                                if (row.Cells[keytype].Value.ToString() == "Foreign Key")
+                                {
+                                    row.DefaultCellStyle.BackColor = SystemColors.ControlLight;
+                                    row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper() + " (Foreign Key)";
+                                }
                             }
 
-                            if (chk == "Primary Key")
-                            {
-                                row.DefaultCellStyle.BackColor = SystemColors.ControlDark;
-                                row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper() + " (Primary Key)";
-                            }
+                         
 
-                            if (row.Cells[keytype].Value.ToString() == "Foreign Key")
-                            {
-                                row.DefaultCellStyle.BackColor = SystemColors.ControlLight;
-                                row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper() + " (Foreign Key)";
-                            }
+                            dataGridView1.Columns[keytype].Visible = false;
+
                         }
 
+                        if (version < 14)
+                        {
+                            int datatype = dataGridView1.Columns.IndexOf(dataGridView1.Columns["Data Type"]);
 
-
-                        dataGridView1.Columns[keytype].Visible = false;
-
+                            foreach (DataGridViewRow row in dataGridView1.Rows)
+                            {
+                                row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper();
+                            }
+                        }
 
                         if (dta.Rows.Count < 1)
                         {
@@ -1446,7 +1613,7 @@ LIKE '%";
                     {
                         textBox11.Visible = true;
                         textBox11.Text = "No Results.";
-                        this.dataGridView1.ColumnHeadersVisible = false;
+                        dataGridView1.ColumnHeadersVisible = false;
                         button3.Enabled = false;
                     }
 
@@ -1498,10 +1665,10 @@ LIKE '%";
             button2.Enabled = false;
             button8.Enabled = false;
             // //this.label17.Location = new System.Drawing.Point(268, 112);
-            this.label17.Text = "Not Connected";
-            this.label17.TextAlign = ContentAlignment.TopRight;
-            this.label17.ForeColor = System.Drawing.Color.Black;
-            contextMenuStrip1.Enabled = false;
+            label17.Text = "Not Connected";
+            label17.TextAlign = ContentAlignment.TopRight;
+            label17.ForeColor = System.Drawing.Color.Black;
+            //contextMenuStrip1.Enabled = false;
             //toolStripMenuItem1.Enabled = false;
             //toolStripMenuItem9.Enabled = false;
             //toolStripMenuItem10.Enabled = false;
@@ -1557,8 +1724,7 @@ LIKE '%";
 
             {
 
-                if (lowmemorymode == true)
-                {
+               
                     if (dta is not null)
                     {
                         dta.Clear();
@@ -1571,7 +1737,19 @@ LIKE '%";
 
                     dta = null;
                     dta2 = null;
+
+
+                if (radioButton6.Checked == true)
+                {
+                    searchtype = "Exact Match";
                 }
+
+                if (radioButton7.Checked == true)
+                {
+                    searchtype = "Partial Match";
+                }
+
+                valuesearchstring = textBox8.Text;
 
                 BeginInvoke((MethodInvoker)delegate
                 {
@@ -1589,7 +1767,7 @@ LIKE '%";
 
                     }
 
-                    this.Text = "SQL Tools - WORKING...";
+                    Text = "SQL Tools - WORKING...";
                 });
 
                 if (radioButton1.Checked == true)
@@ -1606,7 +1784,7 @@ LIKE '%";
 
                 BackgroundWorker worker = sender as BackgroundWorker;
                 if (worker != null)
-
+                {
                     try
                     {
                         using (SqlConnection cmd = new SqlConnection(connex))
@@ -1674,7 +1852,7 @@ LIKE '%";
                                     {
                                         label17.Text = "Connected";
                                         //this.label17.Location = new System.Drawing.Point(288, 112);
-                                        this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                        label17.ForeColor = System.Drawing.Color.DarkGreen;
                                         textBox12.Visible = true;
                                         textBox12.Text = "Working...";
                                     }
@@ -1734,8 +1912,9 @@ LIKE '%";
 
                             {
                                 if (worker.CancellationPending == true)
-
+                                {
                                     return;
+                                }
 
                                 if (ex.Message != null)
                                 {
@@ -1751,12 +1930,12 @@ LIKE '%";
 
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         string msg = "Please enter valid connection details.";
                         MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
                     }
-
+                }
             }
             return;
         }
@@ -1776,7 +1955,7 @@ LIKE '%";
             {
                 BeginInvoke((MethodInvoker)delegate
                 {
-                    this.Text = "SQL Tools";
+                    Text = "SQL Tools";
                 });
 
 
@@ -1789,14 +1968,20 @@ LIKE '%";
                 button8.Enabled = true;
                 busy = false;
 
-                comboBox1.Enabled = true;
+                
                 checkBox1.Enabled = true;
+
+                if (checkBox1.Checked == true)
+                {
+                    comboBox1.Enabled = true;
+                }
 
                 SqlConnection cmd = new SqlConnection();
                 cmd.Close();
                 if (dta != null && dta.Rows.Count > 0)
                 {
                     dta = dta.Copy();
+                    contextMenuStrip7.Enabled = true;
 
                     if (lowmemorymode == false)
                     {
@@ -1814,7 +1999,7 @@ LIKE '%";
                         dataGridView2.DataSource = dta;
 
                     }
-                    this.dataGridView2.ColumnHeadersVisible = true;
+                    dataGridView2.ColumnHeadersVisible = true;
                     textBox12.Visible = false;
 
 
@@ -1830,7 +2015,7 @@ LIKE '%";
                 if (dta is null || dta.Rows.Count == 0)
                 {
 
-                    this.dataGridView2.ColumnHeadersVisible = false;
+                    dataGridView2.ColumnHeadersVisible = false;
                     button3.Enabled = false;
                     textBox12.Text = "No Results.";
 
@@ -1838,7 +2023,7 @@ LIKE '%";
 
                 if (textBox12.Text == "No Results.")
                 {
-                    this.dataGridView2.ColumnHeadersVisible = false;
+                    dataGridView2.ColumnHeadersVisible = false;
                     button3.Enabled = false;
                     //    contextMenuStrip1.Enabled = false;
                     //    toolStripMenuItem1.Enabled = false;
@@ -1876,9 +2061,9 @@ LIKE '%";
             }
 
             //this.label17.Location = new System.Drawing.Point(268, 112);
-            this.label17.Text = "Not Connected";
-            this.label17.TextAlign = ContentAlignment.TopRight;
-            this.label17.ForeColor = System.Drawing.Color.Black;
+            label17.Text = "Not Connected";
+            label17.TextAlign = ContentAlignment.TopRight;
+            label17.ForeColor = System.Drawing.Color.Black;
             //contextMenuStrip1.Enabled = false;
             //toolStripMenuItem1.Enabled = false;
             //toolStripMenuItem9.Enabled = false;
@@ -1917,8 +2102,8 @@ LIKE '%";
             if (dta != null && dataGridView3.Rows.Count > 0)
             {
 
-                var r = dataGridView3.CurrentCell.RowIndex;
-                var c = dataGridView3.CurrentCell.ColumnIndex;
+                int r = dataGridView3.CurrentCell.RowIndex;
+                int c = dataGridView3.CurrentCell.ColumnIndex;
 
 
                 if (builtpath is not null)
@@ -2067,8 +2252,7 @@ LIKE '%";
             {
                 {
 
-                    if (lowmemorymode == true)
-                    {
+                  
                         if (dta is not null)
                         {
                             dta.Clear();
@@ -2081,7 +2265,7 @@ LIKE '%";
 
                         dta = null;
                         dta2 = null;
-                    }
+                    
 
 
                     BeginInvoke((MethodInvoker)delegate
@@ -2098,7 +2282,8 @@ LIKE '%";
                             dataGridView7.DataSource = null;
                             dataGridView8.DataSource = null;
                         }
-                        this.Text = "SQL Tools - WORKING...";
+                        Text = "SQL Tools - WORKING...";
+                        button4.Enabled = false;
                     });
 
                     if (radioButton1.Checked == true)
@@ -2116,7 +2301,7 @@ LIKE '%";
 
                     BackgroundWorker worker = sender as BackgroundWorker;
                     if (worker != null)
-
+                    {
                         try
                         {
                             SqlConnection cmd = new SqlConnection(connex);
@@ -2168,7 +2353,7 @@ LIKE '%";
                                     {
                                         label17.Text = "Connected";
                                         //this.label17.Location = new System.Drawing.Point(288, 112);
-                                        this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                        label17.ForeColor = System.Drawing.Color.DarkGreen;
                                     }
                                  );
 
@@ -2180,7 +2365,7 @@ LIKE '%";
                                         {
                                             label17.Text = "Connection Failed";
                                             //this.label17.Location = new System.Drawing.Point(255, 112);
-                                            this.label17.ForeColor = System.Drawing.Color.DarkRed;
+                                            label17.ForeColor = System.Drawing.Color.DarkRed;
                                         }
                                      );
 
@@ -2230,8 +2415,9 @@ LIKE '%";
                             {
 
                                 if (worker.CancellationPending == true)
-
+                                {
                                     return;
+                                }
 
                                 {
                                     string msg = ex.Message;
@@ -2247,11 +2433,12 @@ LIKE '%";
 
 
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             string msg = "Please enter valid connection details.";
                             MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
                         }
+                    }
                 }
                 return;
             }
@@ -2264,7 +2451,7 @@ LIKE '%";
             {
                 BeginInvoke((MethodInvoker)delegate
                 {
-                    this.Text = "SQL Tools";
+                    Text = "SQL Tools";
                 });
 
 
@@ -2307,10 +2494,10 @@ LIKE '%";
                         dataGridView3.DataSource = dta;
 
                     }
-                    this.dataGridView3.ColumnHeadersVisible = true;
+                    dataGridView3.ColumnHeadersVisible = true;
                     relationshipsearchsuccess = true;
                     button7.Enabled = true;
-                    button7.Text = "Copy to Clipboard";
+                    button7.Text = "Results to Clipboard";
                     checkBox2.Enabled = true;
                     checkBox2_CheckedChanged(sender, e);
 
@@ -2321,11 +2508,12 @@ LIKE '%";
 
                 if (dta is null || dta.Rows.Count == 0)
                 {
-                    this.dataGridView3.ColumnHeadersVisible = false;
+                    dataGridView3.ColumnHeadersVisible = false;
                     button3.Enabled = false;
                     relationshipsearchsuccess = false;
                     textBox13.Visible = true;
                     textBox13.Text = "No Results.";
+                    builtjoinsequence = 1;
 
                     if (builtpath == "" || builtpath == null)
                     {
@@ -2336,7 +2524,7 @@ LIKE '%";
 
                 if (textBox13.Text == "No Results.")
                 {
-                    this.dataGridView3.ColumnHeadersVisible = false;
+                    dataGridView3.ColumnHeadersVisible = false;
                     button3.Enabled = false;
                     //contextMenuStrip1.Enabled = false;
                     //toolStripMenuItem1.Enabled = false;
@@ -2384,11 +2572,16 @@ LIKE '%";
                 int index = new int();
 
                 if (dataGridView1.Columns[0].Name == "Table Name")
+                {
                     index = 0;
-                if (dataGridView1.Columns[1].Name == "Table Name")
-                    index = 1;
+                }
 
-                var holding = dataGridView1.SelectedCells[index].Value;
+                if (dataGridView1.Columns[1].Name == "Table Name")
+                {
+                    index = 1;
+                }
+
+                object? holding = dataGridView1.SelectedCells[index].Value;
                 if (holding != null)
                 {
                     textBox6.Text = holding.ToString();
@@ -2399,8 +2592,9 @@ LIKE '%";
             }
 
             else
+            {
                 return;
-
+            }
         }
 
         public void clickmenu2(object sender, EventArgs e)
@@ -2411,20 +2605,20 @@ LIKE '%";
 
 
                 searchedfromgrid = true;
-                //initialsearch = "";
-                int index = new int();
-                var rowindex = dataGridView3.CurrentCell.RowIndex;
-                var colindex = dataGridView3.CurrentCell.ColumnIndex;
+                int rowindex = dataGridView3.CurrentCell.RowIndex;
+                int colindex = dataGridView3.CurrentCell.ColumnIndex;
 
-
+                radioButton6.Checked = true;
 
                 if (dataGridView3.Columns[0].Name == "Referencing Table")
-                    index = 0;
+                {
+                }
+
                 if (dataGridView3.Columns[0].Name == "Referenced Table")
-                    index = 2;
+                {
+                }
 
-
-                var holding = dataGridView3.Rows[rowindex].Cells[colindex].Value;
+                object? holding = dataGridView3.Rows[rowindex].Cells[colindex].Value;
                 if (holding != null)
                 {
                     //builtpath += textBox6.Text;
@@ -2439,7 +2633,7 @@ LIKE '%";
 
                     if (colindex == 1 || colindex == 3)
                     {
-                        var holding2 = dataGridView3.Rows[rowindex].Cells[colindex - 1].Value;
+                        object? holding2 = dataGridView3.Rows[rowindex].Cells[colindex - 1].Value;
                         textBox6.Text = holding2.ToString();
                         tabControl1.SelectedIndex = 2;
                         startAsyncButton_Click3(sender, e);
@@ -2452,8 +2646,9 @@ LIKE '%";
             }
 
             else
+            {
                 return;
-
+            }
         }
 
 
@@ -2468,11 +2663,16 @@ LIKE '%";
                 int index = new int();
 
                 if (dataGridView1.Columns[0].Name == "Table Name")
+                {
                     index = 0;
-                if (dataGridView1.Columns[1].Name == "Table Name")
-                    index = 1;
+                }
 
-                var holding = dataGridView1.SelectedCells[index].Value;
+                if (dataGridView1.Columns[1].Name == "Table Name")
+                {
+                    index = 1;
+                }
+
+                object? holding = dataGridView1.SelectedCells[index].Value;
                 if (holding != null)
                 {
 
@@ -2487,8 +2687,9 @@ LIKE '%";
             }
 
             else
+            {
                 return;
-
+            }
         }
 
         public void clickmenu4(object sender, EventArgs e)
@@ -2501,11 +2702,16 @@ LIKE '%";
                 int index = new int();
 
                 if (dataGridView1.Columns[0].Name == "Column Name")
+                {
                     index = 0;
-                if (dataGridView1.Columns[1].Name == "Column Name")
-                    index = 1;
+                }
 
-                var holding = dataGridView1.SelectedCells[index].Value;
+                if (dataGridView1.Columns[1].Name == "Column Name")
+                {
+                    index = 1;
+                }
+
+                object? holding = dataGridView1.SelectedCells[index].Value;
                 if (holding != null)
                 {
 
@@ -2520,8 +2726,9 @@ LIKE '%";
             }
 
             else
+            {
                 return;
-
+            }
         }
 
 
@@ -2599,6 +2806,7 @@ LIKE '%";
             builtjoinsequence = 1;
 
 
+
         }
 
 
@@ -2611,15 +2819,14 @@ LIKE '%";
         {
 
 
-            if (dta is not null && tabControl1.SelectedTab == this.tabPage4)
+            if (dta is not null && tabControl1.SelectedTab == tabPage4)
 
             {
-                if (String.Equals(ctp, "ctp4"))
+                if (string.Equals(ctp, "ctp4"))
                 {
 
-                    var newline = System.Environment.NewLine;
-                    var tab = "\t";
-                    var clipboard_string = new StringBuilder();
+                    string? newline = System.Environment.NewLine;
+                    StringBuilder? clipboard_string = new StringBuilder();
 
 
 
@@ -2629,9 +2836,13 @@ LIKE '%";
                         for (int i = 0; i < row.Cells.Count; i++)
                         {
                             if (i == (row.Cells.Count - 1))
+                            {
                                 clipboard_string.Append("[" + row.Cells[i].Value + "]" + newline);
+                            }
                             else
+                            {
                                 clipboard_string.Append("[" + row.Cells[i].Value + "]" + ",");
+                            }
                         }
                     }
                     button3.Enabled = false;
@@ -2639,7 +2850,9 @@ LIKE '%";
 
 
                     if (clipboard_string != null)
+                    {
                         Clipboard.SetText(clipboard_string.ToString());
+                    }
 
                     if (clipboard_string == null)
                     {
@@ -2655,7 +2868,7 @@ LIKE '%";
 
                 }
 
-                if (!(String.Equals(ctp, "ctp4")))
+                if (!(string.Equals(ctp, "ctp4")))
                 {
                     return;
                 }
@@ -2664,15 +2877,14 @@ LIKE '%";
 
 
 
-            if (dta is not null && tabControl1.SelectedTab == this.tabPage1)
+            if (dta is not null && tabControl1.SelectedTab == tabPage1)
 
             {
-                if (String.Equals(ctp, "ctp1"))
+                if (string.Equals(ctp, "ctp1"))
                 {
 
-                    var newline = System.Environment.NewLine;
-                    var tab = "\t";
-                    var clipboard_string = new StringBuilder();
+                    string? newline = System.Environment.NewLine;
+                    StringBuilder? clipboard_string = new StringBuilder();
 
                     dataGridView1.Columns[3].Visible = false;
 
@@ -2686,10 +2898,13 @@ LIKE '%";
 
 
                             if (i == (row.Cells.Count - 2))
+                            {
                                 clipboard_string.Append("[" + row.Cells[i].Value + "]" + newline);
+                            }
                             else
+                            {
                                 clipboard_string.Append("[" + row.Cells[i].Value + "]" + ",");
-
+                            }
                         }
                     }
 
@@ -2699,7 +2914,9 @@ LIKE '%";
 
 
                     if (clipboard_string != null)
+                    {
                         Clipboard.SetText(clipboard_string.ToString());
+                    }
 
                     if (clipboard_string == null)
                     {
@@ -2715,7 +2932,7 @@ LIKE '%";
 
                 }
 
-                if (!(String.Equals(ctp, "ctp1")))
+                if (!(string.Equals(ctp, "ctp1")))
                 {
                     return;
                 }
@@ -2724,25 +2941,28 @@ LIKE '%";
 
 
 
-            if (dta is not null && tabControl1.SelectedTab == this.tabPage2)
+            if (dta is not null && tabControl1.SelectedTab == tabPage2)
 
             {
-                if (String.Equals(ctp, "ctp2"))
+                if (string.Equals(ctp, "ctp2"))
 
 
                 {
-                    var newline = System.Environment.NewLine;
-                    var tab = "\t";
-                    var clipboard_string = new StringBuilder();
+                    string? newline = System.Environment.NewLine;
+                    StringBuilder? clipboard_string = new StringBuilder();
 
                     foreach (DataGridViewRow row in dataGridView2.Rows)
                     {
                         for (int i = 0; i < row.Cells.Count; i++)
                         {
                             if (i == (row.Cells.Count - 1))
+                            {
                                 clipboard_string.Append("[" + row.Cells[i].Value + "]" + newline);
+                            }
                             else
+                            {
                                 clipboard_string.Append("[" + row.Cells[i].Value + "]" + ",");
+                            }
                         }
                     }
 
@@ -2754,7 +2974,9 @@ LIKE '%";
                         return;
                     }
                     if (clipboard_string != null)
+                    {
                         Clipboard.SetText(clipboard_string.ToString());
+                    }
                 }
 
                 if (dta == null)
@@ -2762,31 +2984,34 @@ LIKE '%";
                     return;
                 }
 
-                if (!(String.Equals(ctp, "ctp2")))
+                if (!(string.Equals(ctp, "ctp2")))
                 {
                     return;
                 }
             }
 
-            if (dta is not null && tabControl1.SelectedTab == this.tabPage3)
+            if (dta is not null && tabControl1.SelectedTab == tabPage3)
 
             {
-                if (String.Equals(ctp, "ctp3"))
+                if (string.Equals(ctp, "ctp3"))
 
                 {
 
-                    var newline = System.Environment.NewLine;
-                    var tab = "\t";
-                    var clipboard_string = new StringBuilder();
+                    string? newline = System.Environment.NewLine;
+                    StringBuilder? clipboard_string = new StringBuilder();
 
                     foreach (DataGridViewRow row in dataGridView3.Rows)
                     {
                         for (int i = 0; i < row.Cells.Count; i++)
                         {
                             if (i == (row.Cells.Count - 1))
+                            {
                                 clipboard_string.Append("[" + row.Cells[i].Value + "]" + newline);
+                            }
                             else
+                            {
                                 clipboard_string.Append("[" + row.Cells[i].Value + "]" + ",");
+                            }
                         }
                     }
 
@@ -2798,7 +3023,9 @@ LIKE '%";
                         return;
                     }
                     if (clipboard_string != null)
+                    {
                         Clipboard.SetText(clipboard_string.ToString());
+                    }
                 }
 
                 if (dta == null)
@@ -2807,7 +3034,7 @@ LIKE '%";
                 }
 
 
-                if (!(String.Equals(ctp, "ctp3")))
+                if (!(string.Equals(ctp, "ctp3")))
                 {
                     return;
                 }
@@ -2878,23 +3105,33 @@ LIKE '%";
         void Authentication_Value(object sender, EventArgs e)
         {
             if (radioButton1.Checked == true)
+            {
                 Set_ReadOnly_For_SQL(sender, e);
+            }
             else if
                 (radioButton2.Checked == true)
+            {
                 Set_Editable_For_Windows(sender, e);
+            }
         }
 
 
         void Search_Type(object sender, EventArgs e)
         {
             if (radioButton3.Checked == true)
+            {
                 Set_Search_Table(sender, e);
+            }
             else if
                 (radioButton4.Checked == true)
+            {
                 Set_Search_Column(sender, e);
+            }
             else if
                 (radioButton5.Checked == true)
+            {
                 Set_Search_Both(sender, e);
+            }
         }
 
 
@@ -3091,7 +3328,7 @@ LIKE '%";
 
                 int currentcaretposition = richTextBox1.SelectionStart;
 
-                var chk = richTextBox1.Text.Substring(lastchar, 1);
+                string? chk = richTextBox1.Text.Substring(lastchar, 1);
                 string stringoriginal = richTextBox1.Text.Substring(0, lastchar + 1);
                 char[] stringarray = stringoriginal.ToString().ToCharArray();
                 Array.Reverse(stringarray);
@@ -3110,7 +3347,7 @@ LIKE '%";
             {
                 if (lastchar > -1)
                 {
-                    var chk = richTextBox1.Text.Substring(lastchar, 0);
+                    string? chk = richTextBox1.Text.Substring(lastchar, 0);
                 }
                 richTextBox1.Select(lastchar, 0);
                 richTextBox1.SelectionStart = nextchar;
@@ -3147,7 +3384,7 @@ LIKE '%";
 
                 int currentcaretposition = richTextBox2.SelectionStart;
 
-                var chk = richTextBox2.Text.Substring(lastchar, 1);
+                string? chk = richTextBox2.Text.Substring(lastchar, 1);
                 string stringoriginal = richTextBox2.Text.Substring(0, lastchar + 1);
                 char[] stringarray = stringoriginal.ToString().ToCharArray();
                 Array.Reverse(stringarray);
@@ -3166,7 +3403,7 @@ LIKE '%";
             {
                 if (lastchar > -1)
                 {
-                    var chk = richTextBox2.Text.Substring(lastchar, 0);
+                    string? chk = richTextBox2.Text.Substring(lastchar, 0);
                 }
                 richTextBox2.Select(lastchar, 0);
                 richTextBox2.SelectionStart = nextchar;
@@ -3203,7 +3440,7 @@ LIKE '%";
 
                 int currentcaretposition = richTextBox4.SelectionStart;
 
-                var chk = richTextBox4.Text.Substring(lastchar, 1);
+                string? chk = richTextBox4.Text.Substring(lastchar, 1);
                 string stringoriginal = richTextBox4.Text.Substring(0, lastchar + 1);
                 char[] stringarray = stringoriginal.ToString().ToCharArray();
                 Array.Reverse(stringarray);
@@ -3222,7 +3459,7 @@ LIKE '%";
             {
                 if (lastchar > -1)
                 {
-                    var chk = richTextBox4.Text.Substring(lastchar, 0);
+                    string? chk = richTextBox4.Text.Substring(lastchar, 0);
                 }
                 richTextBox4.Select(lastchar, 0);
                 richTextBox4.SelectionStart = nextchar;
@@ -3349,7 +3586,7 @@ LIKE '%";
 
             }
 
-            var prochar = new string[45];
+            string[]? prochar = new string[45];
             prochar[1] = ".";
             prochar[2] = "$";
             prochar[3] = "^";
@@ -3452,7 +3689,7 @@ LIKE '%";
 
                     //int len = richTextBox1.TextLength;
 
-                    var procwords = new string[300];
+                    string[]? procwords = new string[300];
                     procwords[1] = "ABSOLUTE";
                     procwords[2] = "EXEC";
                     procwords[3] = "OVERLAPS";
@@ -3787,12 +4024,12 @@ LIKE '%";
             if (lowmemorymode == true)
             {
 
-                this.dataGridView1.ColumnHeadersVisible = false;
-                this.dataGridView2.ColumnHeadersVisible = false;
-                this.dataGridView3.ColumnHeadersVisible = false;
-                this.dataGridView4.ColumnHeadersVisible = false;
-                this.dataGridView5.ColumnHeadersVisible = false;
-                this.dataGridView6.ColumnHeadersVisible = false;
+                dataGridView1.ColumnHeadersVisible = false;
+                dataGridView2.ColumnHeadersVisible = false;
+                dataGridView3.ColumnHeadersVisible = false;
+                dataGridView4.ColumnHeadersVisible = false;
+                dataGridView5.ColumnHeadersVisible = false;
+                dataGridView6.ColumnHeadersVisible = false;
             }
             button3.Enabled = false;
             button4.Enabled = false;
@@ -3805,9 +4042,9 @@ LIKE '%";
             button2.Enabled = false;
             button1.Enabled = false;
             //this.label17.Location = new System.Drawing.Point(268, 112);
-            this.label17.Text = "Not Connected";
-            this.label17.TextAlign = ContentAlignment.TopRight;
-            this.label17.ForeColor = System.Drawing.Color.Black;
+            label17.Text = "Not Connected";
+            label17.TextAlign = ContentAlignment.TopRight;
+            label17.ForeColor = System.Drawing.Color.Black;
             //contextMenuStrip1.Enabled = false;
             //toolStripMenuItem1.Enabled = false;
             //toolStripMenuItem9.Enabled = false;
@@ -3853,8 +4090,7 @@ LIKE '%";
         private void backgroundWorker4_DoWork(object sender, DoWorkEventArgs e)
         {
 
-            if (lowmemorymode == true)
-            {
+          
                 if (dta is not null)
                 {
                     dta.Clear();
@@ -3867,7 +4103,7 @@ LIKE '%";
 
                 dta = null;
                 dta2 = null;
-            }
+            
 
 
             BeginInvoke((MethodInvoker)delegate
@@ -3884,7 +4120,7 @@ LIKE '%";
                     dataGridView7.DataSource = null;
                     dataGridView8.DataSource = null;
                 }
-                this.Text = "SQL Tools - WORKING...";
+                Text = "SQL Tools - WORKING...";
             });
 
             busy = true;
@@ -3918,7 +4154,7 @@ LIKE '%";
 
                 BackgroundWorker worker = sender as BackgroundWorker;
                 if (worker != null)
-
+                {
                     try
                     {
                         using (SqlConnection cmd = new SqlConnection(connex))
@@ -3961,7 +4197,7 @@ LIKE '%";
                                         {
                                             label17.Text = "Connected";
                                             //this.label17.Location = new System.Drawing.Point(288, 112);
-                                            this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                            label17.ForeColor = System.Drawing.Color.DarkGreen;
                                         }
                                      );
                                     }
@@ -4023,11 +4259,12 @@ LIKE '%";
                             catch (Exception ex)
 
                             {
-                                var msg = ex.Message;
+                                string? msg = ex.Message;
 
                                 if (worker.CancellationPending == true)
-
+                                {
                                     return;
+                                }
 
                                 if (ex.Message != null)
                                 {
@@ -4053,7 +4290,7 @@ LIKE '%";
 
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         string msg = "Please enter valid connection details.";
                         //MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
@@ -4065,7 +4302,7 @@ LIKE '%";
                             //groupBox8.Text = "Error";
                         });
                     }
-
+                }
             }
             return;
         }
@@ -4076,6 +4313,16 @@ LIKE '%";
 
             currenttab = tabControl1.SelectedIndex;
 
+            if (currenttab == 4)
+            {
+                groupBox6.Enabled = false;
+            }
+
+            if (currenttab != 4)
+            {
+                groupBox6.Enabled = true;
+            }
+
             if (dataGridView1.DataSource is null)
             {
 
@@ -4083,7 +4330,7 @@ LIKE '%";
 
                 {
                     dataGridView1.ColumnHeadersVisible = false;
-                    this.dataGridView1.ColumnHeadersVisible = false;
+                    dataGridView1.ColumnHeadersVisible = false;
                     dataGridView1.AllowUserToAddRows = false;
 
                     textBox11.Visible = true;
@@ -4144,7 +4391,7 @@ LIKE '%";
                 {
 
                     dataGridView2.ColumnHeadersVisible = false;
-                    this.dataGridView2.ColumnHeadersVisible = false;
+                    dataGridView2.ColumnHeadersVisible = false;
                     dataGridView2.AllowUserToAddRows = false;
                     textBox11.Visible = true;
                     textBox12.Visible = true;
@@ -4192,7 +4439,7 @@ LIKE '%";
                 if (lowmemorymode == true)
                 {
                     dataGridView4.ColumnHeadersVisible = false;
-                    this.dataGridView4.ColumnHeadersVisible = false;
+                    dataGridView4.ColumnHeadersVisible = false;
                     dataGridView4.AllowUserToAddRows = false;
                     textBox11.Visible = true;
                     textBox12.Visible = true;
@@ -4239,7 +4486,7 @@ LIKE '%";
                 if (lowmemorymode == true)
                 {
                     dataGridView6.ColumnHeadersVisible = false;
-                    this.dataGridView6.ColumnHeadersVisible = false;
+                    dataGridView6.ColumnHeadersVisible = false;
                     dataGridView6.ReadOnly = true;
                     dataGridView6.AllowUserToAddRows = false;
                     textBox11.Visible = true;
@@ -4286,7 +4533,7 @@ LIKE '%";
                 if (lowmemorymode == true)
                 {
                     dataGridView7.ColumnHeadersVisible = false;
-                    this.dataGridView7.ColumnHeadersVisible = false;
+                    dataGridView7.ColumnHeadersVisible = false;
                     dataGridView7.ReadOnly = true;
                     dataGridView7.AllowUserToAddRows = false;
                     textBox11.Visible = true;
@@ -4333,7 +4580,7 @@ LIKE '%";
                 if (lowmemorymode == true)
                 {
                     dataGridView8.ColumnHeadersVisible = false;
-                    this.dataGridView8.ColumnHeadersVisible = false;
+                    dataGridView8.ColumnHeadersVisible = false;
                     dataGridView8.ReadOnly = true;
                     dataGridView8.AllowUserToAddRows = false;
                     textBox11.Visible = true;
@@ -4380,7 +4627,7 @@ LIKE '%";
                 if (lowmemorymode == true)
                 {
                     dataGridView3.ColumnHeadersVisible = false;
-                    this.dataGridView3.ColumnHeadersVisible = false;
+                    dataGridView3.ColumnHeadersVisible = false;
                     dataGridView3.ReadOnly = true;
                     dataGridView3.AllowUserToAddRows = false;
                     textBox11.Visible = true;
@@ -4433,7 +4680,7 @@ LIKE '%";
                 {
                     BeginInvoke((MethodInvoker)delegate
                     {
-                        this.Text = "SQL Tools";
+                        Text = "SQL Tools";
                     });
 
                     if (lowmemorymode == true)
@@ -4477,8 +4724,8 @@ LIKE '%";
 
                     f5pressed = false;
                     ctp = "ctp4";
-                    button3.Enabled = true;
-                    button3.Text = "Results to Clipboard";
+                   // button3.Enabled = true;
+                    ///button3.Text = "Results to Clipboard";
                     button2.Enabled = true;
                     button1.Enabled = true;
                     button4.Enabled = true;
@@ -4517,10 +4764,10 @@ LIKE '%";
 
                         if (lowmemorymode == true)
                         {
-                           
-                       
+
+
                             dataGridView4.DataSource = dta;
-                  
+
                         }
 
                         contextMenuStrip3.Enabled = true;
@@ -4554,11 +4801,11 @@ LIKE '%";
                     {
                         if (lowmemorymode == true)
                         {
-                            this.dataGridView4.ColumnHeadersVisible = false;
-                            this.dataGridView5.ColumnHeadersVisible = false;
-                            this.dataGridView6.ColumnHeadersVisible = false;
+                            dataGridView4.ColumnHeadersVisible = false;
+                            dataGridView5.ColumnHeadersVisible = false;
+                            dataGridView6.ColumnHeadersVisible = false;
                         }
-                        button3.Enabled = false;
+                        //button3.Enabled = false;
                         textBox14.Visible = true;
                         textBox14.Text = "No Results." + changederror;
                         richTextBox1.Enabled = true;
@@ -4568,11 +4815,11 @@ LIKE '%";
                     {
                         if (lowmemorymode == true)
                         {
-                            this.dataGridView4.ColumnHeadersVisible = false;
-                            this.dataGridView5.ColumnHeadersVisible = false;
-                            this.dataGridView6.ColumnHeadersVisible = false;
+                            dataGridView4.ColumnHeadersVisible = false;
+                            dataGridView5.ColumnHeadersVisible = false;
+                            dataGridView6.ColumnHeadersVisible = false;
                         }
-                        button3.Enabled = false;
+                        //button3.Enabled = false;
                         //    contextMenuStrip1.Enabled = false;
                         //    toolStripMenuItem1.Enabled = false;
                         //    toolStripMenuItem9.Enabled = false;
@@ -4840,7 +5087,7 @@ LIKE '%";
 
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 richTextBox1.Select(caretposition, 1);
                 MessageBox.Show("Suggestions failed to initialise.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -4882,13 +5129,19 @@ LIKE '%";
                 if (e.KeyCode == Keys.Down)
                 {
                     if (lb.SelectedIndex < (lb.Items.Count - 1))
+                    {
                         lb.SelectedIndex++;
+                    }
+
                     e.Handled = true;
                 }
                 if (e.KeyCode == Keys.Up)
                 {
                     if (lb.SelectedIndex > 0)
+                    {
                         lb.SelectedIndex--;
+                    }
+
                     e.Handled = true;
                 }
 
@@ -5205,7 +5458,7 @@ LIKE '%";
             textBox10.Text = "";
 
 
-            var len = richTextBox2.TextLength;
+            int len = richTextBox2.TextLength;
 
             if (e.KeyCode == Keys.Back)
             {
@@ -5276,7 +5529,7 @@ LIKE '%";
                 //tabControl3.SelectedTab = tabPage9;
             }
 
-            var prochar = new string[45];
+            string[]? prochar = new string[45];
             prochar[1] = ".";
             prochar[2] = "$";
             prochar[3] = "^";
@@ -5379,7 +5632,7 @@ LIKE '%";
 
                     //int len = richTextBox2.TextLength;
 
-                    var procwords = new string[300];
+                    string[]? procwords = new string[300];
                     procwords[1] = "ABSOLUTE";
                     procwords[2] = "EXEC";
                     procwords[3] = "OVERLAPS";
@@ -5700,17 +5953,17 @@ LIKE '%";
 
             if (lowmemorymode == true)
             {
-                this.dataGridView1.ColumnHeadersVisible = false;
-                this.dataGridView2.ColumnHeadersVisible = false;
-                this.dataGridView3.ColumnHeadersVisible = false;
-                this.dataGridView4.ColumnHeadersVisible = false;
-                this.dataGridView5.ColumnHeadersVisible = false;
-                this.dataGridView6.ColumnHeadersVisible = false;
-                this.dataGridView7.ColumnHeadersVisible = false;
-                this.dataGridView8.ColumnHeadersVisible = false;
+                dataGridView1.ColumnHeadersVisible = false;
+                dataGridView2.ColumnHeadersVisible = false;
+                dataGridView3.ColumnHeadersVisible = false;
+                dataGridView4.ColumnHeadersVisible = false;
+                dataGridView5.ColumnHeadersVisible = false;
+                dataGridView6.ColumnHeadersVisible = false;
+                dataGridView7.ColumnHeadersVisible = false;
+                dataGridView8.ColumnHeadersVisible = false;
             }
 
-            button3.Enabled = false;
+            //button3.Enabled = false;
             button4.Enabled = false;
             button1.Enabled = false;
             button8.Enabled = false;
@@ -5721,9 +5974,9 @@ LIKE '%";
             button2.Enabled = false;
             button1.Enabled = false;
             //this.label17.Location = new System.Drawing.Point(268, 110);
-            this.label17.Text = "Not Connected";
-            this.label17.TextAlign = ContentAlignment.TopRight;
-            this.label17.ForeColor = System.Drawing.Color.Black;
+            label17.Text = "Not Connected";
+            label17.TextAlign = ContentAlignment.TopRight;
+            label17.ForeColor = System.Drawing.Color.Black;
             //contextMenuStrip1.Enabled = false;
             //toolStripMenuItem1.Enabled = false;
             //toolStripMenuItem9.Enabled = false;
@@ -5767,8 +6020,7 @@ LIKE '%";
 
         private void backgroundWorker5_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (lowmemorymode == true)
-            {
+           
                 if (dta is not null)
                 {
                     dta.Clear();
@@ -5781,7 +6033,7 @@ LIKE '%";
 
                 dta = null;
                 dta2 = null;
-            }
+            
 
 
             BeginInvoke((MethodInvoker)delegate
@@ -5800,7 +6052,7 @@ LIKE '%";
                         dataGridView8.DataSource = null;
                     }
                 }
-                this.Text = "SQL Tools - WORKING...";
+                Text = "SQL Tools - WORKING...";
             });
             //errormessage = "";
             //changederror = "";
@@ -5848,7 +6100,7 @@ LIKE '%";
 
                 BackgroundWorker worker = sender as BackgroundWorker;
                 if (worker != null)
-
+                {
                     try
                     {
                         using (SqlConnection cmd = new SqlConnection(connex))
@@ -5889,7 +6141,7 @@ LIKE '%";
                                         {
                                             label17.Text = "Connected";
                                             //this.label17.Location = new System.Drawing.Point(288, 112);
-                                            this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                            label17.ForeColor = System.Drawing.Color.DarkGreen;
                                         }
                                      );
                                     }
@@ -5983,7 +6235,7 @@ LIKE '%";
                                         {
                                             label17.Text = "Connected";
                                             //this.label17.Location = new System.Drawing.Point(288, 112);
-                                            this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                            label17.ForeColor = System.Drawing.Color.DarkGreen;
                                         }
                                      );
                                     }
@@ -6049,8 +6301,9 @@ LIKE '%";
 
                             {
                                 if (worker.CancellationPending == true)
-
+                                {
                                     return;
+                                }
 
                                 if (ex.Message != null)
                                 {
@@ -6067,7 +6320,7 @@ LIKE '%";
 
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         errormessage = Environment.NewLine + "Please enter valid connection details.";
                         //MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
@@ -6083,7 +6336,7 @@ LIKE '%";
                             datacleared = false;
                         });
                     }
-
+                }
             }
             return;
         }
@@ -6097,8 +6350,8 @@ LIKE '%";
                 if (lowmemorymode == true)
                 {
                     dataGridView4.ColumnHeadersVisible = false;
-                    this.dataGridView5.ColumnHeadersVisible = false;
-                    this.dataGridView6.ColumnHeadersVisible = false;
+                    dataGridView5.ColumnHeadersVisible = false;
+                    dataGridView6.ColumnHeadersVisible = false;
                 }
                 dataGridView4.ReadOnly = true;
                 dataGridView4.AllowUserToAddRows = false;
@@ -6119,14 +6372,14 @@ LIKE '%";
                 {
                     BeginInvoke((MethodInvoker)delegate
                     {
-                        this.Text = "SQL Tools";
+                        Text = "SQL Tools";
                     });
 
 
                     f5pressed = false;
                     ctp = "ctp4";
-                    button3.Enabled = true;
-                    button3.Text = "Results to Clipboard";
+                    //button3.Enabled = true;
+                    //button3.Text = "Results to Clipboard";
 
                     button2.Enabled = true;
                     button1.Enabled = true;
@@ -6175,13 +6428,13 @@ LIKE '%";
                         if (lowmemorymode == true)
                         {
 
-                           
+
                             dataGridView5.DataSource = dta;
 
                         }
 
 
-                
+
 
                         groupBox11.Text = "Results";
                         groupBox12.Text = "Results";
@@ -6208,18 +6461,18 @@ LIKE '%";
                     if (dta is null)
                     {
 
-                        this.dataGridView5.ColumnHeadersVisible = false;
-                        this.dataGridView6.ColumnHeadersVisible = false;
-                        button3.Enabled = false;
+                        dataGridView5.ColumnHeadersVisible = false;
+                        dataGridView6.ColumnHeadersVisible = false;
+                        //button3.Enabled = false;
                         textBox10.Visible = true;
                         textBox10.Text = Environment.NewLine + changederror;
                     }
 
                     if (busy == true)
                     {
-                        this.dataGridView5.ColumnHeadersVisible = false;
-                        this.dataGridView6.ColumnHeadersVisible = false;
-                        button3.Enabled = false;
+                        dataGridView5.ColumnHeadersVisible = false;
+                        dataGridView6.ColumnHeadersVisible = false;
+                        //button3.Enabled = false;
                         //contextMenuStrip1.Enabled = false;
                         //toolStripMenuItem1.Enabled = false;
                         //contextMenuStrip2.Enabled = false;no
@@ -6460,7 +6713,7 @@ LIKE '%";
 
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 richTextBox2.Select(caretposition, 1);
                 MessageBox.Show("Suggestions failed to initialise.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -6497,13 +6750,19 @@ LIKE '%";
                 if (e.KeyCode == Keys.Down)
                 {
                     if (listBox1.SelectedIndex < (listBox1.Items.Count - 1))
+                    {
                         listBox1.SelectedIndex++;
+                    }
+
                     e.Handled = true;
                 }
                 if (e.KeyCode == Keys.Up)
                 {
                     if (listBox1.SelectedIndex > 0)
+                    {
                         listBox1.SelectedIndex--;
+                    }
+
                     e.Handled = true;
                 }
 
@@ -6876,7 +7135,7 @@ LIKE '%";
 
             }
 
-            var prochar = new string[45];
+            string[]? prochar = new string[45];
             prochar[1] = ".";
             prochar[2] = "$";
             prochar[3] = "^";
@@ -6979,7 +7238,7 @@ LIKE '%";
 
                     //int len = richTextBox4.TextLength;
 
-                    var procwords = new string[300];
+                    string[]? procwords = new string[300];
                     procwords[1] = "ABSOLUTE";
                     procwords[2] = "EXEC";
                     procwords[3] = "OVERLAPS";
@@ -7317,32 +7576,32 @@ LIKE '%";
             if (lowmemorymode == true)
             {
 
-                this.dataGridView1.ColumnHeadersVisible = false;
-                this.dataGridView2.ColumnHeadersVisible = false;
-                this.dataGridView3.ColumnHeadersVisible = false;
-                this.dataGridView4.ColumnHeadersVisible = false;
-                this.dataGridView5.ColumnHeadersVisible = false;
-                this.dataGridView6.ColumnHeadersVisible = false;
-                this.dataGridView7.ColumnHeadersVisible = false;
-                this.dataGridView8.ColumnHeadersVisible = false;
+                dataGridView1.ColumnHeadersVisible = false;
+                dataGridView2.ColumnHeadersVisible = false;
+                dataGridView3.ColumnHeadersVisible = false;
+                dataGridView4.ColumnHeadersVisible = false;
+                dataGridView5.ColumnHeadersVisible = false;
+                dataGridView6.ColumnHeadersVisible = false;
+                dataGridView7.ColumnHeadersVisible = false;
+                dataGridView8.ColumnHeadersVisible = false;
             }
 
             dataGridView6.Rows.Clear();
             dataGridView7.Rows.Clear();
 
-            button3.Enabled = false;
-            button4.Enabled = false;
-            button1.Enabled = false;
-            button8.Enabled = false;
+            //button3.Enabled = false;
+            // button4.Enabled = false;
+            // button1.Enabled = false;
+            // button8.Enabled = false;
 
             //textBox11.Text = "No Results.";
             //label14.Visible = false;
             button2.Enabled = false;
             button1.Enabled = false;
             //this.label17.Location = new System.Drawing.Point(288, 110);
-            this.label17.Text = "Not Connected";
-            this.label17.TextAlign = ContentAlignment.TopRight;
-            this.label17.ForeColor = System.Drawing.Color.Black;
+            label17.Text = "Not Connected";
+            label17.TextAlign = ContentAlignment.TopRight;
+            label17.ForeColor = System.Drawing.Color.Black;
             //contextMenuStrip1.Enabled = false;
             //toolStripMenuItem1.Enabled = false;
             //toolStripMenuItem9.Enabled = false;
@@ -7382,8 +7641,7 @@ LIKE '%";
 
         private void backgroundWorker6_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (lowmemorymode == true)
-            {
+           
                 if (dta is not null)
                 {
                     dta.Clear();
@@ -7396,7 +7654,7 @@ LIKE '%";
 
                 dta = null;
                 dta2 = null;
-            }
+            
 
             BeginInvoke((MethodInvoker)delegate
             {
@@ -7414,7 +7672,7 @@ LIKE '%";
                         dataGridView8.DataSource = null;
                     }
                 }
-                this.Text = "SQL Tools - WORKING...";
+                Text = "SQL Tools - WORKING...";
             });
             //busy = true;
             //errormessage = "";
@@ -7505,7 +7763,7 @@ LIKE '%";
                                 {
                                     label17.Text = "Connected";
                                     //this.label17.Location = new System.Drawing.Point(288, 112);
-                                    this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                    label17.ForeColor = System.Drawing.Color.DarkGreen;
                                 }
                              );
 
@@ -7517,7 +7775,7 @@ LIKE '%";
                                     {
                                         label17.Text = "Connection Failed";
                                         //this.label17.Location = new System.Drawing.Point(255, 112);
-                                        this.label17.ForeColor = System.Drawing.Color.DarkRed;
+                                        label17.ForeColor = System.Drawing.Color.DarkRed;
                                     }
                                  );
 
@@ -7619,15 +7877,16 @@ LIKE '%";
                     {
 
                         if (worker.CancellationPending == true)
-
+                        {
                             return;
+                        }
 
                         if (errormessage != null)
 
 
                         {
 
-                            var msg = ex.Message;
+                            string? msg = ex.Message;
 
 
                             safesqlexceptionhandler(sender, e);
@@ -7658,7 +7917,7 @@ LIKE '%";
 
         //Command 2
 
-        public void secondsql(Object sender, DoWorkEventArgs e)
+        public void secondsql(object sender, DoWorkEventArgs e)
         {
             //errormessage = "";
             //changederror = "";
@@ -7743,7 +8002,7 @@ LIKE '%";
                                 {
                                     label17.Text = "Connected";
                                     //this.label17.Location = new System.Drawing.Point(288, 112);
-                                    this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                    label17.ForeColor = System.Drawing.Color.DarkGreen;
                                 }
                              );
 
@@ -7755,7 +8014,7 @@ LIKE '%";
                                     {
                                         label17.Text = "Connection Failed";
                                         //this.label17.Location = new System.Drawing.Point(255, 112);
-                                        this.label17.ForeColor = System.Drawing.Color.DarkRed;
+                                        label17.ForeColor = System.Drawing.Color.DarkRed;
                                     }
                                  );
 
@@ -7829,8 +8088,10 @@ LIKE '%";
                     {
 
                         if (worker.CancellationPending == true)
-
+                        {
                             return;
+                        }
+
                         if (errormessage != null)
 
                         {
@@ -7867,7 +8128,7 @@ LIKE '%";
         }
 
 
-        public void thirdsql(Object sender, EventArgs e)
+        public void thirdsql(object sender, EventArgs e)
         {
 
             textBox9.Text = "";
@@ -7947,7 +8208,7 @@ LIKE '%";
                             {
                                 label17.Text = "Connected";
                                 //this.label17.Location = new System.Drawing.Point(288, 112);
-                                this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                label17.ForeColor = System.Drawing.Color.DarkGreen;
                             }
                          );
 
@@ -7959,7 +8220,7 @@ LIKE '%";
                                 {
                                     label17.Text = "Connection Failed";
                                     //this.label17.Location = new System.Drawing.Point(255, 112);
-                                    this.label17.ForeColor = System.Drawing.Color.DarkRed;
+                                    label17.ForeColor = System.Drawing.Color.DarkRed;
                                 }
                              );
 
@@ -8090,20 +8351,15 @@ LIKE '%";
 
                     BeginInvoke((MethodInvoker)delegate
                     {
-                        this.Text = "SQL Tools";
+                        Text = "SQL Tools";
                     });
-
-
-                    string ds;
 
                     if (lowmemorymode == true)
                     {
-                        ds = "dta";
                     }
 
                     if (lowmemorymode == true)
                     {
-                        ds = "dtm6";
                     }
 
                     //dataGridView5.DataSource = null;
@@ -8120,8 +8376,8 @@ LIKE '%";
 
                     f5pressed = false;
                     ctp = "ctp4";
-                    button3.Enabled = true;
-                    button3.Text = "Results to Clipboard";
+                    //button3.Enabled = true;
+                    //button3.Text = "Results to Clipboard";
                     button2.Enabled = true;
                     button1.Enabled = true;
                     button4.Enabled = true;
@@ -8201,7 +8457,7 @@ LIKE '%";
                             dataGridView7.ScrollBars = ScrollBars.None;
                             textBox9.Visible = true;
                             textBox9.Text = "No Results" + changederror;
-                            this.dataGridView7.ColumnHeadersVisible = false;
+                            dataGridView7.ColumnHeadersVisible = false;
 
                             if (lowmemorymode == true)
                             {
@@ -8215,7 +8471,7 @@ LIKE '%";
                         if (dta.Rows.Count > 0)
                         {
 
-                            this.dataGridView7.ColumnHeadersVisible = true;
+                            dataGridView7.ColumnHeadersVisible = true;
                             textBox9.Visible = false;
                             //dataGridView7.Visible = true;
                         }
@@ -8225,17 +8481,17 @@ LIKE '%";
                         if (dta.Rows.Count < 1 & errormessage != "")
                         {
                             //label31.Visible = true;
-                            this.dataGridView7.ColumnHeadersVisible = false;
-                            button3.Enabled = false;
+                            dataGridView7.ColumnHeadersVisible = false;
+                            //button3.Enabled = false;
                             textBox9.Visible = true;
                             textBox9.Text = "No Results.";
-                           
-                                dataGridView7.DataSource = null;
-                                dataGridView7.Refresh();
-                                datacleared = true;
-                            
 
-                      
+                            dataGridView7.DataSource = null;
+                            dataGridView7.Refresh();
+                            datacleared = true;
+
+
+
                             textBox9.Visible = false;
                             textBox9.Text = Environment.NewLine + errormessage;
 
@@ -8257,8 +8513,8 @@ LIKE '%";
                         if (errormessage != "")
                         {
                             //label31.Visible = true;
-                            this.dataGridView7.ColumnHeadersVisible = false;
-                            button3.Enabled = false;
+                            dataGridView7.ColumnHeadersVisible = false;
+                            //button3.Enabled = false;
                             textBox9.Visible = true;
                             textBox9.Text = "No Results." + changederror;
                             textBox10.Visible = true;
@@ -8269,7 +8525,7 @@ LIKE '%";
                         if (errormessage == null || errormessage == "")
                         {
 
-                            this.dataGridView7.ColumnHeadersVisible = false;
+                            dataGridView7.ColumnHeadersVisible = false;
                             button3.Enabled = false;
                             textBox9.Visible = true;
                             textBox10.Visible = true;
@@ -8320,7 +8576,7 @@ LIKE '%";
                             dataGridView6.ScrollBars = ScrollBars.None;
                             textBox10.Visible = true;
                             textBox10.Text = "No Results.";
-                            this.dataGridView6.ColumnHeadersVisible = false;
+                            dataGridView6.ColumnHeadersVisible = false;
                             dataGridView6.DataSource = null;
                             dataGridView6.Refresh();
 
@@ -8330,7 +8586,7 @@ LIKE '%";
                         if (dta2.Rows.Count > 0)
                         {
 
-                            this.dataGridView6.ColumnHeadersVisible = true;
+                            dataGridView6.ColumnHeadersVisible = true;
                         }
 
 
@@ -8338,8 +8594,8 @@ LIKE '%";
                         if (dta2.Rows.Count < 1 & errormessage != "")
                         {
                             datacleared = true;
-                            this.dataGridView6.ColumnHeadersVisible = false;
-                            button3.Enabled = false;
+                            dataGridView6.ColumnHeadersVisible = false;
+                            //button3.Enabled = false;
                             textBox10.Visible = true;
                             textBox10.Text = "No Results." + changederror;
                             dataGridView6.DataSource = null;
@@ -8366,8 +8622,8 @@ LIKE '%";
                         if (errormessage != "")
                         {
                             //label31.Visible = true;
-                            this.dataGridView6.ColumnHeadersVisible = false;
-                            button3.Enabled = false;
+                            dataGridView6.ColumnHeadersVisible = false;
+                           // button3.Enabled = false;
                             textBox10.Visible = true;
                             textBox10.Text = "No Results." + changederror;
 
@@ -8376,8 +8632,8 @@ LIKE '%";
                         if (errormessage == null || errormessage == "")
                         {
                             //label31.Visible = true;
-                            this.dataGridView6.ColumnHeadersVisible = false;
-                            button3.Enabled = false;
+                            dataGridView6.ColumnHeadersVisible = false;
+                            //button3.Enabled = false;
                             textBox9.Visible = true;
                             textBox9.Text = "No Results.";
                             textBox10.Visible = true;
@@ -8654,7 +8910,7 @@ LIKE '%";
 
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 richTextBox4.Select(caretposition, 1);
                 MessageBox.Show("Suggestions failed to initialise.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -8692,13 +8948,19 @@ LIKE '%";
                 if (e.KeyCode == Keys.Down)
                 {
                     if (listBox2.SelectedIndex < (listBox2.Items.Count - 1))
+                    {
                         listBox2.SelectedIndex++;
+                    }
+
                     e.Handled = true;
                 }
                 if (e.KeyCode == Keys.Up)
                 {
                     if (listBox2.SelectedIndex > 0)
+                    {
                         listBox2.SelectedIndex--;
+                    }
+
                     e.Handled = true;
                 }
 
@@ -9063,13 +9325,13 @@ LIKE '%";
         void copyresultsRow(object sender, EventArgs e)
 
         {
-            if (dta is not null && tabControl3.SelectedTab == this.tabPage9)
+            if (dta is not null && tabControl3.SelectedTab == tabPage9)
 
             {
 
 
 
-                if (String.Equals(ctp, "ctp4"))
+                if (string.Equals(ctp, "ctp4"))
                 {
                     if (dataGridView7.Rows.Count > 0)
                     {
@@ -9081,7 +9343,7 @@ LIKE '%";
 
                         foreach (DataGridViewCell c in dataGridView7.SelectedCells)
                         {
-                            var ind = c.RowIndex;
+                            int ind = c.RowIndex;
                             dataGridView7.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                             dataGridView7.Rows[ind].Selected = true;
                         }
@@ -9094,21 +9356,20 @@ LIKE '%";
 
                         foreach (DataGridViewRow d in dataGridView7.SelectedRows)
                         {
-                            var i = d.Index;
+                            int i = d.Index;
                             DataRow dd = dtc.Rows[i];
                             dtd.ImportRow(dd);
                         }
 
                         dtd.AcceptChanges();
 
-                        var newline = System.Environment.NewLine;
-                        var tab = "\t";
-                        var clipboard_string = new StringBuilder();
+                        string? newline = System.Environment.NewLine;
+                        StringBuilder? clipboard_string = new StringBuilder();
 
 
                         for (int r = dtd.Rows.Count - 1; r >= 0; r--)
                         {
-                            var row = dtd.Rows[r];
+                            DataRow? row = dtd.Rows[r];
                             dtr.ImportRow(row);
                         }
 
@@ -9126,7 +9387,9 @@ LIKE '%";
 
 
                         if (clipboard_string.Length > 0)
+                        {
                             Clipboard.SetText(clipboard_string.ToString());
+                        }
 
                         if (clipboard_string == null)
                         {
@@ -9142,7 +9405,7 @@ LIKE '%";
                     }
                 }
 
-                if (!(String.Equals(ctp, "ctp4")))
+                if (!(string.Equals(ctp, "ctp4")))
                 {
                     return;
                 }
@@ -9155,13 +9418,13 @@ LIKE '%";
             }
 
 
-            if (dta is not null && tabControl3.SelectedTab == this.tabPage10)
+            if (dta is not null && tabControl3.SelectedTab == tabPage10)
 
             {
 
 
 
-                if (String.Equals(ctp, "ctp4"))
+                if (string.Equals(ctp, "ctp4"))
                 {
                     if (dataGridView6.Rows.Count != 0)
 
@@ -9173,7 +9436,7 @@ LIKE '%";
 
                         foreach (DataGridViewCell c in dataGridView6.SelectedCells)
                         {
-                            var ind = c.RowIndex;
+                            int ind = c.RowIndex;
                             dataGridView6.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                             dataGridView6.Rows[ind].Selected = true;
                         }
@@ -9186,21 +9449,20 @@ LIKE '%";
 
                         foreach (DataGridViewRow d in dataGridView6.SelectedRows)
                         {
-                            var i = d.Index;
+                            int i = d.Index;
                             DataRow dd = dtc.Rows[i];
                             dtd.ImportRow(dd);
                         }
 
                         dtd.AcceptChanges();
 
-                        var newline = System.Environment.NewLine;
-                        var tab = "\t";
-                        var clipboard_string = new StringBuilder();
+                        string? newline = System.Environment.NewLine;
+                        StringBuilder? clipboard_string = new StringBuilder();
 
 
                         for (int r = dtd.Rows.Count - 1; r >= 0; r--)
                         {
-                            var row = dtd.Rows[r];
+                            DataRow? row = dtd.Rows[r];
                             dtr.ImportRow(row);
                         }
 
@@ -9218,7 +9480,9 @@ LIKE '%";
 
 
                         if (clipboard_string.Length > 0)
+                        {
                             Clipboard.SetText(clipboard_string.ToString());
+                        }
 
                         if (clipboard_string == null)
                         {
@@ -9234,7 +9498,7 @@ LIKE '%";
                     }
                 }
 
-                if (!(String.Equals(ctp, "ctp4")))
+                if (!(string.Equals(ctp, "ctp4")))
                 {
                     return;
                 }
@@ -9247,13 +9511,13 @@ LIKE '%";
             }
 
 
-            if (dta is not null && tabControl2.SelectedTab == this.tabPage5)
+            if (dta is not null && tabControl2.SelectedTab == tabPage5)
 
             {
 
 
 
-                if (String.Equals(ctp, "ctp4"))
+                if (string.Equals(ctp, "ctp4"))
                 {
                     if (dataGridView4.Rows.Count > 0)
                     {
@@ -9265,7 +9529,7 @@ LIKE '%";
 
                         foreach (DataGridViewCell c in dataGridView4.SelectedCells)
                         {
-                            var ind = c.RowIndex;
+                            int ind = c.RowIndex;
                             dataGridView4.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                             dataGridView4.Rows[ind].Selected = true;
                         }
@@ -9278,21 +9542,20 @@ LIKE '%";
 
                         foreach (DataGridViewRow d in dataGridView4.SelectedRows)
                         {
-                            var i = d.Index;
+                            int i = d.Index;
                             DataRow dd = dtc.Rows[i];
                             dtd.ImportRow(dd);
                         }
 
                         dtd.AcceptChanges();
 
-                        var newline = System.Environment.NewLine;
-                        var tab = "\t";
-                        var clipboard_string = new StringBuilder();
+                        string? newline = System.Environment.NewLine;
+                        StringBuilder? clipboard_string = new StringBuilder();
 
 
                         for (int r = dtd.Rows.Count - 1; r >= 0; r--)
                         {
-                            var row = dtd.Rows[r];
+                            DataRow? row = dtd.Rows[r];
                             dtr.ImportRow(row);
                         }
 
@@ -9310,7 +9573,9 @@ LIKE '%";
 
 
                         if (clipboard_string.Length > 0)
+                        {
                             Clipboard.SetText(clipboard_string.ToString());
+                        }
 
                         if (clipboard_string == null)
                         {
@@ -9326,7 +9591,7 @@ LIKE '%";
                     }
                 }
 
-                if (!(String.Equals(ctp, "ctp4")))
+                if (!(string.Equals(ctp, "ctp4")))
                 {
                     return;
                 }
@@ -9353,10 +9618,10 @@ LIKE '%";
 
         {
 
-            if (dta is not null && tabControl3.SelectedTab == this.tabPage9)
+            if (dta is not null && tabControl3.SelectedTab == tabPage9)
 
             {
-                if (String.Equals(ctp, "ctp4"))
+                if (string.Equals(ctp, "ctp4"))
                 {
                     if (dataGridView7.Rows.Count > 0)
                     {
@@ -9369,7 +9634,7 @@ LIKE '%";
                         int[] selectedcells = new int[numcel];
 
 
-                        var clipboard_string = new StringBuilder();
+                        StringBuilder? clipboard_string = new StringBuilder();
 
                         string[] hold = new string[numcel];
 
@@ -9378,11 +9643,11 @@ LIKE '%";
                         foreach (DataGridViewCell d in dataGridView7.SelectedCells)
                         {
 
-                            var val = d.Value;
+                            object? val = d.Value;
                             //var i = d.ColumnIndex;
                             //var j = d.RowIndex;
 
-                            var fullstring = string.Concat(val, ',');
+                            string? fullstring = string.Concat(val, ',');
 
                             hold[num] = fullstring;
 
@@ -9401,7 +9666,9 @@ LIKE '%";
 
 
                         if (clipboard_string.Length > 0)
+                        {
                             Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
+                        }
 
                         if (clipboard_string == null)
                         {
@@ -9417,7 +9684,7 @@ LIKE '%";
                     }
                 }
 
-                if (!(String.Equals(ctp, "ctp4")))
+                if (!(string.Equals(ctp, "ctp4")))
                 {
                     return;
                 }
@@ -9426,10 +9693,10 @@ LIKE '%";
             }
 
 
-            if (dta is not null && tabControl3.SelectedTab == this.tabPage10)
+            if (dta is not null && tabControl3.SelectedTab == tabPage10)
 
             {
-                if (String.Equals(ctp, "ctp4"))
+                if (string.Equals(ctp, "ctp4"))
                 {
 
                     if (dataGridView6.Rows.Count > 0)
@@ -9444,7 +9711,7 @@ LIKE '%";
                         int[] selectedcells = new int[numcel];
 
 
-                        var clipboard_string = new StringBuilder();
+                        StringBuilder? clipboard_string = new StringBuilder();
 
                         string[] hold = new string[numcel];
 
@@ -9453,11 +9720,11 @@ LIKE '%";
                         foreach (DataGridViewCell d in dataGridView6.SelectedCells)
                         {
 
-                            var val = d.Value;
+                            object? val = d.Value;
                             //var i = d.ColumnIndex;
                             //var j = d.RowIndex;
 
-                            var fullstring = string.Concat(val, ',');
+                            string? fullstring = string.Concat(val, ',');
 
                             hold[num] = fullstring;
 
@@ -9476,7 +9743,9 @@ LIKE '%";
 
 
                         if (clipboard_string.Length > 0)
+                        {
                             Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
+                        }
 
                         if (clipboard_string == null)
                         {
@@ -9492,7 +9761,7 @@ LIKE '%";
                     }
                 }
 
-                if (!(String.Equals(ctp, "ctp4")))
+                if (!(string.Equals(ctp, "ctp4")))
                 {
                     return;
                 }
@@ -9501,10 +9770,10 @@ LIKE '%";
             }
 
 
-            if (dta is not null && tabControl2.SelectedTab == this.tabPage5)
+            if (dta is not null && tabControl2.SelectedTab == tabPage5)
 
             {
-                if (String.Equals(ctp, "ctp4"))
+                if (string.Equals(ctp, "ctp4"))
                 {
                     if (dataGridView4.Rows.Count > 0)
                     {
@@ -9518,7 +9787,7 @@ LIKE '%";
                         int[] selectedcells = new int[numcel];
 
 
-                        var clipboard_string = new StringBuilder();
+                        StringBuilder? clipboard_string = new StringBuilder();
 
                         string[] hold = new string[numcel];
 
@@ -9527,11 +9796,11 @@ LIKE '%";
                         foreach (DataGridViewCell d in dataGridView4.SelectedCells)
                         {
 
-                            var val = d.Value;
+                            object? val = d.Value;
                             //var i = d.ColumnIndex;
                             //var j = d.RowIndex;
 
-                            var fullstring = string.Concat(val, ',');
+                            string? fullstring = string.Concat(val, ',');
 
                             hold[num] = fullstring;
 
@@ -9550,7 +9819,9 @@ LIKE '%";
 
 
                         if (clipboard_string.Length > 0)
+                        {
                             Clipboard.SetText(clipboard_string.ToString().Substring(0, clipboard_string.ToString().Length - 1));
+                        }
 
                         if (clipboard_string == null)
                         {
@@ -9566,7 +9837,7 @@ LIKE '%";
                     }
                 }
 
-                if (!(String.Equals(ctp, "ctp4")))
+                if (!(string.Equals(ctp, "ctp4")))
                 {
                     return;
                 }
@@ -9586,10 +9857,10 @@ LIKE '%";
 
 
 
-            if (dta is not null && tabControl3.SelectedTab == this.tabPage9)
+            if (dta is not null && tabControl3.SelectedTab == tabPage9)
 
             {
-                if (String.Equals(ctp, "ctp4"))
+                if (string.Equals(ctp, "ctp4"))
                 {
 
                     //DataTable dtc = new DataTable();
@@ -9617,7 +9888,7 @@ LIKE '%";
 
                         foreach (DataGridViewCell c in dataGridView7.SelectedCells)
                         {
-                            var ind = c.ColumnIndex;
+                            int ind = c.ColumnIndex;
                             string name = dtc.Columns[ind].ColumnName;
 
                             colnames.Add(name);
@@ -9626,7 +9897,7 @@ LIKE '%";
 
                         foreach (DataGridViewColumn dc in dataGridView7.SelectedColumns)
                         {
-                            var id = dc.Index;
+                            int id = dc.Index;
                             string s = dtc.Columns[id].ColumnName;
                             colnames.Add(s);
                         }
@@ -9634,7 +9905,7 @@ LIKE '%";
 
                         foreach (DataGridViewColumn dcs in dataGridView7.Columns)
                         {
-                            var ids = dcs.Index;
+                            int ids = dcs.Index;
                             string t = dcs.Name;
                             allcolnames.Add(t);
                         }
@@ -9654,7 +9925,7 @@ LIKE '%";
 
                         copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
 
-                        var clipboard_string = new StringBuilder();
+                        StringBuilder? clipboard_string = new StringBuilder();
 
 
 
@@ -9662,7 +9933,9 @@ LIKE '%";
 
 
                         if (clipboard_string.Length > 0)
+                        {
                             Clipboard.SetText(clipboard_string.ToString());
+                        }
 
                         if (clipboard_string == null)
                         {
@@ -9678,7 +9951,7 @@ LIKE '%";
 
                     }
 
-                    if (!(String.Equals(ctp, "ctp4")))
+                    if (!(string.Equals(ctp, "ctp4")))
                     {
                         return;
                     }
@@ -9686,10 +9959,10 @@ LIKE '%";
                 }
             }
 
-            if (dta is not null && tabControl3.SelectedTab == this.tabPage10)
+            if (dta is not null && tabControl3.SelectedTab == tabPage10)
 
             {
-                if (String.Equals(ctp, "ctp4"))
+                if (string.Equals(ctp, "ctp4"))
                 {
 
                     //DataTable dtc = new DataTable();
@@ -9717,7 +9990,7 @@ LIKE '%";
 
                         foreach (DataGridViewCell c in dataGridView6.SelectedCells)
                         {
-                            var ind = c.ColumnIndex;
+                            int ind = c.ColumnIndex;
                             string name = dtc.Columns[ind].ColumnName;
 
                             colnames.Add(name);
@@ -9726,7 +9999,7 @@ LIKE '%";
 
                         foreach (DataGridViewColumn dc in dataGridView6.SelectedColumns)
                         {
-                            var id = dc.Index;
+                            int id = dc.Index;
                             string s = dtc.Columns[id].ColumnName;
                             colnames.Add(s);
                         }
@@ -9734,7 +10007,7 @@ LIKE '%";
 
                         foreach (DataGridViewColumn dcs in dataGridView6.Columns)
                         {
-                            var ids = dcs.Index;
+                            int ids = dcs.Index;
                             string t = dcs.Name;
                             allcolnames.Add(t);
                         }
@@ -9754,7 +10027,7 @@ LIKE '%";
 
                         copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
 
-                        var clipboard_string = new StringBuilder();
+                        StringBuilder? clipboard_string = new StringBuilder();
 
 
 
@@ -9762,7 +10035,9 @@ LIKE '%";
 
 
                         if (clipboard_string.Length > 0)
+                        {
                             Clipboard.SetText(clipboard_string.ToString());
+                        }
 
                         if (clipboard_string == null)
                         {
@@ -9778,7 +10053,7 @@ LIKE '%";
                     }
                 }
 
-                if (!(String.Equals(ctp, "ctp4")))
+                if (!(string.Equals(ctp, "ctp4")))
                 {
                     return;
                 }
@@ -9786,10 +10061,10 @@ LIKE '%";
 
             }
 
-            if (dta is not null && tabControl2.SelectedTab == this.tabPage5)
+            if (dta is not null && tabControl2.SelectedTab == tabPage5)
 
             {
-                if (String.Equals(ctp, "ctp4"))
+                if (string.Equals(ctp, "ctp4"))
                 {
 
                     //DataTable dtc = new DataTable();
@@ -9817,7 +10092,7 @@ LIKE '%";
 
                         foreach (DataGridViewCell c in dataGridView4.SelectedCells)
                         {
-                            var ind = c.ColumnIndex;
+                            int ind = c.ColumnIndex;
                             string name = dtc.Columns[ind].ColumnName;
 
                             colnames.Add(name);
@@ -9826,7 +10101,7 @@ LIKE '%";
 
                         foreach (DataGridViewColumn dc in dataGridView4.SelectedColumns)
                         {
-                            var id = dc.Index;
+                            int id = dc.Index;
                             string s = dtc.Columns[id].ColumnName;
                             colnames.Add(s);
                         }
@@ -9834,7 +10109,7 @@ LIKE '%";
 
                         foreach (DataGridViewColumn dcs in dataGridView4.Columns)
                         {
-                            var ids = dcs.Index;
+                            int ids = dcs.Index;
                             string t = dcs.Name;
                             allcolnames.Add(t);
                         }
@@ -9854,7 +10129,7 @@ LIKE '%";
 
                         copyrows = string.Join(Environment.NewLine, dtc.Rows.OfType<DataRow>().Select(x => string.Join(",", x.ItemArray)));
 
-                        var clipboard_string = new StringBuilder();
+                        StringBuilder? clipboard_string = new StringBuilder();
 
 
 
@@ -9862,7 +10137,9 @@ LIKE '%";
 
 
                         if (clipboard_string.Length > 0)
+                        {
                             Clipboard.SetText(clipboard_string.ToString());
+                        }
 
                         if (clipboard_string == null)
                         {
@@ -9878,7 +10155,7 @@ LIKE '%";
                     }
                 }
 
-                if (!(String.Equals(ctp, "ctp4")))
+                if (!(string.Equals(ctp, "ctp4")))
                 {
                     return;
                 }
@@ -9903,7 +10180,7 @@ LIKE '%";
                 dataGridView6.Rows.Clear();
                 dataGridView7.Rows.Clear();
 
-                var errorrepl = "";
+                string? errorrepl = "";
 
                 if (errormessage is not null)
                 {
@@ -9973,8 +10250,8 @@ LIKE '%";
                     colindex = 1;
                     tabindex = 0;
                 }
-                var holding = dataGridView1.SelectedCells[colindex].Value;
-                var holding2 = dataGridView1.SelectedCells[tabindex].Value;
+                object? holding = dataGridView1.SelectedCells[colindex].Value;
+                object? holding2 = dataGridView1.SelectedCells[tabindex].Value;
                 if (holding != null)
                 {
 
@@ -9987,7 +10264,9 @@ LIKE '%";
             }
 
             else
+            {
                 return;
+            }
         }
 
         private void SelectAllForTable(object sender, EventArgs e)
@@ -10008,7 +10287,7 @@ LIKE '%";
 
                     tabindex = 0;
                 }
-                var holding2 = dataGridView1.SelectedCells[tabindex].Value;
+                object? holding2 = dataGridView1.SelectedCells[tabindex].Value;
                 if (holding2 != null)
                 {
 
@@ -10021,7 +10300,9 @@ LIKE '%";
             }
 
             else
+            {
                 return;
+            }
         }
 
         private void groupBox12_Enter(object sender, EventArgs e)
@@ -10046,7 +10327,7 @@ LIKE '%";
 
                 row.Cells[datatype].Value = row.Cells[datatype].Value.ToString().ToUpper();
 
-                var chk = row.Cells[keytype].Value.ToString();
+                string? chk = row.Cells[keytype].Value.ToString();
 
                 if (chk == "Primary Key")
                 {
@@ -10075,29 +10356,29 @@ LIKE '%";
 
         async void startAsyncButton_DefClick(object sender, EventArgs e)
         {
-            button3.Enabled = false;
-            button4.Enabled = false;
-            button1.Enabled = false;
-            textBox16.Visible = true;
-            button1.Enabled = false;
-            button2.Enabled = false;
-            button8.Enabled = false;
-            button9.Enabled = false;
-            button10.Enabled = false;
+            //button3.Enabled = false;
+            //button4.Enabled = false;
+            //button1.Enabled = false;
+            //textBox16.Visible = true;
+            //button1.Enabled = false;
+            //button2.Enabled = false;
+            //button8.Enabled = false;
+            //button9.Enabled = false;
+            //button10.Enabled = false;
             //this.label17.Location = new System.Drawing.Point(127, 111);
-            this.label17.Text = "Not Connected";
-            this.label17.TextAlign = ContentAlignment.TopRight;
-            this.label17.ForeColor = System.Drawing.Color.Black;
+            label17.Text = "Not Connected";
+            label17.TextAlign = ContentAlignment.TopRight;
+            label17.ForeColor = System.Drawing.Color.Black;
             if (lowmemorymode == true)
             {
-                this.dataGridView1.ColumnHeadersVisible = false;
-                this.dataGridView2.ColumnHeadersVisible = false;
-                this.dataGridView3.ColumnHeadersVisible = false;
-                this.dataGridView4.ColumnHeadersVisible = false;
-                this.dataGridView5.ColumnHeadersVisible = false;
-                this.dataGridView6.ColumnHeadersVisible = false;
-                this.dataGridView7.ColumnHeadersVisible = false;
-                this.dataGridView8.ColumnHeadersVisible = false;
+                dataGridView1.ColumnHeadersVisible = false;
+                dataGridView2.ColumnHeadersVisible = false;
+                dataGridView3.ColumnHeadersVisible = false;
+                dataGridView4.ColumnHeadersVisible = false;
+                dataGridView5.ColumnHeadersVisible = false;
+                dataGridView6.ColumnHeadersVisible = false;
+                dataGridView7.ColumnHeadersVisible = false;
+                dataGridView8.ColumnHeadersVisible = false;
             }
             //CopyCell.Enabled = false;
             //CopyColumn.Enabled = false;
@@ -10141,8 +10422,7 @@ LIKE '%";
         {
             {
                 {
-                    if (lowmemorymode == true)
-                    {
+                  
                         if (dta is not null)
                         {
                             dta.Clear();
@@ -10155,7 +10435,7 @@ LIKE '%";
 
                         dta = null;
                         dta2 = null;
-                    }
+                    
 
 
                     BeginInvoke((MethodInvoker)delegate
@@ -10172,7 +10452,7 @@ LIKE '%";
                             dataGridView7.DataSource = null;
                             dataGridView8.DataSource = null;
                         }
-                        this.Text = "SQL Tools - WORKING...";
+                        Text = "SQL Tools - WORKING...";
                     });
 
                     if (radioButton1.Checked == true)
@@ -10190,7 +10470,7 @@ LIKE '%";
 
                     BackgroundWorker worker = sender as BackgroundWorker;
                     if (worker != null)
-
+                    {
                         try
                         {
                             SqlConnection cmd = new SqlConnection(connex);
@@ -10645,7 +10925,7 @@ LIKE '%";
                                     {
                                         label17.Text = "Connected";
                                         ////this.label17.Location = new System.Drawing.Point(288, 112);
-                                        this.label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                        label17.ForeColor = System.Drawing.Color.DarkGreen;
                                         textBox16.Visible = true;
                                         textBox16.Text = "Working...";
                                     }
@@ -10659,7 +10939,7 @@ LIKE '%";
                                         {
                                             label17.Text = "Connection Failed";
                                             ////this.label17.Location = new System.Drawing.Point(288, 112);
-                                            this.label17.ForeColor = System.Drawing.Color.DarkRed;
+                                            label17.ForeColor = System.Drawing.Color.DarkRed;
                                         }
                                      );
 
@@ -10717,8 +10997,9 @@ LIKE '%";
                             {
 
                                 if (worker.CancellationPending == true)
-
+                                {
                                     return;
+                                }
 
                                 {
 
@@ -10733,9 +11014,9 @@ LIKE '%";
                                     }
 
                                     else
-
+                                    {
                                         MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
-
+                                    }
                                 }
                             }
                             finally
@@ -10751,6 +11032,7 @@ LIKE '%";
                                 ex.ToString();
                             MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
                         }
+                    }
                 }
                 return;
             }
@@ -10775,13 +11057,13 @@ LIKE '%";
                 {
                     BeginInvoke((MethodInvoker)delegate
                     {
-                        this.Text = "SQL Tools";
+                        Text = "SQL Tools";
                     });
 
 
                     ctp = "ctp1";
-                    button3.Enabled = true;
-                    button3.Text = "Results to Clipboard";
+                    //button3.Enabled = true;
+                    //button3.Text = "Results to Clipboard";
                     //textBox16.Visible = false;
                     button2.Enabled = true;
                     button1.Enabled = true;
@@ -10815,7 +11097,7 @@ LIKE '%";
                         if (lowmemorymode == false)
                         {
                             dtm8 = dta.Copy();
-                        
+
                         }
 
                         if (lowmemorymode == false)
@@ -10828,8 +11110,8 @@ LIKE '%";
                             dataGridView8.DataSource = dta;
                         }
 
-                       
-                        this.dataGridView8.ColumnHeadersVisible = true;
+
+                        dataGridView8.ColumnHeadersVisible = true;
                         textBox16.Visible = false;
                         textBox16.Text = "";
                         button9.Enabled = true;
@@ -10847,8 +11129,8 @@ LIKE '%";
                     {
                         textBox16.Visible = true;
                         textBox16.Text = "No Results.";
-                        this.dataGridView8.ColumnHeadersVisible = false;
-                        button3.Enabled = false;
+                        dataGridView8.ColumnHeadersVisible = false;
+                        //button3.Enabled = false;
                         button9.Enabled = false;
                         button10.Enabled = false;
                     }
@@ -10856,7 +11138,7 @@ LIKE '%";
                     if (textBox16.Text == "Working..." || textBox16.Text != "")
                     {
                         //this.datagridview8.ColumnHeadersVisible = false;
-                        button3.Enabled = false;
+                        //button3.Enabled = false;
                         button9.Enabled = false;
                         button10.Enabled = false;
                         //    contextMenuStrip1.Enabled = false;
@@ -10901,9 +11183,9 @@ LIKE '%";
             int row = dataGridView8.CurrentRow.Index;
 
 
-            var defvalue = dataGridView8.Rows[row].Cells[coldef].Value.ToString();
-            var namevalue = dataGridView8.Rows[row].Cells[colname].Value.ToString();
-            var typevalue = dataGridView8.Rows[row].Cells[coltype].Value.ToString();
+            string? defvalue = dataGridView8.Rows[row].Cells[coldef].Value.ToString();
+            string? namevalue = dataGridView8.Rows[row].Cells[colname].Value.ToString();
+            string? typevalue = dataGridView8.Rows[row].Cells[coltype].Value.ToString();
 
             string topaste = namevalue.ToUpper() + " - " + typevalue + Environment.NewLine + "------------" + Environment.NewLine + defvalue + Environment.NewLine + "------------";
             Clipboard.SetText(topaste);
@@ -10925,9 +11207,9 @@ LIKE '%";
             int row = dataGridView8.CurrentRow.Index;
 
 
-            var defvalue = dataGridView8.Rows[row].Cells[coldef].Value.ToString();
-            var namevalue = dataGridView8.Rows[row].Cells[colname].Value.ToString();
-            var typevalue = dataGridView8.Rows[row].Cells[coltype].Value.ToString();
+            string? defvalue = dataGridView8.Rows[row].Cells[coldef].Value.ToString();
+            string? namevalue = dataGridView8.Rows[row].Cells[colname].Value.ToString();
+            string? typevalue = dataGridView8.Rows[row].Cells[coltype].Value.ToString();
 
             string topaste = namevalue + "," + typevalue + "," + defvalue;
             Clipboard.SetText(topaste);
@@ -11036,7 +11318,7 @@ LIKE '%";
 
             foreach (DataGridViewRow dr in dataGridView8.Rows)
             {
-                s += dr.Cells[name].Value + "," + dr.Cells[type].Value + "," + dr.Cells[def].Value + Environment.NewLine+Environment.NewLine;
+                s += dr.Cells[name].Value + "," + dr.Cells[type].Value + "," + dr.Cells[def].Value + Environment.NewLine + Environment.NewLine;
             }
 
             s = s.ToString().Substring(0, s.Length - 1);
@@ -11085,8 +11367,7 @@ LIKE '%";
         private void backgroundWorker8_DoWork(object? sender, DoWorkEventArgs e)
         {
             {
-                if (lowmemorymode == true)
-                {
+              
                     if (dta is not null)
                     {
                         dta.Clear();
@@ -11099,7 +11380,7 @@ LIKE '%";
 
                     dta = null;
                     dta2 = null;
-                }
+                
 
 
                 if (tablenames is not null)
@@ -11112,7 +11393,7 @@ LIKE '%";
                 BeginInvoke((MethodInvoker)delegate
                 {
 
-                    this.Text = "SQL Tools - WORKING...";
+                    Text = "SQL Tools - WORKING...";
                 });
 
                 if (radioButton1.Checked == true)
@@ -11130,7 +11411,7 @@ LIKE '%";
 
                 BackgroundWorker worker = sender as BackgroundWorker;
                 if (worker != null)
-
+                {
                     try
                     {
                         SqlConnection cmd = new SqlConnection(connex);
@@ -11172,9 +11453,9 @@ LIKE '%";
                                 {
                                     label17.Text = "Connected";
                                     ////this.label17.Location = new System.Drawing.Point(288, 112);
-                                    this.label17.ForeColor = System.Drawing.Color.DarkGreen;
-                                    textBox16.Visible = true;
-                                    textBox16.Text = "Working...";
+                                    label17.ForeColor = System.Drawing.Color.DarkGreen;
+                                    //textBox16.Visible = true;
+                                    //textBox16.Text = "Working...";
                                 }
                              );
 
@@ -11186,7 +11467,7 @@ LIKE '%";
                                     {
                                         label17.Text = "Connection Failed";
                                         ////this.label17.Location = new System.Drawing.Point(288, 112);
-                                        this.label17.ForeColor = System.Drawing.Color.DarkRed;
+                                        label17.ForeColor = System.Drawing.Color.DarkRed;
                                     }
                                  );
 
@@ -11216,7 +11497,7 @@ LIKE '%";
                             {
                                 foreach (DataRow dr in ds.Rows)
                                 {
-                                    var a = dr["Table_Name"].ToString();
+                                    string? a = dr["Table_Name"].ToString();
                                     tablenames = dr.Table;
                                     //tablenames.Columns.Add("TableName");
                                     //tablenames.Rows.Add(a);
@@ -11250,8 +11531,9 @@ LIKE '%";
                         {
 
                             if (worker.CancellationPending == true)
-
+                            {
                                 return;
+                            }
 
                             {
 
@@ -11266,9 +11548,9 @@ LIKE '%";
                                 }
 
                                 else
-
+                                {
                                     MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
-
+                                }
                             }
                         }
                         finally
@@ -11284,6 +11566,7 @@ LIKE '%";
                             ex.ToString();
                         MessageBox.Show(msg, "Please check your details.", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
                     }
+                }
             }
             return;
 
@@ -11295,13 +11578,13 @@ LIKE '%";
             {
                 BeginInvoke((MethodInvoker)delegate
                 {
-                    this.Text = "SQL Tools";
+                    Text = "SQL Tools";
                 });
 
 
                 ctp = "ctp1";
-                button3.Enabled = true;
-                button3.Text = "Results to Clipboard";
+                //button3.Enabled = true;
+                //button3.Text = "Results to Clipboard";
                 //textBox16.Visible = false;
                 button2.Enabled = true;
                 button1.Enabled = true;
@@ -11323,9 +11606,9 @@ LIKE '%";
                     foreach (DataRow row in tablenames.Rows)
                     {
 
-                        var val = row;
+                        DataRow? val = row;
 
-                        var a = row[0].ToString();
+                        string? a = row[0].ToString();
 
                         tables.Add(a);
                     }
@@ -11362,11 +11645,17 @@ LIKE '%";
                 tablelimit = comboBox1.SelectedItem.ToString();
             }
 
+         
+
+            if (backgroundWorker8.IsBusy == true)
+            {
+                workerbusy(sender, e);
+            }
+
             if (backgroundWorker8.IsBusy == false)
             {
                 backgroundWorker8.RunWorkerAsync();
             }
-
         }
 
         private void Check1Click(object sender, EventArgs e)
@@ -11422,12 +11711,9 @@ LIKE '%";
 
             if (dataGridView3.RowCount > 0)
             {
-
-
-            int index;
-            var rowindex = dataGridView3.CurrentCell.RowIndex;
-            var colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referenced Table"]);
-            var holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
+                int rowindex = dataGridView3.CurrentCell.RowIndex;
+                int colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referenced Table"]);
+                string? holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
                 if (holding != null)
                 {
 
@@ -11442,21 +11728,20 @@ LIKE '%";
                 }
 
                 else
-                return;
-            }   
-       
+                {
+                    return;
+                }
+            }
+
         }
 
         private void toolStripMenuItem14_Click(object sender, EventArgs e)
         {
             if (dataGridView3.RowCount > 0)
             {
-
-
-                int index;
-                var rowindex = dataGridView3.CurrentCell.RowIndex;
-                var colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referencing Table"]);
-                var holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
+                int rowindex = dataGridView3.CurrentCell.RowIndex;
+                int colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referencing Table"]);
+                string? holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
                 if (holding != null)
                 {
 
@@ -11471,7 +11756,9 @@ LIKE '%";
                 }
 
                 else
+                {
                     return;
+                }
             }
         }
 
@@ -11479,12 +11766,9 @@ LIKE '%";
         {
             if (dataGridView3.RowCount > 0)
             {
-
-
-                int index;
-                var rowindex = dataGridView3.CurrentCell.RowIndex;
-                var colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referenced Column"]);
-                var holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
+                int rowindex = dataGridView3.CurrentCell.RowIndex;
+                int colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referenced Column"]);
+                string? holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
                 if (holding != null)
                 {
 
@@ -11499,7 +11783,9 @@ LIKE '%";
                 }
 
                 else
+                {
                     return;
+                }
             }
         }
 
@@ -11507,12 +11793,9 @@ LIKE '%";
         {
             if (dataGridView3.RowCount > 0)
             {
-
-
-                int index;
-                var rowindex = dataGridView3.CurrentCell.RowIndex;
-                var colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referencing Column"]);
-                var holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
+                int rowindex = dataGridView3.CurrentCell.RowIndex;
+                int colindex = dataGridView3.Columns.IndexOf(dataGridView3.Columns["Referencing Column"]);
+                string? holding = dataGridView3.Rows[rowindex].Cells[colindex].Value.ToString();
                 if (holding != null)
                 {
 
@@ -11527,7 +11810,9 @@ LIKE '%";
                 }
 
                 else
+                {
                     return;
+                }
             }
         }
 
@@ -11537,6 +11822,541 @@ LIKE '%";
             {
                 textBox6.Clear();
             }
+        }
+
+        private void checkBox5_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+
+
+        private void button11_InitialClick(object sender, EventArgs e)
+
+        { 
+        button11_Click(sender, e);
+        button11_Click(sender, e);
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+
+        {
+
+
+            string[]? procwords = new string[300];
+            procwords[1] = "ABSOLUTE";
+            procwords[2] = "EXEC";
+            procwords[3] = "OVERLAPS";
+            procwords[4] = "ACTION";
+            procwords[5] = "EXECUTE";
+            procwords[6] = "PAD";
+            procwords[7] = "ADA";
+            procwords[8] = "EXISTS";
+            procwords[9] = "PARTIAL";
+            procwords[10] = "ADD";
+            procwords[11] = "EXTERNAL";
+            procwords[12] = "PASCAL";
+            procwords[13] = "ALL";
+            procwords[14] = "EXTRACT";
+            procwords[15] = "POSITION";
+            procwords[16] = "ALLOCATE";
+            procwords[17] = "FALSE";
+            procwords[18] = "PRECISION";
+            procwords[19] = "ALTER";
+            procwords[20] = "FETCH";
+            procwords[21] = "PREPARE";
+            procwords[22] = "AND";
+            procwords[23] = "FIRST";
+            procwords[24] = "PRESERVE";
+            procwords[25] = "ANY";
+            procwords[26] = "FLOAT";
+            procwords[27] = "PRIMARY";
+            procwords[28] = "ARE";
+            procwords[29] = "FOR";
+            procwords[30] = "PRIOR";
+            procwords[31] = "AS";
+            procwords[32] = "FOREIGN";
+            procwords[33] = "PRIVILEGES";
+            procwords[34] = "ASC";
+            procwords[35] = "FORTRAN";
+            procwords[36] = "PROCEDURE";
+            procwords[37] = "ASSERTION";
+            procwords[38] = "FOUND";
+            procwords[39] = "PUBLIC";
+            procwords[40] = "AT";
+            procwords[41] = "FROM";
+            procwords[42] = "READ";
+            procwords[43] = "AUTHORIZATION";
+            procwords[44] = "FULL";
+            procwords[45] = "REAL";
+            procwords[46] = "AVG";
+            procwords[47] = "GET";
+            procwords[48] = "REFERENCES";
+            procwords[49] = "BEGIN";
+            procwords[50] = "GLOBAL";
+            procwords[51] = "RELATIVE";
+            procwords[52] = "BETWEEN";
+            procwords[53] = "GO";
+            procwords[54] = "RESTRICT";
+            procwords[55] = "BIT";
+            procwords[56] = "GOTO";
+            procwords[57] = "REVOKE";
+            procwords[58] = "BIT_LENGTH";
+            procwords[59] = "GRANT";
+            procwords[60] = "RIGHT";
+            procwords[61] = "BOTH";
+            procwords[62] = "GROUP";
+            procwords[63] = "ROLLBACK";
+            procwords[64] = "BY";
+            procwords[65] = "HAVING";
+            procwords[66] = "ROWS";
+            procwords[67] = "CASCADE";
+            procwords[68] = "HOUR";
+            procwords[69] = "SCHEMA";
+            procwords[70] = "CASCADED";
+            procwords[71] = "IDENTITY";
+            procwords[72] = "SCROLL";
+            procwords[73] = "CASE";
+            procwords[74] = "IMMEDIATE";
+            procwords[75] = "SECOND";
+            procwords[76] = "CAST";
+            procwords[77] = "IN";
+            procwords[78] = "SECTION";
+            procwords[79] = "CATALOG";
+            procwords[80] = "INCLUDE";
+            procwords[81] = "SELECT";
+            procwords[82] = "CHAR";
+            procwords[83] = "INDEX";
+            procwords[84] = "SESSION";
+            procwords[85] = "CHAR_LENGTH";
+            procwords[86] = "INDICATOR";
+            procwords[87] = "SESSION_USER";
+            procwords[88] = "CHARACTER";
+            procwords[89] = "INITIALLY";
+            procwords[90] = "SET";
+            procwords[91] = "CHARACTER_LENGTH";
+            procwords[92] = "INNER";
+            procwords[93] = "SIZE";
+            procwords[94] = "CHECK";
+            procwords[95] = "INPUT";
+            procwords[96] = "SMALLINT";
+            procwords[97] = "CLOSE";
+            procwords[98] = "INSENSITIVE";
+            procwords[99] = "SOME";
+            procwords[100] = "COALESCE";
+            procwords[101] = "INSERT";
+            procwords[102] = "SPACE";
+            procwords[103] = "COLLATE";
+            procwords[104] = "INT";
+            procwords[105] = "SQL";
+            procwords[106] = "COLLATION";
+            procwords[107] = "INTEGER";
+            procwords[108] = "SQLCA";
+            procwords[109] = "COLUMN";
+            procwords[110] = "INTERSECT";
+            procwords[111] = "SQLCODE";
+            procwords[112] = "COMMIT";
+            procwords[113] = "INTERVAL";
+            procwords[114] = "SQLERROR";
+            procwords[115] = "CONNECT";
+            procwords[116] = "INTO";
+            procwords[117] = "SQLSTATE";
+            procwords[118] = "CONNECTION";
+            procwords[119] = "IS";
+            procwords[120] = "SQLWARNING";
+            procwords[121] = "CONSTRAINT";
+            procwords[122] = "ISOLATION";
+            procwords[123] = "SUBSTRING";
+            procwords[124] = "CONSTRAINTS";
+            procwords[125] = "JOIN";
+            procwords[126] = "SUM";
+            procwords[127] = "CONTINUE";
+            procwords[128] = "KEY";
+            procwords[129] = "SYSTEM_USER";
+            procwords[130] = "CONVERT";
+            procwords[131] = "LANGUAGE";
+            procwords[132] = "TABLE";
+            procwords[133] = "CORRESPONDING";
+            procwords[134] = "LAST";
+            procwords[135] = "TEMPORARY";
+            procwords[136] = "COUNT";
+            procwords[137] = "LEADING";
+            procwords[138] = "THEN";
+            procwords[139] = "CREATE";
+            procwords[140] = "LEFT";
+            procwords[141] = "TIME";
+            procwords[142] = "CROSS";
+            procwords[143] = "LEVEL";
+            procwords[144] = "TIMESTAMP";
+            procwords[145] = "CURRENT";
+            procwords[146] = "LIKE";
+            procwords[147] = "TIMEZONE_HOUR";
+            procwords[148] = "CURRENT_DATE";
+            procwords[149] = "LOCAL";
+            procwords[150] = "TIMEZONE_MINUTE";
+            procwords[151] = "CURRENT_TIME";
+            procwords[152] = "LOWER";
+            procwords[153] = "TO";
+            procwords[154] = "CURRENT_TIMESTAMP";
+            procwords[155] = "MATCH";
+            procwords[156] = "TRAILING";
+            procwords[157] = "CURRENT_USER";
+            procwords[158] = "MAX";
+            procwords[159] = "TRANSACTION";
+            procwords[160] = "CURSOR";
+            procwords[161] = "MIN";
+            procwords[162] = "TRANSLATE";
+            procwords[163] = "DATE";
+            procwords[164] = "MINUTE";
+            procwords[165] = "TRANSLATION";
+            procwords[166] = "DAY";
+            procwords[167] = "MODULE";
+            procwords[168] = "TRIM";
+            procwords[169] = "DEALLOCATE";
+            procwords[170] = "MONTH";
+            procwords[171] = "TRUE";
+            procwords[172] = "DEC";
+            procwords[173] = "NAMES";
+            procwords[174] = "UNION";
+            procwords[175] = "DECIMAL";
+            procwords[176] = "NATIONAL";
+            procwords[177] = "UNIQUE";
+            procwords[178] = "DECLARE";
+            procwords[179] = "NATURAL";
+            procwords[180] = "UNKNOWN";
+            procwords[181] = "DEFAULT";
+            procwords[182] = "NCHAR";
+            procwords[183] = "UPDATE";
+            procwords[184] = "DEFERRABLE";
+            procwords[185] = "NEXT";
+            procwords[186] = "UPPER";
+            procwords[187] = "DEFERRED";
+            procwords[188] = "NO";
+            procwords[189] = "USAGE";
+            procwords[190] = "DELETE";
+            procwords[191] = "NONE";
+            procwords[192] = "USER";
+            procwords[193] = "DESC";
+            procwords[194] = "NOT";
+            procwords[195] = "USING";
+            procwords[196] = "DESCRIBE";
+            procwords[197] = "NULL";
+            procwords[198] = "VALUE";
+            procwords[199] = "DESCRIPTOR";
+            procwords[200] = "NULLIF";
+            procwords[201] = "VALUES";
+            procwords[202] = "DIAGNOSTICS";
+            procwords[203] = "NUMERIC";
+            procwords[204] = "VARCHAR";
+            procwords[205] = "DISCONNECT";
+            procwords[206] = "OCTET_LENGTH";
+            procwords[207] = "VARYING";
+            procwords[208] = "DISTINCT";
+            procwords[209] = "OF";
+            procwords[210] = "VIEW";
+            procwords[211] = "DOMAIN";
+            procwords[212] = "ON";
+            procwords[213] = "WHEN";
+            procwords[214] = "DOUBLE";
+            procwords[215] = "ONLY";
+            procwords[216] = "WHENEVER";
+            procwords[217] = "DROP";
+            procwords[218] = "OPEN";
+            procwords[219] = "WHERE";
+            procwords[220] = "ELSE";
+            procwords[221] = "OPTION";
+            procwords[222] = "WITH";
+            procwords[223] = "END";
+            procwords[224] = "OR";
+            procwords[225] = "WORK";
+            procwords[226] = "END-EXEC";
+            procwords[227] = "ORDER";
+            procwords[228] = "WRITE";
+            procwords[229] = "ESCAPE";
+            procwords[230] = "OUTER";
+            procwords[231] = "YEAR";
+            procwords[232] = "EXCEPT";
+            procwords[233] = "OUTPUT";
+            procwords[234] = "ZONE";
+            procwords[235] = "EXCEPTION";
+
+            string[]? a = richTextBox3.Text.Split(" ");
+            List<string> ls = a.ToList();
+            fulltext = richTextBox3.Text;
+
+
+            foreach (string splt in ls)
+            {
+
+                foreach (string s in procwords)
+                {
+
+                    if (s != null)
+                    {
+
+
+                        if (s.Equals(splt.ToUpper()))
+                        {
+
+                            string splt2 = Environment.NewLine + splt.ToUpper() + Environment.NewLine;
+                            splt2 = splt2.Replace(" ", "");
+                            fulltext = fulltext.Replace(splt, splt2);
+
+                            stringpos = fulltext.IndexOf(splt2);
+
+
+                            //if (s != null)
+                            //{
+                            //    string t = "/n" + s + "/n";
+                            //    CheckKeyword(t.ToUpper(), Color.Red, 0);
+
+                            //}
+
+                        }
+
+
+                    }
+
+                }
+
+
+            }
+
+
+            richTextBox3.Clear();
+            richTextBox3.Text = fulltext;
+
+            foreach (string s in procwords)
+            {
+                
+
+                if (s != null)
+                {
+                    //string t = "/N" + s + "/N";
+                    CheckKeyword(s.ToUpper(), Color.Red, 0);
+
+                }
+
+            }
+
+
+
+
+
+        
+                
+
+
+           
+
+
+
+            
+
+            richTextBox3.ForeColor = Color.Black;
+
+          
+
+            //string newstring;
+
+            //StringBuilder sb = new StringBuilder();
+
+            //sb.Append(richTextBox3.Text);
+
+            //string text = richTextBox3.Text;
+
+            //var text2 = SqlPrettify.SqlPrettify.Pretty(text);
+
+            //text2 = text2.Trim();
+
+            //text2 = text2.Replace("\n", "\r\n");
+
+            //text2 = text2.Replace("--", Environment.NewLine + "--");
+
+            //richTextBox3.Text = text2;
+
+            
+
+        }
+
+
+
+        private void CheckKeyword(string word, Color color, int startIndex)
+        {
+            int sels = new int();
+
+            if (this.richTextBox3.Text.Contains(word))
+            {
+                int index = -1;
+
+                string wordsur = richTextBox3.Text.Substring(stringpos, word.Length +2);
+                var wordsurrev = wordsur.Reverse();
+                string wrdsurrevs = string.Join(string.Empty, wordsurrev);
+                int len = wordsur.Length;
+                var l = wordsur.Substring((stringpos + len) - 1, 1);
+                var f = wrdsurrevs.Substring((stringpos + len) - 1, 1);
+
+                while ((index = this.richTextBox3.Text.IndexOf(word, (index + 1))) != -1)
+                {
+
+                    this.richTextBox3.Select((index + startIndex), word.Length);
+                    this.richTextBox3.SelectionColor = color;
+                    this.richTextBox3.Select(sels, 0);
+                    this.richTextBox3.SelectionColor = Color.Black;
+                       
+                }
+            }
+        }
+
+
+
+        private void CheckKeywordUpper(string word, int startIndex)
+        {
+            if (this.richTextBox3.Text.Contains(word))
+            {
+                int index = -1;
+                int selectStart = this.richTextBox3.SelectionStart;
+
+                while ((index = this.richTextBox3.Text.IndexOf(word, (index + 1))) != -1)
+                {
+                    this.richTextBox3.Select((index + startIndex), word.Length);
+                    this.richTextBox3.Select(selectStart, 0);
+                    this.richTextBox3.SelectedText = richTextBox3.SelectedText.ToUpper();
+                    this.richTextBox3.SelectionColor = Color.Black;
+                }
+            }
+        }
+
+
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            comboBox1.DataSource = null;
+            comboBox1.Enabled = false;
+            checkBox1.Checked = false;
+            comboBox1.Enabled = false;
+           
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            comboBox1.DataSource = null;
+            comboBox1.Enabled = false;
+            checkBox1.Checked = false;
+            comboBox1.Enabled = false;
+
+        }
+
+        private void toolStripMenuItem17_Click(object sender, EventArgs e)
+        {
+
+            StringBuilder sb = new StringBuilder();
+
+            if (valuesearchstring == "")
+            {
+                valuesearchstring = "(No Search Term Entered)";
+            }
+
+
+            sb.Append("Search Term: " + valuesearchstring + Environment.NewLine + "Search Type: " + searchtype + Environment.NewLine + Environment.NewLine + "Results:" + Environment.NewLine);
+
+            foreach (DataGridViewRow d in dataGridView2.Rows)
+            {
+
+                
+                    for (int i = 0; i < d.Cells.Count; i++)
+                    {
+                        if (i == (d.Cells.Count - 1))
+                        {
+                            sb.Append("[VALUE: " + d.Cells[i].Value + "]" + Environment.NewLine);
+                        }
+                        else
+                        {
+                            sb.Append("[PATH: " + d.Cells[i].Value + "]" + " - ");
+                        }
+                    }     
+
+            }
+
+            string? txt = sb.ToString();
+
+            Clipboard.SetText(txt);
+            sb.Clear();
+        }
+
+        private void toolStripMenuItem18_Click(object sender, EventArgs e)
+        {
+            List<string> ls = new List<string>();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (DataGridViewRow d in dataGridView2.SelectedRows)
+            {
+               ls.Add("[PATH: " + d.Cells[0].Value + "]" + " - " + "[VALUE: " + d.Cells[1].Value + "]" + Environment.NewLine);
+            }
+
+
+            ls.Reverse();
+            string[] values = ls.ToArray();
+
+            if (valuesearchstring == "")
+            {
+                valuesearchstring = "(No Search Term Entered)";
+            }
+
+            sb.Append("Search Term: " + valuesearchstring + Environment.NewLine + "Search Type: " + searchtype + Environment.NewLine + Environment.NewLine + "Results:" + Environment.NewLine);
+
+            foreach(string s in values)
+            {
+                sb.Append(s);
+            }
+          
+            string text = sb.ToString();
+            Clipboard.SetText(text);
+            sb.Clear();
+        }
+
+        private void toolStripMenuItem19_Click(object sender, EventArgs e)
+        {
+            int rowcount = dataGridView2.Rows.Count;
+            List<string> ls = new List<string>();
+           
+
+            StringBuilder sb = new StringBuilder();
+
+            if (valuesearchstring == "")
+            {
+                valuesearchstring = "(No Search Term Entered)";
+            }
+
+            sb.Append("Search Term: " + valuesearchstring + Environment.NewLine + "Search Type: " + searchtype + Environment.NewLine + Environment.NewLine + "Results:" + Environment.NewLine);
+
+
+                foreach (DataGridViewRow d in dataGridView2.Rows)
+                {
+
+                var s = d.Cells["Column Path"].Value;
+                ls.Add("[" + s + "]"); 
+
+                }
+
+            string[] locationlist = ls.ToArray();
+            string[] distinctpaths = locationlist.Distinct().ToArray();
+            
+            foreach (string s in distinctpaths)
+            {
+                sb.Append(s + Environment.NewLine);
+            }
+
+            string text = sb.ToString();
+            Clipboard.SetText(text);
+            sb.Clear();
         }
     }
 
@@ -11552,8 +12372,7 @@ LIKE '%";
 
         public static bool IsInt(string value)
         {
-            int intValue;
-            return Int32.TryParse(value, out intValue);
+            return int.TryParse(value, out int intValue);
         }
 
 
