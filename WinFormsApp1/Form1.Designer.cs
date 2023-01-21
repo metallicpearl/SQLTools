@@ -464,7 +464,7 @@
             this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.checkBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.checkBox2.Location = new System.Drawing.Point(461, 13);
+            this.checkBox2.Location = new System.Drawing.Point(466, 13);
             this.checkBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(102, 23);
@@ -478,7 +478,7 @@
             this.button6.Enabled = false;
             this.button6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button6.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button6.Location = new System.Drawing.Point(703, 12);
+            this.button6.Location = new System.Drawing.Point(709, 12);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(112, 25);
             this.button6.TabIndex = 14;
@@ -491,7 +491,7 @@
             this.button7.Enabled = false;
             this.button7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button7.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button7.Location = new System.Drawing.Point(564, 12);
+            this.button7.Location = new System.Drawing.Point(570, 12);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(139, 25);
             this.button7.TabIndex = 13;
@@ -690,7 +690,7 @@
             // 
             this.button2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button2.ForeColor = System.Drawing.Color.Green;
-            this.button2.Location = new System.Drawing.Point(744, 13);
+            this.button2.Location = new System.Drawing.Point(746, 13);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 25);
             this.button2.TabIndex = 6;
@@ -713,7 +713,7 @@
             this.comboBox1.Location = new System.Drawing.Point(555, 14);
             this.comboBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(185, 23);
+            this.comboBox1.Size = new System.Drawing.Size(188, 23);
             this.comboBox1.TabIndex = 10;
             this.comboBox1.Click += new System.EventHandler(this.ComboClick);
             // 
@@ -1225,7 +1225,7 @@
             this.button10.Enabled = false;
             this.button10.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button10.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button10.Location = new System.Drawing.Point(712, 12);
+            this.button10.Location = new System.Drawing.Point(713, 12);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(108, 25);
             this.button10.TabIndex = 18;

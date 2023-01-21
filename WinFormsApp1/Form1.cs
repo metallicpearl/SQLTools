@@ -147,6 +147,7 @@ namespace WinFormsApp1
         public DataTable dtm9;
         public DataTable dtm10;
 
+        public int curlin;
         public int comboxsel;
         public int stringpos;
         public string fulltext;
@@ -4941,16 +4942,30 @@ LIKE '%";
 
         private void getdbdetails(object sender, EventArgs e)
         {
+            if (richTextBox1.Text.Length == 0)
+            {
+                caretposition = 0;
+            }
+            string resulttxt = Regex.Replace(richTextBox1.Text, @"\r\n?|\n", Environment.NewLine);
 
-            lineIndex = richTextBox1.GetLineFromCharIndex(caretposition);
+            int currentline = richTextBox1.GetFirstCharIndexOfCurrentLine();
 
-            int txtlen = richTextBox1.Text.Length;
+            if (currentline > 0)
+            {
+                curlin = currentline;
+            }
 
-            richTextBox1.SelectedText = "";
+            else
+            {
+                curlin = richTextBox1.SelectionStart;
+            }
+            
 
-            caretposition = richTextBox1.SelectionStart;
 
-            string tosplit = richTextBox1.Text.Replace("\n", " ");
+
+            richTextBox1.ScrollToCaret();
+
+            string tosplit = resulttxt.Replace("\r\n", " ");
 
             string[] rtbarray = tosplit.Split(" ");
 
@@ -4989,6 +5004,11 @@ LIKE '%";
             if (!beforetext.Contains("\n"))
             {
                 containsreturn = false;
+            }
+
+            if (beforetext.Contains("\n"))
+            {
+                containsreturn = true;
             }
 
 
@@ -5118,7 +5138,7 @@ LIKE '%";
 
                 if (lb.Items.Count == 0)
                 {
-                    richTextBox1.SelectionStart = caretposition;
+                    richTextBox1.SelectionStart = 0;
                 }
 
                 if (lb.Items.Count > 0)
@@ -5166,13 +5186,13 @@ LIKE '%";
         private void Lb_KeyDown(object sender, KeyEventArgs e)
         {
 
-            listBox1.Visible = false;
-            listBox2.Visible = false;
+            //listBox1.Visible = false;
+            //listBox2.Visible = false;
 
 
             if (containsreturn == true)
             {
-                addchar = "\n";
+                addchar = "";
             }
 
             if (containsreturn == false)
@@ -5212,16 +5232,27 @@ LIKE '%";
             if (e.KeyData == Keys.Enter)
             {
 
-                richTextBox1.GetLineFromCharIndex(lineIndex);
+                //richTextBox1.GetLineFromCharIndex(lineIndex);
 
 
-                if (lb.SelectedIndex != -1)
+                //if (lb.SelectedIndex != -1)
+
+
+
+
+                caretposition = curlin;
+
+                string beforetext = richTextBox1.Text.Substring(0, caretposition);
+
+                string beforetext2 = beforetext.Replace("\n", " ");
+
+                lastspacebeforetext = beforetext2.LastIndexOf(' ');
                 {
-                    string beforetext = richTextBox1.Text.Substring(0, caretposition);
+                    //string beforetext = richTextBox1.Text.Substring(0, caretposition);
 
-                    string beforetext2 = beforetext.Replace("\n", " ");
+                    //string beforetext2 = beforetext.Replace("\n", " ");
 
-                    lastspacebeforetext = beforetext2.LastIndexOf(' ');
+                    //lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
 
 
@@ -5230,7 +5261,7 @@ LIKE '%";
 
 
 
-                        richTextBox1.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
+                        richTextBox1.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') +1, currentlen);
 
                         richTextBox1.SelectionColor = Color.Black;
 
@@ -5251,6 +5282,7 @@ LIKE '%";
                     autocompletebusy = false;
                     autocomplete = false;
 
+                    richTextBox1.Focus();
                     richTextBox1.DeselectAll();
                     richTextBox1.Refresh();
                 }
@@ -5259,8 +5291,9 @@ LIKE '%";
 
             if (e.KeyCode == Keys.Left && lb.SelectedItem is not null)
             {
+                caretposition = 0;
 
-
+                caretposition = curlin;
 
                 string beforetext = richTextBox1.Text.Substring(0, caretposition);
 
@@ -5303,6 +5336,9 @@ LIKE '%";
 
             if (e.KeyCode == Keys.Right && lb.SelectedItem is not null)
             {
+                caretposition = 0;
+
+                caretposition = curlin;
 
                 string beforetext = richTextBox1.Text.Substring(0, caretposition);
 
@@ -5310,20 +5346,28 @@ LIKE '%";
 
                 lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
-                int lastcharacter = beforetext.Length - 1;
+                //string beforetext = richTextBox1.Text.Substring(0, caretposition);
 
-                if (beforetext.Substring(0, lastcharacter) == "\n")
-                {
-                    newlineonened = true;
-                }
+                //string beforetext2 = beforetext.Replace("\n", " ");
+
+                //lastspacebeforetext = beforetext2.LastIndexOf(' ');
+
+                //int lastcharacter = beforetext.Length - 1;
+                //if (beforetext.Length > 0)
+                //{
+
+                //    if (beforetext.Substring(0, lastcharacter) == "\n")
+                //    {
+                //        newlineonened = true;
+                //    }
 
 
-                if (beforetext.Substring(0, lastcharacter) != "\n")
-                {
-                    newlineonened = false;
-                }
+                //    if (beforetext.Substring(0, lastcharacter) != "\n")
+                //    {
+                //        newlineonened = false;
+                //    }
 
-
+                //}
 
 
 
@@ -5354,6 +5398,8 @@ LIKE '%";
                     richTextBox1.DeselectAll();
                     richTextBox1.Refresh();
 
+        
+
 
 
 
@@ -5372,7 +5418,7 @@ LIKE '%";
 
             }
 
-
+            //curlin = 0;
         }
 
 
@@ -6562,17 +6608,40 @@ LIKE '%";
         private void getdbdetails2(object sender, EventArgs e)
         {
 
-            lineIndex = richTextBox2.GetLineFromCharIndex(caretposition);
+            if (richTextBox2.Text.Length == 0)
+            {
+                caretposition = 0;
+            }
 
-            int txtlen = richTextBox2.Text.Length;
+            string resulttxt = Regex.Replace(richTextBox2.Text, @"\r\n?|\n", Environment.NewLine);
 
-            richTextBox2.SelectedText = "";
+            int currentline = richTextBox2.GetFirstCharIndexOfCurrentLine();
 
-            caretposition = richTextBox2.SelectionStart;
+            if (currentline > 0)
+            {
+                curlin = currentline;
+            }
 
-            string tosplit = richTextBox2.Text.Replace("\n", " ");
+            else
+            {
+                curlin = richTextBox2.SelectionStart;
+            }
+
+
+            richTextBox2.ScrollToCaret();
+
+            string tosplit = resulttxt.Replace("\r\n", " ");
 
             string[] rtbarray = tosplit.Split(" ");
+
+
+            //richTextBox2.SelectedText = "";
+
+            //caretposition = richTextBox2.SelectionStart;
+
+            //string tosplit = richTextBox2.Text.Replace("\n", " ");
+
+            //string[] rtbarray = tosplit.Split(" ");
 
 
 
@@ -6614,6 +6683,10 @@ LIKE '%";
                 containsreturn = false;
             }
 
+            if (beforetext.Contains("\n"))
+            {
+                containsreturn = true;
+            }
 
 
             currentword = wrd.Replace('\n', ' ');
@@ -6793,7 +6866,7 @@ LIKE '%";
 
             if (containsreturn == true)
             {
-                addchar = "\n";
+                addchar = "";
             }
 
             if (containsreturn == false)
@@ -6835,13 +6908,22 @@ LIKE '%";
                 richTextBox2.GetLineFromCharIndex(lineIndex);
 
 
-                if (listBox1.SelectedIndex != -1)
+                //if (listBox1.SelectedIndex != -1)
                 {
+
+                    caretposition = curlin;
+
                     string beforetext = richTextBox2.Text.Substring(0, caretposition);
 
                     string beforetext2 = beforetext.Replace("\n", " ");
 
                     lastspacebeforetext = beforetext2.LastIndexOf(' ');
+
+                    //string beforetext = richTextBox2.Text.Substring(0, caretposition);
+
+                    //string beforetext2 = beforetext.Replace("\n", " ");
+
+                    //lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
 
 
@@ -6882,11 +6964,23 @@ LIKE '%";
 
 
 
+                caretposition = curlin;
+
                 string beforetext = richTextBox2.Text.Substring(0, caretposition);
 
                 string beforetext2 = beforetext.Replace("\n", " ");
 
                 lastspacebeforetext = beforetext2.LastIndexOf(' ');
+
+
+
+
+
+                //string beforetext = richTextBox2.Text.Substring(0, caretposition);
+
+                //string beforetext2 = beforetext.Replace("\n", " ");
+
+                //lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
 
 
@@ -6925,26 +7019,37 @@ LIKE '%";
             if (e.KeyCode == Keys.Right && listBox1.SelectedItem is not null)
             {
 
+                caretposition = curlin;
+
                 string beforetext = richTextBox2.Text.Substring(0, caretposition);
 
                 string beforetext2 = beforetext.Replace("\n", " ");
 
                 lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
-                int lastcharacter = beforetext.Length - 1;
+                //string beforetext = richTextBox2.Text.Substring(0, caretposition);
 
-                if (beforetext.Substring(0, lastcharacter) == "\n")
-                {
-                    newlineonened = true;
-                }
+                //string beforetext2 = beforetext.Replace("\n", " ");
+
+                //lastspacebeforetext = beforetext2.LastIndexOf(' ');
+
+                //int lastcharacter = beforetext.Length - 1;
+
+                //if (beforetext.Length > 0)
+                //{
+
+                //    if (beforetext.Substring(0, lastcharacter) == "\n")
+                //    {
+                //        newlineonened = true;
+                //    }
 
 
-                if (beforetext.Substring(0, lastcharacter) != "\n")
-                {
-                    newlineonened = false;
-                }
+                //    if (beforetext.Substring(0, lastcharacter) != "\n")
+                //    {
+                //        newlineonened = false;
+                //    }
 
-
+                //}
 
 
 
@@ -8764,17 +8869,46 @@ LIKE '%";
         private void getdbdetails3(object sender, EventArgs e)
         {
 
-            lineIndex = richTextBox4.GetLineFromCharIndex(caretposition);
 
-            int txtlen = richTextBox4.Text.Length;
+            if (richTextBox4.Text.Length == 0)
+            {
+                caretposition = 0;
+            }
 
-            richTextBox4.SelectedText = "";
 
-            caretposition = richTextBox4.SelectionStart;
+            string resulttxt = Regex.Replace(richTextBox4.Text, @"\r\n?|\n", Environment.NewLine);
 
-            string tosplit = richTextBox4.Text.Replace("\n", " ");
+            int currentline = richTextBox4.GetFirstCharIndexOfCurrentLine();
+
+            if (currentline > 0)
+            {
+                curlin = currentline;
+            }
+
+            else
+            {
+                curlin = richTextBox4.SelectionStart;
+            }
+
+
+            richTextBox4.ScrollToCaret();
+
+            string tosplit = resulttxt.Replace("\r\n", " ");
 
             string[] rtbarray = tosplit.Split(" ");
+
+
+            //lineIndex = richTextBox4.GetLineFromCharIndex(caretposition);
+
+            //int txtlen = richTextBox4.Text.Length;
+
+            //richTextBox4.SelectedText = "";
+
+            //caretposition = richTextBox4.SelectionStart;
+
+            //string tosplit = richTextBox4.Text.Replace("\n", " ");
+
+            //string[] rtbarray = tosplit.Split(" ");
 
 
 
@@ -8810,6 +8944,11 @@ LIKE '%";
             if (!beforetext.Contains("\n"))
             {
                 containsreturn = false;
+            }
+
+            if (beforetext.Contains("\n"))
+            {
+                containsreturn = true;
             }
 
 
@@ -8991,7 +9130,7 @@ LIKE '%";
 
             if (containsreturn == true)
             {
-                addchar = "\n";
+                addchar = "";
             }
 
             if (containsreturn == false)
@@ -9036,11 +9175,19 @@ LIKE '%";
 
                 if (listBox2.SelectedIndex != -1)
                 {
+                    caretposition = curlin;
+
                     string beforetext = richTextBox4.Text.Substring(0, caretposition);
 
                     string beforetext2 = beforetext.Replace("\n", " ");
 
                     lastspacebeforetext = beforetext2.LastIndexOf(' ');
+
+                    //string beforetext = richTextBox4.Text.Substring(0, caretposition);
+
+                    //string beforetext2 = beforetext.Replace("\n", " ");
+
+                    //lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
 
 
@@ -9079,13 +9226,21 @@ LIKE '%";
             if (e.KeyCode == Keys.Left && listBox2.SelectedItem is not null)
             {
 
-
+                caretposition = curlin;
 
                 string beforetext = richTextBox4.Text.Substring(0, caretposition);
 
                 string beforetext2 = beforetext.Replace("\n", " ");
 
                 lastspacebeforetext = beforetext2.LastIndexOf(' ');
+
+
+
+                //string beforetext = richTextBox4.Text.Substring(0, caretposition);
+
+                //string beforetext2 = beforetext.Replace("\n", " ");
+
+                //lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
 
 
@@ -9122,6 +9277,7 @@ LIKE '%";
 
             if (e.KeyCode == Keys.Right && listBox2.SelectedItem is not null)
             {
+                caretposition = curlin;
 
                 string beforetext = richTextBox4.Text.Substring(0, caretposition);
 
@@ -9129,40 +9285,55 @@ LIKE '%";
 
                 lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
-                int lastcharacter = beforetext.Length - 1;
+                //string beforetext = richTextBox4.Text.Substring(0, caretposition);
 
-                if (beforetext.Substring(0, lastcharacter) == "\n")
-                {
-                    newlineonened = true;
-                }
+                //string beforetext2 = beforetext.Replace("\n", " ");
 
+                //lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
-                if (beforetext.Substring(0, lastcharacter) != "\n")
-                {
-                    newlineonened = false;
-                }
+                //int lastcharacter = beforetext.Length - 1;
+                //if (beforetext.Length > 0)
 
-
-                //if (listBox2.Visible == true)
                 //{
+                //    if (beforetext.Substring(0, lastcharacter) == "\n")
+                //    {
+                //        newlineonened = true;
+                //    }
 
 
-
-                //    richTextBox4.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
-
-                //    richTextBox4.SelectedText = listBox2.SelectedItem.ToString() + " ";
-
-                //    autocomplete = false;
-
-                //    richTextBox4.Focus();
-
-
+                //    if (beforetext.Substring(0, lastcharacter) != "\n")
+                //    {
+                //        newlineonened = false;
+                //    }
 
                 //}
 
+                //if (beforetext.Length == 0)
+                //{
+                //    newlineonened = true;
+
+            
+
+                    //if (listBox2.Visible == true)
+                    //{
 
 
-                if (listBox2.Visible == true)
+
+                    //    richTextBox4.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
+
+                    //    richTextBox4.SelectedText = listBox2.SelectedItem.ToString() + " ";
+
+                    //    autocomplete = false;
+
+                    //    richTextBox4.Focus();
+
+
+
+                    //}
+
+
+
+                    if (listBox2.Visible == true)
                 {
                     //richTextBox4.Select(lastspace, currentlen + 2);
 
@@ -9188,10 +9359,15 @@ LIKE '%";
 
                     richTextBox4.SelectionColor = Color.Black;
 
+                    //string line = "\n";
+                    //string noline = "";   
 
                     string appendageright = listBox2.SelectedItem.ToString().Split('.')[1];
 
-                    richTextBox4.SelectedText = appendageright + " " + addchar;
+                   
+                        richTextBox4.SelectedText = appendageright + " " + addchar;
+                        newlineonened = false;
+                    
 
                     //richTextBox4.SelectionStart = caretposition;
 
@@ -11743,19 +11919,17 @@ LIKE '%";
 
         private void ignorespacert1(object sender, KeyEventArgs e)
         {
-
-            if (e.KeyCode == Keys.Space)
+            if (e.KeyCode == Keys.Decimal)
             {
                 richTextBox1_KeyDown(sender, e);
             }
-
         }
 
 
         private void ignorespacert2(object sender, KeyEventArgs e)
         {
 
-            if (e.KeyCode == Keys.Space)
+            if (e.KeyCode == Keys.Decimal)
             {
                 richTextBox2_KeyDown2(sender, e);
             }
@@ -11765,7 +11939,7 @@ LIKE '%";
         private void ignorespacert4(object sender, KeyEventArgs e)
         {
 
-            if (e.KeyCode == Keys.Space)
+            if (e.KeyCode == Keys.Decimal)
             {
                 richTextBox4_KeyDown3(sender, e);
             }
@@ -12434,12 +12608,13 @@ LIKE '%";
 
             var valuetoget = dataGridView2.SelectedCells[0].Value;
             string[] valuesplit = valuetoget.ToString().Split('>');
-            var table = valuesplit[0].ToString().Replace(" ","");
-            var column = valuesplit[1].ToString().Replace(" ", "");
+            var table = valuesplit[0].ToString().Trim();
+            var column = valuesplit[1].ToString().Trim();
             var searchvalue = dataGridView2.SelectedCells[1].Value;
-            string searchterm = "select * from " + table + " where " + column + " = " + "'" + searchvalue.ToString() + "'";
+            string searchterm = "select * from [" + table + "] where " + column + " = " + "'" + searchvalue.ToString() + "'";
 
             tabControl1.SelectedTab = tabControl1.TabPages[4];
+            tabControl2.SelectedTab = tabControl2.TabPages[0];
             richTextBox1.Text = searchterm;
             richTextBox1_KeyDowns(sender, e);
 
