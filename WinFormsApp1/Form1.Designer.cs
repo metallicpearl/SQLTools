@@ -1133,8 +1133,8 @@
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage8);
-            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage11);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.HotTrack = true;
             this.tabControl1.ImeMode = System.Windows.Forms.ImeMode.Hiragana;
             this.tabControl1.Location = new System.Drawing.Point(12, 128);
