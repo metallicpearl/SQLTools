@@ -6,6 +6,7 @@ using System.Text;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using SqlPrettify;
 
 
 
@@ -4225,7 +4226,7 @@ LIKE '%";
                                 {
 
 
-
+                                    quer = Regex.Replace(quer, @"\r\n?|\n", Environment.NewLine);
 
                                     sqlcomm = sqlquery1 + " " + quer + " " + sqlquery2;
 
@@ -4265,6 +4266,8 @@ LIKE '%";
                                     adapter.SelectCommand = cmd1;
                                     DataTable ds = new DataTable();
                                     adapter.Fill(ds);
+
+
                                     if (dta != null)
                                     {
                                         dta.Clear();
@@ -4333,6 +4336,7 @@ LIKE '%";
                                     BeginInvoke((MethodInvoker)delegate
                                     {
                                         //MessageBox.Show(msg + Environment.NewLine + Environment.NewLine + "(This error was returned when attempting to connect to the database and run the underlying query used to fetch the results. If this is a syntax error, you may have included SQL-specific characters in your search terms.)", "Please check your details", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3, MessageBoxOptions.DefaultDesktopOnly);
+                                        dataGridView4.DataSource = null;
                                         dataGridView4.Rows.Clear();
                                         dataGridView4.Visible = false;
                                         //errortextbox.Visible = true;
@@ -6214,6 +6218,7 @@ LIKE '%";
                             {
 
                                 {
+                                    quer = Regex.Replace(quer, @"\r\n?|\n", Environment.NewLine);
 
                                     sqlcomm = sqlquery1 + " " + quer + " " + sqlquery2;
 
@@ -6308,6 +6313,7 @@ LIKE '%";
 
 
                                 {
+                                    quer = Regex.Replace(quer, @"\r\n?|\n", Environment.NewLine);
 
                                     sqlcomm = sqlquery1 + " " + quer + " " + sqlquery2;
 
@@ -7895,6 +7901,7 @@ LIKE '%";
                     {
                         using (SqlConnection cmd = new SqlConnection(connex))
                         {
+                            quer = Regex.Replace(quer, @"\r\n?|\n", Environment.NewLine);
 
                             sqlcomm = sqlquery1 + " " + quer + " " + sqlquery2;
                             //sqlcomm2 = sqlquery1 + " " + quer2 + Environment.NewLine + quer + " " + sqlquery2;
@@ -8134,7 +8141,7 @@ LIKE '%";
                         using (SqlConnection cmd0 = new SqlConnection(connex))
 
                         {
-
+                            quer = Regex.Replace(quer, @"\r\n?|\n", Environment.NewLine);
                             //sqlcomm = sqlquery1 + " " + quer + " " + sqlquery2;
                             sqlcomm = sqlquery1 + " " + quer2 + Environment.NewLine + quer + " " + sqlquery2;
 
@@ -8340,7 +8347,7 @@ LIKE '%";
                     using (SqlConnection cmd0 = new SqlConnection(connex))
 
                     {
-
+                        quer = Regex.Replace(quer, @"\r\n?|\n", Environment.NewLine);
                         //sqlcomm = sqlquery1 + " " + quer + " " + sqlquery2;
                         sqlcomm = sqlquery1 + " " + quer2 + " " + sqlquery2;
 
@@ -12622,6 +12629,28 @@ LIKE '%";
 
         }
 
+
+        public void pretty(object sender, EventArgs e)
+        {
+
+            string input1 = richTextBox3.Text;
+
+            string input2 = Regex.Replace(input1, @"\r\n?|\n", " ");
+
+            richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(input2);
+        }
+        
+
+        private void richTextBox3_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5)
+            {
+                pretty(sender, e);
+
+
+
+            }
+        }
     }
 
     static class StringReverse
@@ -12641,6 +12670,7 @@ LIKE '%";
 
 
     }
+
 
 
 

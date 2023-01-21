@@ -195,6 +195,9 @@
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
             this.dataGridView6 = new System.Windows.Forms.DataGridView();
+            this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             this.contextMenuStrip5 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
@@ -256,6 +259,8 @@
             this.tabPage10.SuspendLayout();
             this.groupBox12.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView6)).BeginInit();
+            this.tabPage11.SuspendLayout();
+            this.groupBox17.SuspendLayout();
             this.contextMenuStrip5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource1)).BeginInit();
@@ -264,7 +269,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(533, 9);
+            this.textBox1.Location = new System.Drawing.Point(534, 9);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(309, 23);
             this.textBox1.TabIndex = 2;
@@ -272,7 +277,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(533, 38);
+            this.textBox2.Location = new System.Drawing.Point(534, 38);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(309, 23);
             this.textBox2.TabIndex = 3;
@@ -280,7 +285,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(533, 68);
+            this.textBox3.Location = new System.Drawing.Point(534, 68);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(309, 23);
@@ -288,7 +293,7 @@
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(532, 98);
+            this.textBox4.Location = new System.Drawing.Point(533, 98);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
             this.textBox4.ShortcutsEnabled = false;
@@ -655,7 +660,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(17, 16);
+            this.label20.Location = new System.Drawing.Point(21, 17);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(69, 15);
             this.label20.TabIndex = 10;
@@ -847,7 +852,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(15, 16);
+            this.label8.Location = new System.Drawing.Point(20, 18);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(76, 15);
             this.label8.TabIndex = 5;
@@ -886,7 +891,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(5, 50);
+            this.label7.Location = new System.Drawing.Point(6, 50);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(85, 15);
             this.label7.TabIndex = 7;
@@ -1116,7 +1121,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(18, 17);
+            this.label6.Location = new System.Drawing.Point(21, 17);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(69, 15);
             this.label6.TabIndex = 2;
@@ -1129,6 +1134,7 @@
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage8);
             this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage11);
             this.tabControl1.HotTrack = true;
             this.tabControl1.ImeMode = System.Windows.Forms.ImeMode.Hiragana;
             this.tabControl1.Location = new System.Drawing.Point(12, 128);
@@ -2015,6 +2021,39 @@
             this.dataGridView6.Size = new System.Drawing.Size(777, 228);
             this.dataGridView6.TabIndex = 1;
             // 
+            // tabPage11
+            // 
+            this.tabPage11.Controls.Add(this.groupBox17);
+            this.tabPage11.Location = new System.Drawing.Point(4, 24);
+            this.tabPage11.Name = "tabPage11";
+            this.tabPage11.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage11.Size = new System.Drawing.Size(826, 332);
+            this.tabPage11.TabIndex = 5;
+            this.tabPage11.Text = "Prettify";
+            this.tabPage11.UseVisualStyleBackColor = true;
+            // 
+            // groupBox17
+            // 
+            this.groupBox17.Controls.Add(this.richTextBox3);
+            this.groupBox17.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.groupBox17.Location = new System.Drawing.Point(4, 4);
+            this.groupBox17.Name = "groupBox17";
+            this.groupBox17.Size = new System.Drawing.Size(815, 322);
+            this.groupBox17.TabIndex = 1;
+            this.groupBox17.TabStop = false;
+            this.groupBox17.Text = "Prettify - Press F5 to Prettify";
+            // 
+            // richTextBox3
+            // 
+            this.richTextBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.richTextBox3.Location = new System.Drawing.Point(6, 22);
+            this.richTextBox3.Name = "richTextBox3";
+            this.richTextBox3.Size = new System.Drawing.Size(803, 294);
+            this.richTextBox3.TabIndex = 0;
+            this.richTextBox3.Text = "";
+            this.richTextBox3.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox3_KeyDown);
+            // 
             // contextMenuStrip5
             // 
             this.contextMenuStrip5.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -2101,7 +2140,7 @@
             this.groupBox6.Controls.Add(this.label15);
             this.groupBox6.Controls.Add(this.radioButton7);
             this.groupBox6.Controls.Add(this.radioButton6);
-            this.groupBox6.Location = new System.Drawing.Point(544, 119);
+            this.groupBox6.Location = new System.Drawing.Point(545, 119);
             this.groupBox6.Margin = new System.Windows.Forms.Padding(0);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Padding = new System.Windows.Forms.Padding(0);
@@ -2242,6 +2281,8 @@
             this.groupBox12.ResumeLayout(false);
             this.groupBox12.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView6)).EndInit();
+            this.tabPage11.ResumeLayout(false);
+            this.groupBox17.ResumeLayout(false);
             this.contextMenuStrip5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource1)).EndInit();
@@ -2410,6 +2451,9 @@
         private ToolStripMenuItem toolStripMenuItem18;
         private ToolStripMenuItem toolStripMenuItem19;
         private ToolStripMenuItem toolStripMenuItem20;
+        private TabPage tabPage11;
+        private RichTextBox richTextBox3;
+        private GroupBox groupBox17;
     }
 
 
