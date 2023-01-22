@@ -161,7 +161,17 @@
             this.copySelectedRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CopyDefinitionList = new System.Windows.Forms.ToolStripMenuItem();
             this.copyalldefnames = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.button11 = new System.Windows.Forms.Button();
+            this.groupBox18 = new System.Windows.Forms.GroupBox();
+            this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
@@ -195,9 +205,6 @@
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
             this.dataGridView6 = new System.Windows.Forms.DataGridView();
-            this.tabPage11 = new System.Windows.Forms.TabPage();
-            this.groupBox17 = new System.Windows.Forms.GroupBox();
-            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             this.contextMenuStrip5 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
@@ -237,6 +244,9 @@
             this.groupBox10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView8)).BeginInit();
             this.contextMenuStrip6.SuspendLayout();
+            this.tabPage11.SuspendLayout();
+            this.groupBox18.SuspendLayout();
+            this.groupBox17.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage5.SuspendLayout();
@@ -259,8 +269,6 @@
             this.tabPage10.SuspendLayout();
             this.groupBox12.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView6)).BeginInit();
-            this.tabPage11.SuspendLayout();
-            this.groupBox17.SuspendLayout();
             this.contextMenuStrip5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource1)).BeginInit();
@@ -1520,8 +1528,117 @@
             this.copyalldefnames.Text = "Copy All Definition Names to Clipboard";
             this.copyalldefnames.Click += new System.EventHandler(this.CopDefinitionList);
             // 
+            // tabPage11
+            // 
+            this.tabPage11.Controls.Add(this.button11);
+            this.tabPage11.Controls.Add(this.groupBox18);
+            this.tabPage11.Controls.Add(this.groupBox17);
+            this.tabPage11.Location = new System.Drawing.Point(4, 24);
+            this.tabPage11.Name = "tabPage11";
+            this.tabPage11.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage11.Size = new System.Drawing.Size(826, 332);
+            this.tabPage11.TabIndex = 5;
+            this.tabPage11.Text = "SQL Format";
+            this.tabPage11.UseVisualStyleBackColor = true;
+            // 
+            // button11
+            // 
+            this.button11.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.button11.ForeColor = System.Drawing.Color.Green;
+            this.button11.Location = new System.Drawing.Point(578, 300);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(241, 25);
+            this.button11.TabIndex = 14;
+            this.button11.Text = "Format SQL";
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.pretty);
+            // 
+            // groupBox18
+            // 
+            this.groupBox18.Controls.Add(this.checkBox6);
+            this.groupBox18.Controls.Add(this.checkBox5);
+            this.groupBox18.Controls.Add(this.checkBox4);
+            this.groupBox18.Controls.Add(this.checkBox3);
+            this.groupBox18.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.groupBox18.Location = new System.Drawing.Point(5, 288);
+            this.groupBox18.Name = "groupBox18";
+            this.groupBox18.Size = new System.Drawing.Size(567, 39);
+            this.groupBox18.TabIndex = 2;
+            this.groupBox18.TabStop = false;
+            this.groupBox18.Text = "Options";
+            // 
+            // checkBox6
+            // 
+            this.checkBox6.AutoSize = true;
+            this.checkBox6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.checkBox6.Location = new System.Drawing.Point(469, 16);
+            this.checkBox6.Name = "checkBox6";
+            this.checkBox6.Size = new System.Drawing.Size(98, 19);
+            this.checkBox6.TabIndex = 3;
+            this.checkBox6.Text = "All Lowercase";
+            this.checkBox6.UseVisualStyleBackColor = true;
+            this.checkBox6.Click += new System.EventHandler(this.sqlcheckboxbehaviour4);
+            // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.checkBox5.Location = new System.Drawing.Point(365, 16);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.Size = new System.Drawing.Size(98, 19);
+            this.checkBox5.TabIndex = 2;
+            this.checkBox5.Text = "All Uppercase";
+            this.checkBox5.UseVisualStyleBackColor = true;
+            this.checkBox5.Click += new System.EventHandler(this.sqlcheckboxbehaviour3);
+            // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.checkBox4.Location = new System.Drawing.Point(187, 16);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(172, 19);
+            this.checkBox4.TabIndex = 1;
+            this.checkBox4.Text = "Lowercase Protected Words";
+            this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkBox4.Click += new System.EventHandler(this.sqlcheckboxbehaviour2);
+            // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.checkBox3.Location = new System.Drawing.Point(9, 16);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(172, 19);
+            this.checkBox3.TabIndex = 0;
+            this.checkBox3.Text = "Uppercase Protected Words";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.Click += new System.EventHandler(this.sqlcheckboxbehaviour1);
+            // 
+            // groupBox17
+            // 
+            this.groupBox17.Controls.Add(this.richTextBox3);
+            this.groupBox17.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.groupBox17.Location = new System.Drawing.Point(4, 4);
+            this.groupBox17.Name = "groupBox17";
+            this.groupBox17.Size = new System.Drawing.Size(815, 283);
+            this.groupBox17.TabIndex = 1;
+            this.groupBox17.TabStop = false;
+            this.groupBox17.Text = "Input SQL Here";
+            // 
+            // richTextBox3
+            // 
+            this.richTextBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.richTextBox3.Location = new System.Drawing.Point(6, 22);
+            this.richTextBox3.Name = "richTextBox3";
+            this.richTextBox3.Size = new System.Drawing.Size(803, 245);
+            this.richTextBox3.TabIndex = 0;
+            this.richTextBox3.Text = "";
+            // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.checkBox7);
             this.tabPage4.Controls.Add(this.tabControl2);
             this.tabPage4.Location = new System.Drawing.Point(4, 24);
             this.tabPage4.Name = "tabPage4";
@@ -1530,6 +1647,19 @@
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "SafeSQL";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // checkBox7
+            // 
+            this.checkBox7.AutoSize = true;
+            this.checkBox7.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.checkBox7.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.checkBox7.Location = new System.Drawing.Point(149, 9);
+            this.checkBox7.Name = "checkBox7";
+            this.checkBox7.Size = new System.Drawing.Size(501, 19);
+            this.checkBox7.TabIndex = 17;
+            this.checkBox7.Text = "Enable Table/Column Suggestions On Press Of Decimal Key (Pasting Text Will Disabl" +
+    "e This)";
+            this.checkBox7.UseVisualStyleBackColor = true;
             // 
             // tabControl2
             // 
@@ -1684,6 +1814,7 @@
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             this.richTextBox1.Click += new System.EventHandler(this.lbhide);
+            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
             this.richTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ignorespacert1);
             this.richTextBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.richTextBox1_KeyDown);
             // 
@@ -1757,6 +1888,7 @@
             this.richTextBox4.Size = new System.Drawing.Size(769, 96);
             this.richTextBox4.TabIndex = 1;
             this.richTextBox4.Text = "";
+            this.richTextBox4.TextChanged += new System.EventHandler(this.richTextBox4_TextChanged);
             this.richTextBox4.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ignorespacert4);
             this.richTextBox4.KeyUp += new System.Windows.Forms.KeyEventHandler(this.richTextBox4_KeyDown3);
             // 
@@ -1797,6 +1929,7 @@
             this.richTextBox2.Size = new System.Drawing.Size(769, 96);
             this.richTextBox2.TabIndex = 1;
             this.richTextBox2.Text = "";
+            this.richTextBox2.TextChanged += new System.EventHandler(this.richTextBox2_TextChanged);
             this.richTextBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ignorespacert2);
             this.richTextBox2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.richTextBox2_KeyDown2);
             // 
@@ -2021,39 +2154,6 @@
             this.dataGridView6.Size = new System.Drawing.Size(777, 228);
             this.dataGridView6.TabIndex = 1;
             // 
-            // tabPage11
-            // 
-            this.tabPage11.Controls.Add(this.groupBox17);
-            this.tabPage11.Location = new System.Drawing.Point(4, 24);
-            this.tabPage11.Name = "tabPage11";
-            this.tabPage11.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage11.Size = new System.Drawing.Size(826, 332);
-            this.tabPage11.TabIndex = 5;
-            this.tabPage11.Text = "Prettify";
-            this.tabPage11.UseVisualStyleBackColor = true;
-            // 
-            // groupBox17
-            // 
-            this.groupBox17.Controls.Add(this.richTextBox3);
-            this.groupBox17.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox17.Location = new System.Drawing.Point(4, 4);
-            this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(815, 322);
-            this.groupBox17.TabIndex = 1;
-            this.groupBox17.TabStop = false;
-            this.groupBox17.Text = "Prettify - Press F5 to Prettify";
-            // 
-            // richTextBox3
-            // 
-            this.richTextBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.richTextBox3.Location = new System.Drawing.Point(6, 22);
-            this.richTextBox3.Name = "richTextBox3";
-            this.richTextBox3.Size = new System.Drawing.Size(803, 294);
-            this.richTextBox3.TabIndex = 0;
-            this.richTextBox3.Text = "";
-            this.richTextBox3.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox3_KeyDown);
-            // 
             // contextMenuStrip5
             // 
             this.contextMenuStrip5.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -2256,7 +2356,12 @@
             this.groupBox10.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView8)).EndInit();
             this.contextMenuStrip6.ResumeLayout(false);
+            this.tabPage11.ResumeLayout(false);
+            this.groupBox18.ResumeLayout(false);
+            this.groupBox18.PerformLayout();
+            this.groupBox17.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.tabControl2.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
@@ -2281,8 +2386,6 @@
             this.groupBox12.ResumeLayout(false);
             this.groupBox12.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView6)).EndInit();
-            this.tabPage11.ResumeLayout(false);
-            this.groupBox17.ResumeLayout(false);
             this.contextMenuStrip5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource1)).EndInit();
@@ -2454,6 +2557,13 @@
         private TabPage tabPage11;
         private RichTextBox richTextBox3;
         private GroupBox groupBox17;
+        private GroupBox groupBox18;
+        private CheckBox checkBox3;
+        private CheckBox checkBox4;
+        private CheckBox checkBox5;
+        private Button button11;
+        private CheckBox checkBox6;
+        private CheckBox checkBox7;
     }
 
 

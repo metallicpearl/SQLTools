@@ -3563,6 +3563,12 @@ LIKE '%";
         private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
         {
 
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
+            {
+                checkBox7.Checked = false;
+            }
+
+
 
             if (e.KeyCode == Keys.Back)
             {
@@ -3599,7 +3605,7 @@ LIKE '%";
             }
 
 
-            if (e.KeyCode == Keys.Decimal)
+            if (e.KeyCode == Keys.Decimal && checkBox7.Checked == true)
             {
                 if (autocomplete == false)
                 {
@@ -4966,7 +4972,7 @@ LIKE '%";
             
 
 
-
+            
             richTextBox1.ScrollToCaret();
 
             string tosplit = resulttxt.Replace("\r\n", " ");
@@ -5265,7 +5271,7 @@ LIKE '%";
 
 
 
-                        richTextBox1.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') +1, currentlen);
+                        richTextBox1.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
 
                         richTextBox1.SelectionColor = Color.Black;
 
@@ -5279,16 +5285,17 @@ LIKE '%";
 
                     }
 
-                    lb.Hide();
+                        lb.Hide();
 
-                    lb.Visible = false;
+                        lb.Visible = false;
 
-                    autocompletebusy = false;
-                    autocomplete = false;
+                        autocompletebusy = false;
+                        autocomplete = false;
 
-                    richTextBox1.Focus();
-                    richTextBox1.DeselectAll();
-                    richTextBox1.Refresh();
+                        richTextBox1.Focus();
+                        richTextBox1.DeselectAll();
+                        richTextBox1.Refresh();
+                      
                 }
             }
 
@@ -5422,6 +5429,8 @@ LIKE '%";
 
             }
 
+            richTextBox1.ScrollToCaret();
+
             //curlin = 0;
         }
 
@@ -5526,6 +5535,10 @@ LIKE '%";
 
         private void richTextBox2_KeyDown2(object sender, KeyEventArgs e)
         {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
+            {
+                checkBox7.Checked = false;
+            }
 
 
             if (e.KeyCode == Keys.Back)
@@ -5596,7 +5609,7 @@ LIKE '%";
 
             if (e.KeyCode == Keys.Decimal)
             {
-                if (autocomplete == false)
+                if (autocomplete == false && checkBox7.Checked == true)
                 {
                     e.Handled = true;
                     e.SuppressKeyPress = true;
@@ -7258,7 +7271,12 @@ LIKE '%";
                 e.SuppressKeyPress = true;
             }
 
-            if (e.KeyCode == Keys.Decimal)
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
+            {
+                checkBox7.Checked = false;
+            }
+
+            if (e.KeyCode == Keys.Decimal && checkBox7.Checked == true)
             {
                 if (autocomplete == false)
                 {
@@ -10695,6 +10713,7 @@ LIKE '%";
                             dataGridView8.DataSource = null;
                         }
                         Text = "SQL Tools - WORKING...";
+                        button8.Enabled = false;    
                     });
 
                     if (radioButton1.Checked == true)
@@ -11398,6 +11417,7 @@ LIKE '%";
             }
 
             busy = false;
+            button8.Enabled = true;
         }
 
         private void checkdef(object sender, KeyEventArgs e)
@@ -12620,7 +12640,7 @@ LIKE '%";
             var searchvalue = dataGridView2.SelectedCells[1].Value;
             string searchterm = "select * from [" + table + "] where " + column + " = " + "'" + searchvalue.ToString() + "'";
 
-            tabControl1.SelectedTab = tabControl1.TabPages[4];
+            tabControl1.SelectedTab = tabControl1.TabPages[5];
             tabControl2.SelectedTab = tabControl2.TabPages[0];
             richTextBox1.Text = searchterm;
             richTextBox1_KeyDowns(sender, e);
@@ -12630,25 +12650,511 @@ LIKE '%";
         }
 
 
+        public static string makeupper (string input)
+        {
+            string output = input.ToUpper();
+            return output;
+        }
+
+        public static string makelower(string input)
+        {
+            string output = input.ToLower();
+            return output;
+        }
+
         public void pretty(object sender, EventArgs e)
         {
+
+            string[]? procwords = new string[300];
+            procwords[1] = "ABSOLUTE";
+            procwords[2] = "EXEC";
+            procwords[3] = "OVERLAPS";
+            procwords[4] = "ACTION";
+            procwords[5] = "EXECUTE";
+            procwords[6] = "PAD";
+            procwords[7] = "ADA";
+            procwords[8] = "EXISTS";
+            procwords[9] = "PARTIAL";
+            procwords[10] = "ADD";
+            procwords[11] = "EXTERNAL";
+            procwords[12] = "PASCAL";
+            procwords[13] = "ALL";
+            procwords[14] = "EXTRACT";
+            procwords[15] = "POSITION";
+            procwords[16] = "ALLOCATE";
+            procwords[17] = "FALSE";
+            procwords[18] = "PRECISION";
+            procwords[19] = "ALTER";
+            procwords[20] = "FETCH";
+            procwords[21] = "PREPARE";
+            procwords[22] = "AND";
+            procwords[23] = "FIRST";
+            procwords[24] = "PRESERVE";
+            procwords[25] = "ANY";
+            procwords[26] = "FLOAT";
+            procwords[27] = "PRIMARY";
+            procwords[28] = "ARE";
+            procwords[29] = "FOR";
+            procwords[30] = "PRIOR";
+            procwords[31] = "AS";
+            procwords[32] = "FOREIGN";
+            procwords[33] = "PRIVILEGES";
+            procwords[34] = "ASC";
+            procwords[35] = "FORTRAN";
+            procwords[36] = "PROCEDURE";
+            procwords[37] = "ASSERTION";
+            procwords[38] = "FOUND";
+            procwords[39] = "PUBLIC";
+            procwords[40] = "AT";
+            procwords[41] = "FROM";
+            procwords[42] = "READ";
+            procwords[43] = "AUTHORIZATION";
+            procwords[44] = "FULL";
+            procwords[45] = "REAL";
+            procwords[46] = "AVG";
+            procwords[47] = "GET";
+            procwords[48] = "REFERENCES";
+            procwords[49] = "BEGIN";
+            procwords[50] = "GLOBAL";
+            procwords[51] = "RELATIVE";
+            procwords[52] = "BETWEEN";
+            procwords[53] = "GO";
+            procwords[54] = "RESTRICT";
+            procwords[55] = "BIT";
+            procwords[56] = "GOTO";
+            procwords[57] = "REVOKE";
+            procwords[58] = "BIT_LENGTH";
+            procwords[59] = "GRANT";
+            procwords[60] = "RIGHT";
+            procwords[61] = "BOTH";
+            procwords[62] = "GROUP";
+            procwords[63] = "ROLLBACK";
+            procwords[64] = "BY";
+            procwords[65] = "HAVING";
+            procwords[66] = "ROWS";
+            procwords[67] = "CASCADE";
+            procwords[68] = "HOUR";
+            procwords[69] = "SCHEMA";
+            procwords[70] = "CASCADED";
+            procwords[71] = "IDENTITY";
+            procwords[72] = "SCROLL";
+            procwords[73] = "CASE";
+            procwords[74] = "IMMEDIATE";
+            procwords[75] = "SECOND";
+            procwords[76] = "CAST";
+            procwords[77] = "IN";
+            procwords[78] = "SECTION";
+            procwords[79] = "CATALOG";
+            procwords[80] = "INCLUDE";
+            procwords[81] = "SELECT";
+            procwords[82] = "CHAR";
+            procwords[83] = "INDEX";
+            procwords[84] = "SESSION";
+            procwords[85] = "CHAR_LENGTH";
+            procwords[86] = "INDICATOR";
+            procwords[87] = "SESSION_USER";
+            procwords[88] = "CHARACTER";
+            procwords[89] = "INITIALLY";
+            procwords[90] = "SET";
+            procwords[91] = "CHARACTER_LENGTH";
+            procwords[92] = "INNER";
+            procwords[93] = "SIZE";
+            procwords[94] = "CHECK";
+            procwords[95] = "INPUT";
+            procwords[96] = "SMALLINT";
+            procwords[97] = "CLOSE";
+            procwords[98] = "INSENSITIVE";
+            procwords[99] = "SOME";
+            procwords[100] = "COALESCE";
+            procwords[101] = "INSERT";
+            procwords[102] = "SPACE";
+            procwords[103] = "COLLATE";
+            procwords[104] = "INT";
+            procwords[105] = "SQL";
+            procwords[106] = "COLLATION";
+            procwords[107] = "INTEGER";
+            procwords[108] = "SQLCA";
+            procwords[109] = "COLUMN";
+            procwords[110] = "INTERSECT";
+            procwords[111] = "SQLCODE";
+            procwords[112] = "COMMIT";
+            procwords[113] = "INTERVAL";
+            procwords[114] = "SQLERROR";
+            procwords[115] = "CONNECT";
+            procwords[116] = "INTO";
+            procwords[117] = "SQLSTATE";
+            procwords[118] = "CONNECTION";
+            procwords[119] = "IS";
+            procwords[120] = "SQLWARNING";
+            procwords[121] = "CONSTRAINT";
+            procwords[122] = "ISOLATION";
+            procwords[123] = "SUBSTRING";
+            procwords[124] = "CONSTRAINTS";
+            procwords[125] = "JOIN";
+            procwords[126] = "SUM";
+            procwords[127] = "CONTINUE";
+            procwords[128] = "KEY";
+            procwords[129] = "SYSTEM_USER";
+            procwords[130] = "CONVERT";
+            procwords[131] = "LANGUAGE";
+            procwords[132] = "TABLE";
+            procwords[133] = "CORRESPONDING";
+            procwords[134] = "LAST";
+            procwords[135] = "TEMPORARY";
+            procwords[136] = "COUNT";
+            procwords[137] = "LEADING";
+            procwords[138] = "THEN";
+            procwords[139] = "CREATE";
+            procwords[140] = "LEFT";
+            procwords[141] = "TIME";
+            procwords[142] = "CROSS";
+            procwords[143] = "LEVEL";
+            procwords[144] = "TIMESTAMP";
+            procwords[145] = "CURRENT";
+            procwords[146] = "LIKE";
+            procwords[147] = "TIMEZONE_HOUR";
+            procwords[148] = "CURRENT_DATE";
+            procwords[149] = "LOCAL";
+            procwords[150] = "TIMEZONE_MINUTE";
+            procwords[151] = "CURRENT_TIME";
+            procwords[152] = "LOWER";
+            procwords[153] = "TO";
+            procwords[154] = "CURRENT_TIMESTAMP";
+            procwords[155] = "MATCH";
+            procwords[156] = "TRAILING";
+            procwords[157] = "CURRENT_USER";
+            procwords[158] = "MAX";
+            procwords[159] = "TRANSACTION";
+            procwords[160] = "CURSOR";
+            procwords[161] = "MIN";
+            procwords[162] = "TRANSLATE";
+            procwords[163] = "DATE";
+            procwords[164] = "MINUTE";
+            procwords[165] = "TRANSLATION";
+            procwords[166] = "DAY";
+            procwords[167] = "MODULE";
+            procwords[168] = "TRIM";
+            procwords[169] = "DEALLOCATE";
+            procwords[170] = "MONTH";
+            procwords[171] = "TRUE";
+            procwords[172] = "DEC";
+            procwords[173] = "NAMES";
+            procwords[174] = "UNION";
+            procwords[175] = "DECIMAL";
+            procwords[176] = "NATIONAL";
+            procwords[177] = "UNIQUE";
+            procwords[178] = "DECLARE";
+            procwords[179] = "NATURAL";
+            procwords[180] = "UNKNOWN";
+            procwords[181] = "DEFAULT";
+            procwords[182] = "NCHAR";
+            procwords[183] = "UPDATE";
+            procwords[184] = "DEFERRABLE";
+            procwords[185] = "NEXT";
+            procwords[186] = "UPPER";
+            procwords[187] = "DEFERRED";
+            procwords[188] = "NO";
+            procwords[189] = "USAGE";
+            procwords[190] = "DELETE";
+            procwords[191] = "NONE";
+            procwords[192] = "USER";
+            procwords[193] = "DESC";
+            procwords[194] = "NOT";
+            procwords[195] = "USING";
+            procwords[196] = "DESCRIBE";
+            procwords[197] = "NULL";
+            procwords[198] = "VALUE";
+            procwords[199] = "DESCRIPTOR";
+            procwords[200] = "NULLIF";
+            procwords[201] = "VALUES";
+            procwords[202] = "DIAGNOSTICS";
+            procwords[203] = "NUMERIC";
+            procwords[204] = "VARCHAR";
+            procwords[205] = "DISCONNECT";
+            procwords[206] = "OCTET_LENGTH";
+            procwords[207] = "VARYING";
+            procwords[208] = "DISTINCT";
+            procwords[209] = "OF";
+            procwords[210] = "VIEW";
+            procwords[211] = "DOMAIN";
+            procwords[212] = "ON";
+            procwords[213] = "WHEN";
+            procwords[214] = "DOUBLE";
+            procwords[215] = "ONLY";
+            procwords[216] = "WHENEVER";
+            procwords[217] = "DROP";
+            procwords[218] = "OPEN";
+            procwords[219] = "WHERE";
+            procwords[220] = "ELSE";
+            procwords[221] = "OPTION";
+            procwords[222] = "WITH";
+            procwords[223] = "END";
+            procwords[224] = "OR";
+            procwords[225] = "WORK";
+            procwords[226] = "END-EXEC";
+            procwords[227] = "ORDER";
+            procwords[228] = "WRITE";
+            procwords[229] = "ESCAPE";
+            procwords[230] = "OUTER";
+            procwords[231] = "YEAR";
+            procwords[232] = "EXCEPT";
+            procwords[233] = "OUTPUT";
+            procwords[234] = "ZONE";
+            procwords[235] = "EXCEPTION";
 
             string input1 = richTextBox3.Text;
 
             string input2 = Regex.Replace(input1, @"\r\n?|\n", " ");
 
-            richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(input2);
+            string[] input3 = input2.Split(" ");
+
+            string toheader;
+
+            if ((checkBox3.Checked == false) && (checkBox4.Checked == false))
+            {
+                richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(richTextBox3.Text);
+            }
+
+            if (checkBox5.Checked == true)
+            {
+                string s = richTextBox3.Text.ToUpper();
+                richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(s);
+            }
+
+            if (checkBox6.Checked == true)
+            {
+                string s = richTextBox3.Text.ToLower();
+                richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(s);
+            }
+
+            if (checkBox3.Checked == true)
+            {
+
+                foreach (string p in procwords)
+                {
+                    if (p != null)
+                    {
+                        foreach (string s in input3)
+                        {
+                            string t = s.ToLower();
+                            string u = p.ToLower();
+
+                            if (t == u)
+                            {
+                                int index = Array.IndexOf(input3, s);
+                                string v = makeupper(s);
+                                input3[index] = v;
+                            }
+                        }
+                    }
+                }
+
+                string input4 = String.Join(" ", input3);
+
+                richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(input4);
+                toheader = SqlPrettify.SqlPrettify.Pretty(input4);
+            }
+
+            if (checkBox4.Checked == true)
+            {
+
+                foreach (string p in procwords)
+                {
+                    if (p != null)
+                    {
+                        foreach (string s in input3)
+                        {
+                            string t = s.ToLower();
+                            string u = p.ToLower();
+
+                            if (t == u)
+                            {
+                                int index = Array.IndexOf(input3, s);
+                                string v = makelower(s);
+                                input3[index] = v;
+                            }
+                        }
+                    }
+                }
+
+                string input4 = String.Join(" ", input3);
+
+                richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(input4);
+                toheader = SqlPrettify.SqlPrettify.Pretty(input4);
+            }
+
+          
+
         }
-        
+
+
+        //Private Sub chkBox1_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkBox1.CheckedChanged
+    //    If chkBox1.CheckState = CheckState.Checked And chkBox2.CheckState = CheckState.Checked Then
+    //        chkBox2.CheckState = CheckState.Unchecked
+    
+    //    End If
+    
+    //    If chkBox1.CheckState = CheckState.Unchecked And chkBox2.CheckState = CheckState.Unchecked Then
+    //        chkBox2.CheckState = CheckState.Checked
+    
+    //    End If
+    //End Sub
+    
+
+
+
+        public void sqlcheckboxbehaviour1(object sender, EventArgs e)
+        {
+            if (checkBox3.Checked == true || checkBox4.Checked == true)
+            {
+                checkBox5.Enabled = false;
+                checkBox6.Enabled = false;
+            }
+
+            if (checkBox3.Checked == true && checkBox4.Checked == true)
+            {
+                checkBox4.Checked = false;
+                checkBox5.Enabled = false;
+                checkBox6.Enabled = false;
+            }
+
+            if (checkBox3.Checked == false && checkBox4.Checked == false)
+            {
+                checkBox4.Checked = false;
+                checkBox5.Enabled = true;
+                checkBox6.Enabled = true;
+            }
+
+        }
+
+        public void sqlcheckboxbehaviour2(object sender, EventArgs e)
+        {
+            if (checkBox3.Checked == true || checkBox4.Checked == true)
+            {
+                checkBox5.Enabled = false;
+                checkBox6.Enabled = false;
+            }
+
+            if (checkBox3.Checked == true && checkBox4.Checked == true)
+            {
+                checkBox3.Checked = false;
+                checkBox5.Enabled = false;
+                checkBox6.Enabled = false;
+            }
+
+            if (checkBox3.Checked == false && checkBox4.Checked == false)
+            {
+                checkBox3.Checked = false;
+                checkBox5.Enabled = true;
+                checkBox6.Enabled = true;
+            }
+
+        }
+
+
+        public void sqlcheckboxbehaviour3(object sender, EventArgs e)
+        {
+            if (checkBox5.Checked == true || checkBox6.Checked == true)
+            {
+                checkBox3.Enabled = false;
+                checkBox4.Enabled = false;
+            }
+
+            if (checkBox5.Checked == true && checkBox6.Checked == true)
+            {
+                checkBox6.Checked = false;
+                checkBox3.Enabled = false;
+                checkBox4.Enabled = false;
+            }
+
+            if (checkBox5.Checked == false && checkBox6.Checked == false)
+            {
+                checkBox6.Checked = false;
+                checkBox3.Enabled = true;
+                checkBox4.Enabled = true;
+            }
+
+        }
+
+        public void sqlcheckboxbehaviour4(object sender, EventArgs e)
+        {
+            if (checkBox5.Checked == true || checkBox6.Checked == true)
+            {
+                checkBox3.Enabled = false;
+                checkBox4.Enabled = false;
+            }
+
+            if (checkBox5.Checked == true && checkBox6.Checked == true)
+            {
+                checkBox5.Checked = false;
+                checkBox3.Enabled = false;
+                checkBox4.Enabled = false;
+            }
+
+            if (checkBox5.Checked == false && checkBox6.Checked == false)
+            {
+                checkBox5.Checked = false;
+                checkBox3.Enabled = true;
+                checkBox4.Enabled = true;
+            }
+
+
+            //if (checkBox5.Checked == false && checkBox6.Checked == false)
+        }
+
+
+
 
         private void richTextBox3_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.F5)
+
+        }
+
+        private void checkBox5_CheckedChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            int currentline = richTextBox1.GetFirstCharIndexOfCurrentLine();
+            if (currentline > 0)
             {
-                pretty(sender, e);
+                curlin = currentline;
+            }
 
+            else
+            {
+                curlin = richTextBox1.SelectionStart;
+            }
 
+        }
 
+        private void richTextBox2_TextChanged(object sender, EventArgs e)
+        {
+            int currentline = richTextBox2.GetFirstCharIndexOfCurrentLine();
+            if (currentline > 0)
+            {
+                curlin = currentline;
+            }
+
+            else
+            {
+                curlin = richTextBox1.SelectionStart;
+            }
+        }
+
+        private void richTextBox4_TextChanged(object sender, EventArgs e)
+        {
+            int currentline = richTextBox4.GetFirstCharIndexOfCurrentLine();
+            if (currentline > 0)
+            {
+                curlin = currentline;
+            }
+
+            else
+            {
+                curlin = richTextBox1.SelectionStart;
             }
         }
     }
