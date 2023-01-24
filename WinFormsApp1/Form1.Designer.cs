@@ -1275,9 +1275,9 @@
             this.groupBox14.Controls.Add(this.radioButton9);
             this.groupBox14.Controls.Add(this.radioButton10);
             this.groupBox14.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox14.Location = new System.Drawing.Point(6, 35);
+            this.groupBox14.Location = new System.Drawing.Point(6, 40);
             this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(228, 295);
+            this.groupBox14.Size = new System.Drawing.Size(228, 290);
             this.groupBox14.TabIndex = 16;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "Search For";
@@ -1421,11 +1421,11 @@
             this.groupBox10.Controls.Add(this.textBox16);
             this.groupBox10.Controls.Add(this.dataGridView8);
             this.groupBox10.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox10.Location = new System.Drawing.Point(240, 35);
+            this.groupBox10.Location = new System.Drawing.Point(240, 40);
             this.groupBox10.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox10.Name = "groupBox10";
             this.groupBox10.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox10.Size = new System.Drawing.Size(580, 295);
+            this.groupBox10.Size = new System.Drawing.Size(580, 290);
             this.groupBox10.TabIndex = 0;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "Results";
@@ -1440,7 +1440,7 @@
             this.textBox16.Multiline = true;
             this.textBox16.Name = "textBox16";
             this.textBox16.ReadOnly = true;
-            this.textBox16.Size = new System.Drawing.Size(570, 276);
+            this.textBox16.Size = new System.Drawing.Size(569, 268);
             this.textBox16.TabIndex = 17;
             // 
             // dataGridView8
@@ -1494,7 +1494,7 @@
             this.dataGridView8.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridView8.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView8.ShowCellToolTips = false;
-            this.dataGridView8.Size = new System.Drawing.Size(570, 272);
+            this.dataGridView8.Size = new System.Drawing.Size(570, 267);
             this.dataGridView8.TabIndex = 0;
             // 
             // contextMenuStrip6
@@ -1655,11 +1655,11 @@
             this.checkBox7.ForeColor = System.Drawing.SystemColors.Desktop;
             this.checkBox7.Location = new System.Drawing.Point(149, 9);
             this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Size = new System.Drawing.Size(501, 19);
+            this.checkBox7.Size = new System.Drawing.Size(320, 19);
             this.checkBox7.TabIndex = 17;
-            this.checkBox7.Text = "Enable Table/Column Suggestions On Press Of Decimal Key (Pasting Text Will Disabl" +
-    "e This)";
+            this.checkBox7.Text = "Enable Table/Column Suggestions On Decimal Keypress";
             this.checkBox7.UseVisualStyleBackColor = true;
+            this.checkBox7.Click += new System.EventHandler(this.checkBox7_Click);
             // 
             // tabControl2
             // 
@@ -1700,7 +1700,7 @@
             this.textBox14.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.textBox14.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textBox14.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.textBox14.Location = new System.Drawing.Point(8, 18);
+            this.textBox14.Location = new System.Drawing.Point(7, 18);
             this.textBox14.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox14.Multiline = true;
             this.textBox14.Name = "textBox14";
@@ -2240,7 +2240,7 @@
             this.groupBox6.Controls.Add(this.label15);
             this.groupBox6.Controls.Add(this.radioButton7);
             this.groupBox6.Controls.Add(this.radioButton6);
-            this.groupBox6.Location = new System.Drawing.Point(545, 119);
+            this.groupBox6.Location = new System.Drawing.Point(546, 119);
             this.groupBox6.Margin = new System.Windows.Forms.Padding(0);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Padding = new System.Windows.Forms.Padding(0);

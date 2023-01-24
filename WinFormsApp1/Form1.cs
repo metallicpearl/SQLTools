@@ -147,7 +147,7 @@ namespace WinFormsApp1
         public DataTable dtm8;
         public DataTable dtm9;
         public DataTable dtm10;
-
+        public bool caretreset;
         public int curlin;
         public int comboxsel;
         public int stringpos;
@@ -3340,7 +3340,7 @@ LIKE '%";
 
             int lineIndex = richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart);
 
-            int positionOfcarett = caretposition;
+            int positionOfcarett = richTextBox1.SelectionStart;
 
 
             lineIndex = richTextBox1.GetFirstCharIndexOfCurrentLine();
@@ -3353,8 +3353,9 @@ LIKE '%";
                 richTextBox1.SelectionColor = Color.Black;
                 richTextBox1.SelectionLength = 0;
                 richTextBox1.ForeColor = Color.Black;
-                richTextBox1.SelectionStart = richTextBox1.Text.Length;
-                richTextBox1.SelectionStart = positionOfcarett;
+                //richTextBox1.SelectionStart = richTextBox1.Text.Length;
+                richTextBox1.SelectionStart =
+                    positionOfcarett;
 
                 index++;
 
@@ -3565,7 +3566,8 @@ LIKE '%";
 
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
             {
-                checkBox7.Checked = false;
+                //checkBox7.Checked = false;
+
             }
 
 
@@ -3611,8 +3613,9 @@ LIKE '%";
                 {
                     e.Handled = true;
                     e.SuppressKeyPress = true;
+
                     getdbdetails(sender, e);
-                    //getdbdetails(sender, e);
+                    
 
                 }
                 else if (autocomplete == true)
@@ -3740,7 +3743,7 @@ LIKE '%";
 
                 if (e.KeyCode == Keys.Enter)
                 {
-                    richTextBox1.ScrollToCaret();
+                    //richTextBox1.ScrollToCaret();
                 }
 
 
@@ -4952,6 +4955,10 @@ LIKE '%";
 
         private void getdbdetails(object sender, EventArgs e)
         {
+
+
+            int curposstart = richTextBox1.SelectionStart;
+
             if (richTextBox1.Text.Length == 0)
             {
                 caretposition = 0;
@@ -4962,7 +4969,8 @@ LIKE '%";
 
             if (currentline > 0)
             {
-                curlin = currentline;
+                curlin = curposstart;
+                    //currentline;
             }
 
             else
@@ -5016,11 +5024,10 @@ LIKE '%";
                 containsreturn = false;
             }
 
-            if (beforetext.Contains("\n"))
+            if (beforetext.Contains("\n") || (beforetext == ""))
             {
                 containsreturn = true;
             }
-
 
 
             currentword = wrd.Replace('\n', ' ');
@@ -5148,14 +5155,14 @@ LIKE '%";
 
                 if (lb.Items.Count == 0)
                 {
-                    richTextBox1.SelectionStart = 0;
+                    richTextBox1.SelectionStart = curposstart;
                 }
 
-                if (lb.Items.Count > 0)
+                if (lb.Items.Count > 0)// && label17.Text == "Connected")
                 {
                     autocompletebusy = true;
 
-                    richTextBox1.Select(lastspacebeforetext = beforetext.LastIndexOf(' ') + 1, currentlen + 1);
+                    richTextBox1.Select(lastspacebeforetext = beforetext.LastIndexOf(' ')+1, currentlen);
 
                     string sl = richTextBox1.SelectedText;
 
@@ -5165,9 +5172,15 @@ LIKE '%";
 
                     //richTextBox1.Focus();
 
-                    int charpos = richTextBox1.SelectionStart;
+                    int charpos =
+                        curlin;
+                        //richTextBox1.SelectionStart;
 
-                    Point carpos = richTextBox1.GetPositionFromCharIndex(charpos);
+                    Point carpos = richTextBox1.GetPositionFromCharIndex(charpos-1);
+
+                    lb.Location = carpos;
+
+                    richTextBox1.ScrollToCaret();
 
                     lb.Location = carpos;
                     lb.Visible = true;
@@ -5187,7 +5200,7 @@ LIKE '%";
             autocomplete = false;
             autocompletebusy = false;
 
-
+            //curlin = 0;
 
 
 
@@ -5199,16 +5212,22 @@ LIKE '%";
             //listBox1.Visible = false;
             //listBox2.Visible = false;
 
+                //int curpos = richTextBox1.SelectionStart;
 
-            if (containsreturn == true)
-            {
-                addchar = "";
-            }
 
             if (containsreturn == false)
             {
                 addchar = "";
+
             }
+
+            else if (containsreturn == true)
+            {
+                addchar = " " + Environment.NewLine;
+                
+            }
+
+           
 
 
 
@@ -5242,7 +5261,7 @@ LIKE '%";
             if (e.KeyData == Keys.Enter)
             {
 
-                //richTextBox1.GetLineFromCharIndex(lineIndex);
+                richTextBox1.GetLineFromCharIndex(lineIndex);
 
 
                 //if (lb.SelectedIndex != -1)
@@ -5275,7 +5294,9 @@ LIKE '%";
 
                         richTextBox1.SelectionColor = Color.Black;
 
-                        richTextBox1.SelectedText = lb.SelectedItem.ToString() + " " + addchar;
+                        richTextBox1.SelectedText = lb.SelectedItem.ToString() + addchar;
+
+                        
 
                         autocomplete = false;
 
@@ -5286,16 +5307,20 @@ LIKE '%";
                     }
 
                         lb.Hide();
+                    richTextBox1.SelectionStart = richTextBox1.SelectionStart - 1;
 
-                        lb.Visible = false;
+                    lb.Visible = false;
 
                         autocompletebusy = false;
                         autocomplete = false;
 
-                        richTextBox1.Focus();
-                        richTextBox1.DeselectAll();
+                    
+                    //richTextBox1.Focus();
+                    richTextBox1.DeselectAll();
                         richTextBox1.Refresh();
-                      
+
+                        
+
                 }
             }
 
@@ -5327,13 +5352,14 @@ LIKE '%";
 
                     string appendageleft = lb.SelectedItem.ToString().Split('.')[0];
 
-                    richTextBox1.SelectedText = appendageleft + " " + addchar;
+                    richTextBox1.SelectedText = appendageleft  + addchar;
 
                     autocomplete = false;
 
                     richTextBox1.Focus();
 
                     lb.Hide();
+                    richTextBox1.SelectionStart = richTextBox1.SelectionStart - 1;
                     //richTextBox1.SelectionStart = caretposition;
 
                     richTextBox1.Focus();
@@ -5394,16 +5420,18 @@ LIKE '%";
 
                     string appendageright = lb.SelectedItem.ToString().Split('.')[1];
 
-                    richTextBox1.SelectedText = appendageright + " " + addchar;
+                    richTextBox1.SelectedText = appendageright  + addchar;
 
                     //richTextBox1.SelectionStart = caretposition;
 
                     autocomplete = false;
 
+                    
+
                     richTextBox1.Focus();
 
                     lb.Hide();
-                    //richTextBox1.SelectionStart = caretposition;
+                    richTextBox1.SelectionStart = richTextBox1.SelectionStart - 1;
 
                     richTextBox1.Focus();
                     richTextBox1.DeselectAll();
@@ -5421,15 +5449,21 @@ LIKE '%";
             if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape)
             {
                 lb.Hide();
-                richTextBox1.SelectionStart = caretposition;
+                richTextBox1.SelectionStart = curlin;
                 richTextBox1.DeselectAll();
                 richTextBox1.Focus();
-
                 richTextBox1.Refresh();
 
             }
 
-            richTextBox1.ScrollToCaret();
+            
+
+
+
+
+            //richTextBox1.ScrollToCaret();
+
+            
 
             //curlin = 0;
         }
@@ -5505,7 +5539,7 @@ LIKE '%";
                 richTextBox2.SelectionColor = Color.Black;
                 richTextBox2.SelectionLength = 0;
                 richTextBox2.ForeColor = Color.Black;
-                richTextBox2.SelectionStart = richTextBox2.Text.Length;
+                //richTextBox2.SelectionStart = richTextBox2.Text.Length;
                 //richTextBox2.DeselectAll();
                 richTextBox2.SelectionStart = positionOfcarett;
 
@@ -5537,7 +5571,7 @@ LIKE '%";
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
             {
-                checkBox7.Checked = false;
+                //checkBox7.Checked = false;
             }
 
 
@@ -5738,7 +5772,7 @@ LIKE '%";
 
                 if (e.KeyCode == Keys.Enter)
                 {
-                    richTextBox2.ScrollToCaret();
+                    //richTextBox2.ScrollToCaret();
                 }
 
 
@@ -6626,6 +6660,7 @@ LIKE '%";
 
         private void getdbdetails2(object sender, EventArgs e)
         {
+            int curposstart = richTextBox2.SelectionStart;
 
             if (richTextBox2.Text.Length == 0)
             {
@@ -6638,7 +6673,7 @@ LIKE '%";
 
             if (currentline > 0)
             {
-                curlin = currentline;
+                curlin = curposstart;
             }
 
             else
@@ -6676,6 +6711,8 @@ LIKE '%";
             string beforetextedited = beforetext.Replace("\n", " ");
 
             string aftertext = richTextBox2.Text.Substring(caretposition, (richTextBox2.Text.Length - caretposition));
+
+            string a = aftertext;
 
             if (beforetextedited.LastIndexOf(" ") < 0)
             {
@@ -6836,7 +6873,7 @@ LIKE '%";
 
                 if (listBox1.Items.Count == 0)
                 {
-                    richTextBox2.SelectionStart = caretposition;
+                    richTextBox2.SelectionStart = curposstart;
                 }
 
                 if (listBox1.Items.Count > 0)
@@ -6853,9 +6890,20 @@ LIKE '%";
 
                     //richTextBox2.Focus();
 
-                    int charpos = richTextBox2.SelectionStart;
+                    //int charpos = richTextBox2.SelectionStart;
+
+                    //Point carpos = richTextBox2.GetPositionFromCharIndex(charpos);
+
+                    int charpos =
+                     curlin;
+                    //richTextBox1.SelectionStart;
 
                     Point carpos = richTextBox2.GetPositionFromCharIndex(charpos);
+
+                    listBox1.Location = carpos;
+
+                    richTextBox2.ScrollToCaret();
+
 
                     listBox1.Location = carpos;
                     listBox1.Visible = true;
@@ -6885,12 +6933,12 @@ LIKE '%";
 
             if (containsreturn == true)
             {
-                addchar = "";
+                addchar = " " + Environment.NewLine;
             }
 
             if (containsreturn == false)
             {
-                addchar = "";
+                addchar = " ";
             }
 
 
@@ -6955,7 +7003,7 @@ LIKE '%";
 
                         richTextBox2.SelectionColor = Color.Black;
 
-                        richTextBox2.SelectedText = listBox1.SelectedItem.ToString() + " " + addchar;
+                        richTextBox2.SelectedText = listBox1.SelectedItem.ToString() + addchar;
 
                         autocomplete = false;
 
@@ -6966,6 +7014,7 @@ LIKE '%";
                     }
 
                     listBox1.Hide();
+                    richTextBox2.SelectionStart = richTextBox2.SelectionStart - 1;
 
                     listBox1.Visible = false;
 
@@ -7017,13 +7066,15 @@ LIKE '%";
 
                     string appendageleft = listBox1.SelectedItem.ToString().Split('.')[0];
 
-                    richTextBox2.SelectedText = appendageleft + " " + addchar;
+                    richTextBox2.SelectedText = appendageleft + addchar;
 
                     autocomplete = false;
 
                     richTextBox2.Focus();
 
                     listBox1.Hide();
+                    richTextBox2.SelectionStart = richTextBox2.SelectionStart - 1;
+
                     //richTextBox2.SelectionStart = caretposition;
 
                     richTextBox2.Focus();
@@ -7085,7 +7136,7 @@ LIKE '%";
 
                     string appendageright = listBox1.SelectedItem.ToString().Split('.')[1];
 
-                    richTextBox2.SelectedText = appendageright + " " + addchar;
+                    richTextBox2.SelectedText = appendageright + addchar;
 
                     //richTextBox2.SelectionStart = caretposition;
 
@@ -7094,6 +7145,8 @@ LIKE '%";
                     richTextBox2.Focus();
 
                     listBox1.Hide();
+                    richTextBox2.SelectionStart = richTextBox2.SelectionStart - 1;
+
                     //richTextBox2.SelectionStart = caretposition;
 
                     richTextBox2.Focus();
@@ -7110,7 +7163,7 @@ LIKE '%";
             if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape)
             {
                 listBox1.Hide();
-                richTextBox2.SelectionStart = caretposition;
+                richTextBox2.SelectionStart = curlin;
                 richTextBox2.DeselectAll();
                 richTextBox2.Focus();
                 richTextBox2.Refresh();
@@ -7190,7 +7243,7 @@ LIKE '%";
                 richTextBox4.SelectionColor = Color.Black;
                 richTextBox4.SelectionLength = 0;
                 richTextBox4.ForeColor = Color.Black;
-                richTextBox4.SelectionStart = richTextBox4.Text.Length;
+                //richTextBox4.SelectionStart = richTextBox4.Text.Length;
                 //richTextBox4.DeselectAll();
                 richTextBox4.SelectionStart = positionOfcarett;
 
@@ -7227,6 +7280,13 @@ LIKE '%";
             //    string hold = e.ToString();
             //    richTextBox4.Text = richTextBox4 + hold;
             //}
+
+
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
+            {
+                //checkBox7.Checked = false;
+            }
+
 
             if (e.KeyCode == Keys.Back)
             {
@@ -7273,12 +7333,12 @@ LIKE '%";
 
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
             {
-                checkBox7.Checked = false;
+                //checkBox7.Checked = false;
             }
 
-            if (e.KeyCode == Keys.Decimal && checkBox7.Checked == true)
+            if (e.KeyCode == Keys.Decimal)
             {
-                if (autocomplete == false)
+                if (autocomplete == false && checkBox7.Checked == true)
                 {
                     e.Handled = true;
                     e.SuppressKeyPress = true;
@@ -7410,7 +7470,8 @@ LIKE '%";
 
                 if (e.KeyCode == Keys.Enter)
                 {
-                    richTextBox4.ScrollToCaret();
+                    //richTextBox4.ScrollToCaret();
+
                 }
 
 
@@ -8893,7 +8954,7 @@ LIKE '%";
 
         private void getdbdetails3(object sender, EventArgs e)
         {
-
+            int curposstart = richTextBox4.SelectionStart;
 
             if (richTextBox4.Text.Length == 0)
             {
@@ -8907,7 +8968,7 @@ LIKE '%";
 
             if (currentline > 0)
             {
-                curlin = currentline;
+                curlin = curposstart;
             }
 
             else
@@ -9105,7 +9166,7 @@ LIKE '%";
 
                 if (listBox2.Items.Count == 0)
                 {
-                    richTextBox4.SelectionStart = caretposition;
+                    richTextBox4.SelectionStart = curposstart;
                 }
 
                 if (listBox2.Items.Count > 0)
@@ -9122,9 +9183,20 @@ LIKE '%";
 
 
 
-                    int charpos = richTextBox4.SelectionStart;
+                    //int charpos = richTextBox4.SelectionStart;
+
+                    //Point carpos = richTextBox4.GetPositionFromCharIndex(charpos);
+
+                    int charpos =
+                     curlin;
+                    //richTextBox1.SelectionStart;
 
                     Point carpos = richTextBox4.GetPositionFromCharIndex(charpos);
+
+                    listBox2.Location = carpos;
+
+                    richTextBox4.ScrollToCaret();
+
 
                     listBox2.Location = carpos;
                     listBox2.Visible = true;
@@ -9155,12 +9227,12 @@ LIKE '%";
 
             if (containsreturn == true)
             {
-                addchar = "";
+                addchar = " " + Environment.NewLine;
             }
 
             if (containsreturn == false)
             {
-                addchar = "";
+                addchar = " ";
             }
 
 
@@ -9225,7 +9297,7 @@ LIKE '%";
 
                         richTextBox4.SelectionColor = Color.Black;
 
-                        richTextBox4.SelectedText = listBox2.SelectedItem.ToString() + " " + addchar;
+                        richTextBox4.SelectedText = listBox2.SelectedItem.ToString() + addchar;
 
                         autocomplete = false;
 
@@ -9236,6 +9308,8 @@ LIKE '%";
                     }
 
                     listBox2.Hide();
+                    richTextBox4.SelectionStart = richTextBox4.SelectionStart - 1;
+
 
                     listBox2.Visible = false;
 
@@ -9282,13 +9356,15 @@ LIKE '%";
 
                     string appendageleft = listBox2.SelectedItem.ToString().Split('.')[0];
 
-                    richTextBox4.SelectedText = appendageleft + " " + addchar;
+                    richTextBox4.SelectedText = appendageleft + addchar;
 
                     autocomplete = false;
 
                     richTextBox4.Focus();
 
                     listBox2.Hide();
+                    richTextBox4.SelectionStart = richTextBox4.SelectionStart - 1;
+
                     //richTextBox4.SelectionStart = caretposition;
 
                     richTextBox4.Focus();
@@ -9390,7 +9466,7 @@ LIKE '%";
                     string appendageright = listBox2.SelectedItem.ToString().Split('.')[1];
 
                    
-                        richTextBox4.SelectedText = appendageright + " " + addchar;
+                        richTextBox4.SelectedText = appendageright + addchar;
                         newlineonened = false;
                     
 
@@ -9401,6 +9477,8 @@ LIKE '%";
                     richTextBox4.Focus();
 
                     listBox2.Hide();
+                    richTextBox4.SelectionStart = richTextBox4.SelectionStart - 1;
+
                     //richTextBox4.SelectionStart = caretposition;
 
                     richTextBox4.Focus();
@@ -9419,7 +9497,7 @@ LIKE '%";
             if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape)
             {
                 listBox2.Hide();
-                richTextBox4.SelectionStart = caretposition;
+                richTextBox4.SelectionStart = curlin;
                 richTextBox4.DeselectAll();
                 richTextBox4.Focus();
                 richTextBox4.Refresh();
@@ -9433,53 +9511,59 @@ LIKE '%";
         private void lbhide(object sender, EventArgs e)
         {
             lb.Hide();
+
+            if (caretreset == false)
+            {
+                richTextBox1.SelectionStart = curlin;
+                caretreset = true;
+            }
         }
 
         private void lb_click(object sender, EventArgs e)
         {
 
-            richTextBox1.GetLineFromCharIndex(lineIndex);
+            //richTextBox1.GetLineFromCharIndex(lineIndex);
 
 
-            if (lb.SelectedIndex != -1)
-            {
-                string beforetext = richTextBox1.Text.Substring(0, caretposition);
+            //if (lb.SelectedIndex != -1)
+            //{
+            //    string beforetext = richTextBox1.Text.Substring(0, caretposition);
 
-                string beforetext2 = beforetext.Replace("\n", " ");
+            //    string beforetext2 = beforetext.Replace("\n", " ");
 
-                lastspacebeforetext = beforetext2.LastIndexOf(' ');
-
-
-
-                if (lb.Visible == true)
-                {
+            //    lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
 
 
-                    richTextBox1.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
-
-                    richTextBox1.SelectionColor = Color.Black;
-
-                    richTextBox1.SelectedText = lb.SelectedItem.ToString() + " " + addchar;
-
-                    autocomplete = false;
-
-                    richTextBox1.Focus();
+            //    if (lb.Visible == true)
+            //    {
 
 
 
-                }
+            //        richTextBox1.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
 
-                lb.Hide();
+            //        richTextBox1.SelectionColor = Color.Black;
 
-                lb.Visible = false;
+            //        richTextBox1.SelectedText = lb.SelectedItem.ToString() + " " + addchar;
 
-                autocompletebusy = false;
-                autocomplete = false;
+            //        autocomplete = false;
 
-                richTextBox1.DeselectAll();
-                richTextBox1.Refresh();
-            }
+            //        richTextBox1.Focus();
+
+
+
+            //    }
+
+            //    lb.Hide();
+
+            //    lb.Visible = false;
+
+            //    autocompletebusy = false;
+            //    autocomplete = false;
+
+            //    richTextBox1.DeselectAll();
+            //    richTextBox1.Refresh();
+            //}
 
         }
 
@@ -9488,48 +9572,48 @@ LIKE '%";
         private void lb_click2(object sender, EventArgs e)
         {
 
-            richTextBox2.GetLineFromCharIndex(lineIndex);
+            //richTextBox2.GetLineFromCharIndex(lineIndex);
 
 
-            if (listBox1.SelectedIndex != -1)
-            {
-                string beforetext = richTextBox2.Text.Substring(0, caretposition);
+            //if (listBox1.SelectedIndex != -1)
+            //{
+            //    string beforetext = richTextBox2.Text.Substring(0, caretposition);
 
-                string beforetext2 = beforetext.Replace("\n", " ");
+            //    string beforetext2 = beforetext.Replace("\n", " ");
 
-                lastspacebeforetext = beforetext2.LastIndexOf(' ');
-
-
-
-                if (listBox1.Visible == true)
-                {
+            //    lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
 
 
-                    richTextBox2.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
-
-                    richTextBox2.SelectionColor = Color.Black;
-
-                    richTextBox2.SelectedText = listBox1.SelectedItem.ToString() + " " + addchar;
-
-                    autocomplete = false;
-
-                    richTextBox2.Focus();
+            //    if (listBox1.Visible == true)
+            //    {
 
 
 
-                }
+            //        richTextBox2.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
 
-                listBox1.Hide();
+            //        richTextBox2.SelectionColor = Color.Black;
 
-                listBox1.Visible = false;
+            //        richTextBox2.SelectedText = listBox1.SelectedItem.ToString() + " " + addchar;
 
-                autocompletebusy = false;
-                autocomplete = false;
+            //        autocomplete = false;
 
-                richTextBox2.DeselectAll();
-                richTextBox2.Refresh();
-            }
+            //        richTextBox2.Focus();
+
+
+
+            //    }
+
+            //    listBox1.Hide();
+
+            //    listBox1.Visible = false;
+
+            //    autocompletebusy = false;
+            //    autocomplete = false;
+
+            //    richTextBox2.DeselectAll();
+            //    richTextBox2.Refresh();
+            //}
 
         }
 
@@ -9537,48 +9621,48 @@ LIKE '%";
         private void lb_click3(object sender, EventArgs e)
         {
 
-            richTextBox4.GetLineFromCharIndex(lineIndex);
+            //richTextBox4.GetLineFromCharIndex(lineIndex);
 
 
-            if (listBox2.SelectedIndex != -1)
-            {
-                string beforetext = richTextBox4.Text.Substring(0, caretposition);
+            //if (listBox2.SelectedIndex != -1)
+            //{
+            //    string beforetext = richTextBox4.Text.Substring(0, caretposition);
 
-                string beforetext2 = beforetext.Replace("\n", " ");
+            //    string beforetext2 = beforetext.Replace("\n", " ");
 
-                lastspacebeforetext = beforetext2.LastIndexOf(' ');
-
-
-
-                if (listBox2.Visible == true)
-                {
+            //    lastspacebeforetext = beforetext2.LastIndexOf(' ');
 
 
 
-                    richTextBox4.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
-
-                    richTextBox4.SelectionColor = Color.Black;
-
-                    richTextBox4.SelectedText = listBox2.SelectedItem.ToString() + " " + addchar;
-
-                    autocomplete = false;
-
-                    richTextBox4.Focus();
+            //    if (listBox2.Visible == true)
+            //    {
 
 
 
-                }
+            //        richTextBox4.Select(lastspacebeforetext = beforetext2.LastIndexOf(' ') + 1, currentlen);
 
-                listBox2.Hide();
+            //        richTextBox4.SelectionColor = Color.Black;
 
-                listBox2.Visible = false;
+            //        richTextBox4.SelectedText = listBox2.SelectedItem.ToString() + " " + addchar;
 
-                autocompletebusy = false;
-                autocomplete = false;
+            //        autocomplete = false;
 
-                richTextBox4.DeselectAll();
-                richTextBox4.Refresh();
-            }
+            //        richTextBox4.Focus();
+
+
+
+            //    }
+
+            //    listBox2.Hide();
+
+            //    listBox2.Visible = false;
+
+            //    autocompletebusy = false;
+            //    autocomplete = false;
+
+            //    richTextBox4.DeselectAll();
+            //    richTextBox4.Refresh();
+            //}
 
         }
 
@@ -13120,12 +13204,12 @@ LIKE '%";
             int currentline = richTextBox1.GetFirstCharIndexOfCurrentLine();
             if (currentline > 0)
             {
-                curlin = currentline;
+                curlin = richTextBox1.SelectionStart;
             }
 
             else
             {
-                curlin = richTextBox1.SelectionStart;
+                curlin = richTextBox1.SelectionStart;         
             }
 
         }
@@ -13135,12 +13219,12 @@ LIKE '%";
             int currentline = richTextBox2.GetFirstCharIndexOfCurrentLine();
             if (currentline > 0)
             {
-                curlin = currentline;
+                curlin = richTextBox2.SelectionStart;
             }
 
             else
             {
-                curlin = richTextBox1.SelectionStart;
+                curlin = richTextBox2.SelectionStart;
             }
         }
 
@@ -13149,13 +13233,19 @@ LIKE '%";
             int currentline = richTextBox4.GetFirstCharIndexOfCurrentLine();
             if (currentline > 0)
             {
-                curlin = currentline;
+                curlin = richTextBox4.SelectionStart;
             }
 
             else
             {
-                curlin = richTextBox1.SelectionStart;
+                curlin = richTextBox4.SelectionStart;
             }
+        }
+
+        private void checkBox7_Click(object sender, EventArgs e)
+        {
+            if (checkBox7.Checked == true)
+            { autocomplete = true; }
         }
     }
 
