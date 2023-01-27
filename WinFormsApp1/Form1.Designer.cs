@@ -1501,11 +1501,11 @@
             // 
             this.contextMenuStrip6.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip6.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copySelectedRowToolStripMenuItem,
             this.CopyDefinitionList,
-            this.copyalldefnames});
+            this.copyalldefnames,
+            this.copySelectedRowToolStripMenuItem});
             this.contextMenuStrip6.Name = "contextMenuStrip6";
-            this.contextMenuStrip6.Size = new System.Drawing.Size(284, 70);
+            this.contextMenuStrip6.Size = new System.Drawing.Size(284, 92);
             // 
             // copySelectedRowToolStripMenuItem
             // 

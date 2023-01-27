@@ -5391,10 +5391,10 @@ LIKE '%";
 
                         richTextBox1.SelectionColor = Color.Black;
 
-                        richTextBox1.SelectedText = lb.SelectedItem.ToString() + addchar;
+                        string appendage = "["+lb.SelectedItem.ToString().Split('.')[0] +"]" + "." + "[" + lb.SelectedItem.ToString().Split('.')[1] +"]";
 
-                        
-
+                        richTextBox1.SelectedText = appendage + addchar;
+                   
                         autocomplete = false;
 
                         richTextBox1.Focus();
@@ -5447,7 +5447,8 @@ LIKE '%";
 
                     richTextBox1.SelectionColor = Color.Black;
 
-                    string appendageleft = lb.SelectedItem.ToString().Split('.')[0];
+                    string appendageleft =  "[" + lb.SelectedItem.ToString().Split('.')[0] + "]";
+
 
                     richTextBox1.SelectedText = appendageleft  + addchar;
 
@@ -5515,7 +5516,7 @@ LIKE '%";
                     richTextBox1.SelectionColor = Color.Black;
 
 
-                    string appendageright = lb.SelectedItem.ToString().Split('.')[1];
+                    string appendageright = "[" + lb.SelectedItem.ToString().Split('.')[1] + "]";
 
                     richTextBox1.SelectedText = appendageright  + addchar;
 
@@ -7118,15 +7119,15 @@ LIKE '%";
         {
 
 
-            if (containsreturn == true)
-            {
-                addchar = " " + Environment.NewLine;
-            }
+            //if (containsreturn == true)
+            //{
+            //    addchar = " " + Environment.NewLine;
+            //}
 
-            if (containsreturn == false)
-            {
-                addchar = " ";
-            }
+            //if (containsreturn == false)
+            //{
+            //    addchar = " ";
+            //}
 
 
 
@@ -7190,7 +7191,9 @@ LIKE '%";
 
                         richTextBox2.SelectionColor = Color.Black;
 
-                        richTextBox2.SelectedText = listBox1.SelectedItem.ToString() + addchar;
+                        string appendage = "[" + listBox1.SelectedItem.ToString().Split('.')[0] + "]" + "." + "[" + listBox2.SelectedItem.ToString().Split('.')[1] + "]";
+
+                        richTextBox2.SelectedText = appendage + addchar;
 
                         autocomplete = false;
 
@@ -7201,7 +7204,7 @@ LIKE '%";
                     }
 
                     listBox1.Hide();
-                    richTextBox2.SelectionStart = richTextBox2.SelectionStart - 1;
+                    //richTextBox2.SelectionStart = richTextBox2.SelectionStart - 1;
 
                     listBox1.Visible = false;
 
@@ -7251,7 +7254,7 @@ LIKE '%";
 
                     richTextBox2.SelectionColor = Color.Black;
 
-                    string appendageleft = listBox1.SelectedItem.ToString().Split('.')[0];
+                    string appendageleft = "[" + listBox1.SelectedItem.ToString().Split('.')[0] + "]";
 
                     richTextBox2.SelectedText = appendageleft + addchar;
 
@@ -7260,7 +7263,7 @@ LIKE '%";
                     richTextBox2.Focus();
 
                     listBox1.Hide();
-                    richTextBox2.SelectionStart = richTextBox2.SelectionStart - 1;
+                    //richTextBox2.SelectionStart = richTextBox2.SelectionStart - 1;
 
                     //richTextBox2.SelectionStart = caretposition;
 
@@ -7321,7 +7324,7 @@ LIKE '%";
                     richTextBox2.SelectionColor = Color.Black;
 
 
-                    string appendageright = listBox1.SelectedItem.ToString().Split('.')[1];
+                    string appendageright = "[" + listBox1.SelectedItem.ToString().Split('.')[1] + "]";
 
                     richTextBox2.SelectedText = appendageright + addchar;
 
@@ -7332,7 +7335,7 @@ LIKE '%";
                     richTextBox2.Focus();
 
                     listBox1.Hide();
-                    richTextBox2.SelectionStart = richTextBox2.SelectionStart - 1;
+                    //richTextBox2.SelectionStart = richTextBox2.SelectionStart - 1;
 
                     //richTextBox2.SelectionStart = caretposition;
 
@@ -9502,15 +9505,15 @@ LIKE '%";
         {
 
 
-            if (containsreturn == true)
-            {
-                addchar = " " + Environment.NewLine;
-            }
+            //if (containsreturn == true)
+            //{
+            //    addchar = " " + Environment.NewLine;
+            //}
 
-            if (containsreturn == false)
-            {
-                addchar = " ";
-            }
+            //if (containsreturn == false)
+            //{
+            //    addchar = " ";
+            //}
 
 
 
@@ -9574,7 +9577,9 @@ LIKE '%";
 
                         richTextBox4.SelectionColor = Color.Black;
 
-                        richTextBox4.SelectedText = listBox2.SelectedItem.ToString() + addchar;
+                        string appendage = "[" + listBox2.SelectedItem.ToString().Split('.')[0] + "]" + "." + "[" + listBox2.SelectedItem.ToString().Split('.')[1] + "]";
+
+                        richTextBox4.SelectedText = appendage + addchar;
 
                         autocomplete = false;
 
@@ -9585,7 +9590,7 @@ LIKE '%";
                     }
 
                     listBox2.Hide();
-                    richTextBox4.SelectionStart = richTextBox4.SelectionStart - 1;
+                    //richTextBox4.SelectionStart = richTextBox4.SelectionStart - 1;
 
 
                     listBox2.Visible = false;
@@ -9631,7 +9636,7 @@ LIKE '%";
 
                     richTextBox4.SelectionColor = Color.Black;
 
-                    string appendageleft = listBox2.SelectedItem.ToString().Split('.')[0];
+                    string appendageleft = "[" + listBox2.SelectedItem.ToString().Split('.')[0] + "]";
 
                     richTextBox4.SelectedText = appendageleft + addchar;
 
@@ -9640,7 +9645,7 @@ LIKE '%";
                     richTextBox4.Focus();
 
                     listBox2.Hide();
-                    richTextBox4.SelectionStart = richTextBox4.SelectionStart - 1;
+                    //richTextBox4.SelectionStart = richTextBox4.SelectionStart - 1;
 
                     //richTextBox4.SelectionStart = caretposition;
 
@@ -9740,10 +9745,10 @@ LIKE '%";
                     //string line = "\n";
                     //string noline = "";   
 
-                    string appendageright = listBox2.SelectedItem.ToString().Split('.')[1];
+                    string appendageright = "[" + listBox2.SelectedItem.ToString().Split('.')[1] + "]";
 
-                   
-                        richTextBox4.SelectedText = appendageright + addchar;
+
+                    richTextBox4.SelectedText = appendageright + addchar;
                         newlineonened = false;
                     
 
@@ -9754,7 +9759,7 @@ LIKE '%";
                     richTextBox4.Focus();
 
                     listBox2.Hide();
-                    richTextBox4.SelectionStart = richTextBox4.SelectionStart - 1;
+                    //richTextBox4.SelectionStart = richTextBox4.SelectionStart - 1;
 
                     //richTextBox4.SelectionStart = caretposition;
 
@@ -12990,16 +12995,16 @@ LIKE '%";
 
 
         private void findthisrecord(object sender, EventArgs e)
-        { 
+        {
 
-            
+
 
             var valuetoget = dataGridView2.SelectedCells[0].Value;
             string[] valuesplit = valuetoget.ToString().Split('>');
             var table = valuesplit[0].ToString().Trim();
             var column = valuesplit[1].ToString().Trim();
             var searchvalue = dataGridView2.SelectedCells[1].Value;
-            string searchterm = "select * from [" + table + "] where " + column + " = " + "'" + searchvalue.ToString() + "'";
+            string searchterm = "select * from [" + table + "] where " + "[" + column +"] " + " = " + "'" + searchvalue.ToString() + "'";
 
             tabControl1.SelectedTab = tabControl1.TabPages[5];
             tabControl2.SelectedTab = tabControl2.TabPages[0];
@@ -13271,81 +13276,84 @@ LIKE '%";
 
             string toheader;
 
-            if ((checkBox3.Checked == false) && (checkBox4.Checked == false))
-            {
-                richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(richTextBox3.Text);
-            }
-
-            if (checkBox5.Checked == true)
-            {
-                string s = richTextBox3.Text.ToUpper();
-                richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(s);
-            }
-
-            if (checkBox6.Checked == true)
-            {
-                string s = richTextBox3.Text.ToLower();
-                richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(s);
-            }
-
-            if (checkBox3.Checked == true)
+            if (richTextBox3.Text.Length > 0)
             {
 
-                foreach (string p in procwords)
+                if ((checkBox3.Checked == false) && (checkBox4.Checked == false))
                 {
-                    if (p != null)
-                    {
-                        foreach (string s in input3)
-                        {
-                            string t = s.ToLower();
-                            string u = p.ToLower();
+                    richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(richTextBox3.Text);
+                }
 
-                            if (t == u)
+                if (checkBox5.Checked == true)
+                {
+                    string s = richTextBox3.Text.ToUpper();
+                    richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(s);
+                }
+
+                if (checkBox6.Checked == true)
+                {
+                    string s = richTextBox3.Text.ToLower();
+                    richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(s);
+                }
+
+                if (checkBox3.Checked == true)
+                {
+
+                    foreach (string p in procwords)
+                    {
+                        if (p != null)
+                        {
+                            foreach (string s in input3)
                             {
-                                int index = Array.IndexOf(input3, s);
-                                string v = makeupper(s);
-                                input3[index] = v;
+                                string t = s.ToLower();
+                                string u = p.ToLower();
+
+                                if (t == u)
+                                {
+                                    int index = Array.IndexOf(input3, s);
+                                    string v = makeupper(s);
+                                    input3[index] = v;
+                                }
                             }
                         }
                     }
+
+                    string input4 = String.Join(" ", input3);
+
+                    richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(input4);
+                    toheader = SqlPrettify.SqlPrettify.Pretty(input4);
                 }
 
-                string input4 = String.Join(" ", input3);
-
-                richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(input4);
-                toheader = SqlPrettify.SqlPrettify.Pretty(input4);
-            }
-
-            if (checkBox4.Checked == true)
-            {
-
-                foreach (string p in procwords)
+                if (checkBox4.Checked == true)
                 {
-                    if (p != null)
-                    {
-                        foreach (string s in input3)
-                        {
-                            string t = s.ToLower();
-                            string u = p.ToLower();
 
-                            if (t == u)
+                    foreach (string p in procwords)
+                    {
+                        if (p != null)
+                        {
+                            foreach (string s in input3)
                             {
-                                int index = Array.IndexOf(input3, s);
-                                string v = makelower(s);
-                                input3[index] = v;
+                                string t = s.ToLower();
+                                string u = p.ToLower();
+
+                                if (t == u)
+                                {
+                                    int index = Array.IndexOf(input3, s);
+                                    string v = makelower(s);
+                                    input3[index] = v;
+                                }
                             }
                         }
                     }
+
+                    string input4 = String.Join(" ", input3);
+
+                    richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(input4);
+                    toheader = SqlPrettify.SqlPrettify.Pretty(input4);
                 }
 
-                string input4 = String.Join(" ", input3);
 
-                richTextBox3.Text = SqlPrettify.SqlPrettify.Pretty(input4);
-                toheader = SqlPrettify.SqlPrettify.Pretty(input4);
             }
-
-          
-
         }
 
 
