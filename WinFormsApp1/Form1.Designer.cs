@@ -126,6 +126,8 @@
             this.toolStripMenuItem11 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.radioButton20 = new System.Windows.Forms.RadioButton();
             this.label27 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.radioButton5 = new System.Windows.Forms.RadioButton();
@@ -158,10 +160,13 @@
             this.textBox16 = new System.Windows.Forms.TextBox();
             this.dataGridView8 = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip6 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.copySelectedRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CopyDefinitionList = new System.Windows.Forms.ToolStripMenuItem();
             this.copyalldefnames = new System.Windows.Forms.ToolStripMenuItem();
+            this.copySelectedRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.button14 = new System.Windows.Forms.Button();
+            this.button13 = new System.Windows.Forms.Button();
+            this.button12 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
@@ -219,6 +224,9 @@
             this.radioButton6 = new System.Windows.Forms.RadioButton();
             this.backgroundWorker7 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker8 = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorker9 = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorker10 = new System.ComponentModel.BackgroundWorker();
+            this.groupBox19 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.tabPageBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pageBindingSource)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -273,10 +281,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource1)).BeginInit();
             this.groupBox6.SuspendLayout();
+            this.groupBox19.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox1
             // 
+            this.textBox1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.textBox1.Location = new System.Drawing.Point(534, 9);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(309, 23);
@@ -301,18 +311,18 @@
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(533, 98);
+            this.textBox4.Location = new System.Drawing.Point(534, 98);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
             this.textBox4.ShortcutsEnabled = false;
-            this.textBox4.Size = new System.Drawing.Size(310, 23);
+            this.textBox4.Size = new System.Drawing.Size(309, 23);
             this.textBox4.TabIndex = 5;
             this.textBox4.UseSystemPasswordChar = true;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(456, 12);
+            this.label2.Location = new System.Drawing.Point(464, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 15);
             this.label2.TabIndex = 6;
@@ -321,7 +331,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(463, 41);
+            this.label3.Location = new System.Drawing.Point(472, 42);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(55, 15);
             this.label3.TabIndex = 7;
@@ -330,7 +340,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(436, 72);
+            this.label4.Location = new System.Drawing.Point(444, 72);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(84, 15);
             this.label4.TabIndex = 8;
@@ -339,7 +349,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(439, 104);
+            this.label5.Location = new System.Drawing.Point(447, 102);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(81, 15);
             this.label5.TabIndex = 9;
@@ -352,9 +362,9 @@
             this.groupBox1.Controls.Add(this.label16);
             this.groupBox1.Controls.Add(this.radioButton2);
             this.groupBox1.Controls.Add(this.radioButton1);
-            this.groupBox1.Location = new System.Drawing.Point(107, 95);
+            this.groupBox1.Location = new System.Drawing.Point(12, 85);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(284, 32);
+            this.groupBox1.Size = new System.Drawing.Size(243, 32);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             // 
@@ -362,7 +372,7 @@
             // 
             this.label28.AutoSize = true;
             this.label28.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label28.Location = new System.Drawing.Point(5, 11);
+            this.label28.Location = new System.Drawing.Point(3, 12);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(93, 15);
             this.label28.TabIndex = 5;
@@ -371,7 +381,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(202, 10);
+            this.label16.Location = new System.Drawing.Point(182, 10);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(10, 15);
             this.label16.TabIndex = 4;
@@ -380,7 +390,7 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(222, 10);
+            this.radioButton2.Location = new System.Drawing.Point(195, 10);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(46, 19);
             this.radioButton2.TabIndex = 1;
@@ -393,7 +403,7 @@
             // 
             this.radioButton1.AutoSize = true;
             this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(116, 10);
+            this.radioButton1.Location = new System.Drawing.Point(109, 10);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(74, 19);
             this.radioButton1.TabIndex = 0;
@@ -405,50 +415,57 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Nachlieli CLM", 8.249999F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label10.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.label10.Location = new System.Drawing.Point(22, 3);
+            this.label10.Font = new System.Drawing.Font("Segoe UI Black", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label10.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.label10.Location = new System.Drawing.Point(10, 4);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(124, 12);
+            this.label10.Size = new System.Drawing.Size(40, 12);
             this.label10.TabIndex = 11;
-            this.label10.Text = "------ PV 2023 ------";
+            this.label10.Text = "PV 2023";
             // 
             // label17
             // 
+            this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label17.AutoSize = true;
-            this.label17.Font = new System.Drawing.Font("Segoe UI", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label17.Location = new System.Drawing.Point(288, 88);
+            this.label17.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label17.ForeColor = System.Drawing.Color.DarkRed;
+            this.label17.Location = new System.Drawing.Point(3, 14);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(75, 12);
+            this.label17.Size = new System.Drawing.Size(86, 13);
             this.label17.TabIndex = 14;
             this.label17.Text = "Not Connected";
-            this.label17.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // button5
             // 
+            this.button5.BackColor = System.Drawing.Color.Transparent;
+            this.button5.FlatAppearance.BorderColor = System.Drawing.Color.Red;
             this.button5.FlatAppearance.BorderSize = 2;
             this.button5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button5.ForeColor = System.Drawing.Color.Red;
-            this.button5.Location = new System.Drawing.Point(11, 102);
+            this.button5.Location = new System.Drawing.Point(354, 92);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(89, 25);
+            this.button5.Size = new System.Drawing.Size(86, 25);
             this.button5.TabIndex = 9;
             this.button5.Text = "Restart App";
-            this.button5.UseVisualStyleBackColor = true;
+            this.button5.UseVisualStyleBackColor = false;
             this.button5.Click += new System.EventHandler(this.torestart);
             // 
             // button3
             // 
+            this.button3.BackColor = System.Drawing.Color.Transparent;
             this.button3.Enabled = false;
             this.button3.FlatAppearance.BorderSize = 5;
             this.button3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button3.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button3.Location = new System.Drawing.Point(610, 45);
+            this.button3.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.button3.Location = new System.Drawing.Point(613, 45);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(208, 25);
             this.button3.TabIndex = 15;
             this.button3.Text = "Results to Clipboard";
-            this.button3.UseVisualStyleBackColor = true;
+            this.button3.UseVisualStyleBackColor = false;
             this.button3.Click += new System.EventHandler(this.copyresults);
             // 
             // tabPage3
@@ -477,7 +494,7 @@
             this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.checkBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.checkBox2.Location = new System.Drawing.Point(466, 13);
+            this.checkBox2.Location = new System.Drawing.Point(468, 12);
             this.checkBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(102, 23);
@@ -488,28 +505,30 @@
             // 
             // button6
             // 
+            this.button6.BackColor = System.Drawing.Color.Transparent;
             this.button6.Enabled = false;
             this.button6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button6.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button6.Location = new System.Drawing.Point(709, 12);
+            this.button6.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.button6.Location = new System.Drawing.Point(709, 11);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(112, 25);
             this.button6.TabIndex = 14;
             this.button6.Text = "Clear Clipboard";
-            this.button6.UseVisualStyleBackColor = true;
+            this.button6.UseVisualStyleBackColor = false;
             this.button6.Click += new System.EventHandler(this.ClearClipboard);
             // 
             // button7
             // 
+            this.button7.BackColor = System.Drawing.Color.Transparent;
             this.button7.Enabled = false;
             this.button7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button7.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button7.Location = new System.Drawing.Point(570, 12);
+            this.button7.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.button7.Location = new System.Drawing.Point(570, 11);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(139, 25);
             this.button7.TabIndex = 13;
             this.button7.Text = "Results to Clipboard";
-            this.button7.UseVisualStyleBackColor = true;
+            this.button7.UseVisualStyleBackColor = false;
             this.button7.Click += new System.EventHandler(this.builtpathcopy);
             // 
             // groupBox5
@@ -599,6 +618,8 @@
             this.dataGridView3.ShowCellToolTips = false;
             this.dataGridView3.Size = new System.Drawing.Size(802, 266);
             this.dataGridView3.TabIndex = 1;
+            this.dataGridView3.Click += new System.EventHandler(this.ChangeMenuIItemDynamically);
+            this.dataGridView3.DoubleClick += new System.EventHandler(this.clickmenu2);
             // 
             // contextMenuStrip2
             // 
@@ -655,20 +676,21 @@
             // 
             // button4
             // 
+            this.button4.BackColor = System.Drawing.Color.Transparent;
             this.button4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button4.ForeColor = System.Drawing.Color.Green;
-            this.button4.Location = new System.Drawing.Point(381, 12);
+            this.button4.Location = new System.Drawing.Point(378, 11);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 25);
             this.button4.TabIndex = 11;
             this.button4.Text = "Search";
-            this.button4.UseVisualStyleBackColor = true;
+            this.button4.UseVisualStyleBackColor = false;
             this.button4.Click += new System.EventHandler(this.differentiatesearch);
             // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(21, 17);
+            this.label20.Location = new System.Drawing.Point(21, 16);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(69, 15);
             this.label20.TabIndex = 10;
@@ -676,7 +698,7 @@
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(97, 13);
+            this.textBox6.Location = new System.Drawing.Point(95, 12);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(283, 23);
             this.textBox6.TabIndex = 9;
@@ -701,19 +723,20 @@
             // 
             // button2
             // 
+            this.button2.BackColor = System.Drawing.Color.Transparent;
             this.button2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button2.ForeColor = System.Drawing.Color.Green;
-            this.button2.Location = new System.Drawing.Point(746, 13);
+            this.button2.Location = new System.Drawing.Point(746, 11);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 25);
             this.button2.TabIndex = 6;
             this.button2.Text = "Search";
-            this.button2.UseVisualStyleBackColor = true;
+            this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.passtobgworker2);
             // 
             // textBox8
             // 
-            this.textBox8.Location = new System.Drawing.Point(104, 14);
+            this.textBox8.Location = new System.Drawing.Point(95, 12);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(283, 23);
             this.textBox8.TabIndex = 4;
@@ -723,7 +746,7 @@
             // 
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(555, 14);
+            this.comboBox1.Location = new System.Drawing.Point(555, 12);
             this.comboBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(188, 23);
@@ -733,7 +756,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(420, 18);
+            this.checkBox1.Location = new System.Drawing.Point(421, 15);
             this.checkBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(135, 19);
@@ -860,7 +883,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(20, 18);
+            this.label8.Location = new System.Drawing.Point(15, 16);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(76, 15);
             this.label8.TabIndex = 5;
@@ -886,6 +909,7 @@
             // 
             // button1
             // 
+            this.button1.BackColor = System.Drawing.Color.Transparent;
             this.button1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button1.ForeColor = System.Drawing.Color.Green;
             this.button1.Location = new System.Drawing.Point(397, 45);
@@ -893,7 +917,7 @@
             this.button1.Size = new System.Drawing.Size(208, 25);
             this.button1.TabIndex = 3;
             this.button1.Text = "Search";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.passtobgworker);
             // 
             // label7
@@ -909,7 +933,6 @@
             // 
             this.textBox7.Location = new System.Drawing.Point(97, 46);
             this.textBox7.Name = "textBox7";
-            this.textBox7.ReadOnly = true;
             this.textBox7.Size = new System.Drawing.Size(292, 23);
             this.textBox7.TabIndex = 6;
             this.textBox7.KeyDown += new System.Windows.Forms.KeyEventHandler(this.checkenter1);
@@ -939,7 +962,7 @@
             this.textBox11.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.textBox11.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textBox11.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.textBox11.Location = new System.Drawing.Point(6, 20);
+            this.textBox11.Location = new System.Drawing.Point(6, 19);
             this.textBox11.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox11.Multiline = true;
             this.textBox11.Name = "textBox11";
@@ -1055,24 +1078,50 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label9);
+            this.groupBox2.Controls.Add(this.radioButton20);
             this.groupBox2.Controls.Add(this.label27);
             this.groupBox2.Controls.Add(this.label26);
             this.groupBox2.Controls.Add(this.radioButton5);
             this.groupBox2.Controls.Add(this.radioButton4);
             this.groupBox2.Controls.Add(this.radioButton3);
             this.groupBox2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox2.Location = new System.Drawing.Point(398, 4);
+            this.groupBox2.Location = new System.Drawing.Point(398, 5);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(419, 38);
-            this.groupBox2.TabIndex = 4;
+            this.groupBox2.Size = new System.Drawing.Size(422, 33);
+            this.groupBox2.TabIndex = 16;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Search For";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label9.Location = new System.Drawing.Point(190, 12);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(10, 15);
+            this.label9.TabIndex = 8;
+            this.label9.Text = "|";
+            // 
+            // radioButton20
+            // 
+            this.radioButton20.AutoSize = true;
+            this.radioButton20.Checked = true;
+            this.radioButton20.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.radioButton20.Location = new System.Drawing.Point(6, 12);
+            this.radioButton20.Name = "radioButton20";
+            this.radioButton20.Size = new System.Drawing.Size(112, 19);
+            this.radioButton20.TabIndex = 7;
+            this.radioButton20.TabStop = true;
+            this.radioButton20.Text = "Table or Column";
+            this.radioButton20.UseVisualStyleBackColor = true;
+            this.radioButton20.CheckedChanged += new System.EventHandler(this.Search_Type);
             // 
             // label27
             // 
             this.label27.AutoSize = true;
             this.label27.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label27.Location = new System.Drawing.Point(260, 14);
+            this.label27.Location = new System.Drawing.Point(278, 12);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(10, 15);
             this.label27.TabIndex = 6;
@@ -1082,7 +1131,7 @@
             // 
             this.label26.AutoSize = true;
             this.label26.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label26.Location = new System.Drawing.Point(113, 14);
+            this.label26.Location = new System.Drawing.Point(118, 12);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(10, 15);
             this.label26.TabIndex = 5;
@@ -1092,7 +1141,7 @@
             // 
             this.radioButton5.AutoSize = true;
             this.radioButton5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.radioButton5.Location = new System.Drawing.Point(286, 14);
+            this.radioButton5.Location = new System.Drawing.Point(295, 12);
             this.radioButton5.Name = "radioButton5";
             this.radioButton5.Size = new System.Drawing.Size(121, 19);
             this.radioButton5.TabIndex = 2;
@@ -1104,32 +1153,31 @@
             // 
             this.radioButton4.AutoSize = true;
             this.radioButton4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.radioButton4.Location = new System.Drawing.Point(146, 14);
+            this.radioButton4.Location = new System.Drawing.Point(208, 12);
             this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(96, 19);
+            this.radioButton4.Size = new System.Drawing.Size(68, 19);
             this.radioButton4.TabIndex = 1;
-            this.radioButton4.Text = "Column Only";
+            this.radioButton4.Text = "Column";
             this.radioButton4.UseVisualStyleBackColor = true;
             this.radioButton4.CheckedChanged += new System.EventHandler(this.Search_Type);
             // 
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Checked = true;
             this.radioButton3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.radioButton3.Location = new System.Drawing.Point(14, 14);
+            this.radioButton3.Location = new System.Drawing.Point(134, 12);
             this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(80, 19);
+            this.radioButton3.Size = new System.Drawing.Size(52, 19);
             this.radioButton3.TabIndex = 0;
             this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "Table Only";
+            this.radioButton3.Text = "Table";
             this.radioButton3.UseVisualStyleBackColor = true;
             this.radioButton3.CheckedChanged += new System.EventHandler(this.Search_Type);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(21, 17);
+            this.label6.Location = new System.Drawing.Point(21, 16);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(69, 15);
             this.label6.TabIndex = 2;
@@ -1174,7 +1222,7 @@
             // 
             // textBox15
             // 
-            this.textBox15.Location = new System.Drawing.Point(182, 13);
+            this.textBox15.Location = new System.Drawing.Point(182, 12);
             this.textBox15.Name = "textBox15";
             this.textBox15.Size = new System.Drawing.Size(310, 23);
             this.textBox15.TabIndex = 12;
@@ -1236,29 +1284,31 @@
             // 
             // button10
             // 
+            this.button10.BackColor = System.Drawing.Color.Transparent;
             this.button10.Enabled = false;
             this.button10.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button10.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button10.Location = new System.Drawing.Point(713, 12);
+            this.button10.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.button10.Location = new System.Drawing.Point(713, 11);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(108, 25);
             this.button10.TabIndex = 18;
             this.button10.Text = "Clear Clipboard";
-            this.button10.UseVisualStyleBackColor = true;
+            this.button10.UseVisualStyleBackColor = false;
             this.button10.Click += new System.EventHandler(this.ClearDefClipboard);
             // 
             // button9
             // 
+            this.button9.BackColor = System.Drawing.Color.Transparent;
             this.button9.Enabled = false;
             this.button9.FlatAppearance.BorderSize = 5;
             this.button9.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button9.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.button9.Location = new System.Drawing.Point(572, 12);
+            this.button9.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.button9.Location = new System.Drawing.Point(573, 11);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(141, 25);
             this.button9.TabIndex = 17;
             this.button9.Text = "Results to Clipboard";
-            this.button9.UseVisualStyleBackColor = true;
+            this.button9.UseVisualStyleBackColor = false;
             this.button9.Click += new System.EventHandler(this.CopyDefResults);
             // 
             // groupBox14
@@ -1406,14 +1456,15 @@
             // 
             // button8
             // 
+            this.button8.BackColor = System.Drawing.Color.Transparent;
             this.button8.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button8.ForeColor = System.Drawing.Color.Green;
-            this.button8.Location = new System.Drawing.Point(493, 12);
+            this.button8.Location = new System.Drawing.Point(492, 11);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(75, 25);
             this.button8.TabIndex = 13;
             this.button8.Text = "Search";
-            this.button8.UseVisualStyleBackColor = true;
+            this.button8.UseVisualStyleBackColor = false;
             this.button8.Click += new System.EventHandler(this.startAsyncButton_DefClick);
             // 
             // groupBox10
@@ -1435,12 +1486,12 @@
             this.textBox16.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.textBox16.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textBox16.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.textBox16.Location = new System.Drawing.Point(5, 18);
+            this.textBox16.Location = new System.Drawing.Point(5, 15);
             this.textBox16.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox16.Multiline = true;
             this.textBox16.Name = "textBox16";
             this.textBox16.ReadOnly = true;
-            this.textBox16.Size = new System.Drawing.Size(569, 268);
+            this.textBox16.Size = new System.Drawing.Size(570, 270);
             this.textBox16.TabIndex = 17;
             // 
             // dataGridView8
@@ -1505,14 +1556,7 @@
             this.copyalldefnames,
             this.copySelectedRowToolStripMenuItem});
             this.contextMenuStrip6.Name = "contextMenuStrip6";
-            this.contextMenuStrip6.Size = new System.Drawing.Size(284, 92);
-            // 
-            // copySelectedRowToolStripMenuItem
-            // 
-            this.copySelectedRowToolStripMenuItem.Name = "copySelectedRowToolStripMenuItem";
-            this.copySelectedRowToolStripMenuItem.Size = new System.Drawing.Size(283, 22);
-            this.copySelectedRowToolStripMenuItem.Text = "Copy Selected Row";
-            this.copySelectedRowToolStripMenuItem.Click += new System.EventHandler(this.DefCopyOut);
+            this.contextMenuStrip6.Size = new System.Drawing.Size(284, 70);
             // 
             // CopyDefinitionList
             // 
@@ -1528,8 +1572,18 @@
             this.copyalldefnames.Text = "Copy All Definition Names to Clipboard";
             this.copyalldefnames.Click += new System.EventHandler(this.CopDefinitionList);
             // 
+            // copySelectedRowToolStripMenuItem
+            // 
+            this.copySelectedRowToolStripMenuItem.Name = "copySelectedRowToolStripMenuItem";
+            this.copySelectedRowToolStripMenuItem.Size = new System.Drawing.Size(283, 22);
+            this.copySelectedRowToolStripMenuItem.Text = "Copy Selected Row";
+            this.copySelectedRowToolStripMenuItem.Click += new System.EventHandler(this.DefCopyOut);
+            // 
             // tabPage11
             // 
+            this.tabPage11.Controls.Add(this.button14);
+            this.tabPage11.Controls.Add(this.button13);
+            this.tabPage11.Controls.Add(this.button12);
             this.tabPage11.Controls.Add(this.button11);
             this.tabPage11.Controls.Add(this.groupBox18);
             this.tabPage11.Controls.Add(this.groupBox17);
@@ -1541,11 +1595,51 @@
             this.tabPage11.Text = "SQL Format";
             this.tabPage11.UseVisualStyleBackColor = true;
             // 
+            // button14
+            // 
+            this.button14.BackColor = System.Drawing.Color.Transparent;
+            this.button14.FlatAppearance.BorderSize = 2;
+            this.button14.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.button14.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.button14.Location = new System.Drawing.Point(334, 273);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(241, 25);
+            this.button14.TabIndex = 19;
+            this.button14.Text = "Minify SQL";
+            this.button14.UseVisualStyleBackColor = false;
+            this.button14.Click += new System.EventHandler(this.minify);
+            // 
+            // button13
+            // 
+            this.button13.BackColor = System.Drawing.Color.Transparent;
+            this.button13.FlatAppearance.BorderSize = 2;
+            this.button13.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.button13.ForeColor = System.Drawing.Color.Brown;
+            this.button13.Location = new System.Drawing.Point(579, 273);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(241, 25);
+            this.button13.TabIndex = 18;
+            this.button13.Text = "Revert SQL To Previous State";
+            this.button13.UseVisualStyleBackColor = false;
+            this.button13.Click += new System.EventHandler(this.restoretext);
+            // 
+            // button12
+            // 
+            this.button12.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.button12.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.button12.Location = new System.Drawing.Point(579, 301);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(241, 25);
+            this.button12.TabIndex = 15;
+            this.button12.Text = "Copy Formatted SQL To Clipboard";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.copyoutSQL);
+            // 
             // button11
             // 
             this.button11.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button11.ForeColor = System.Drawing.Color.Green;
-            this.button11.Location = new System.Drawing.Point(578, 300);
+            this.button11.Location = new System.Drawing.Point(334, 301);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(241, 25);
             this.button11.TabIndex = 14;
@@ -1560,9 +1654,9 @@
             this.groupBox18.Controls.Add(this.checkBox4);
             this.groupBox18.Controls.Add(this.checkBox3);
             this.groupBox18.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox18.Location = new System.Drawing.Point(5, 288);
+            this.groupBox18.Location = new System.Drawing.Point(6, 266);
             this.groupBox18.Name = "groupBox18";
-            this.groupBox18.Size = new System.Drawing.Size(567, 39);
+            this.groupBox18.Size = new System.Drawing.Size(324, 60);
             this.groupBox18.TabIndex = 2;
             this.groupBox18.TabStop = false;
             this.groupBox18.Text = "Options";
@@ -1571,11 +1665,11 @@
             // 
             this.checkBox6.AutoSize = true;
             this.checkBox6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.checkBox6.Location = new System.Drawing.Point(469, 16);
+            this.checkBox6.Location = new System.Drawing.Point(186, 38);
             this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(98, 19);
+            this.checkBox6.Size = new System.Drawing.Size(135, 19);
             this.checkBox6.TabIndex = 3;
-            this.checkBox6.Text = "All Lowercase";
+            this.checkBox6.Text = "Lowercase All Words";
             this.checkBox6.UseVisualStyleBackColor = true;
             this.checkBox6.Click += new System.EventHandler(this.sqlcheckboxbehaviour4);
             // 
@@ -1583,11 +1677,11 @@
             // 
             this.checkBox5.AutoSize = true;
             this.checkBox5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.checkBox5.Location = new System.Drawing.Point(365, 16);
+            this.checkBox5.Location = new System.Drawing.Point(186, 16);
             this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(98, 19);
+            this.checkBox5.Size = new System.Drawing.Size(135, 19);
             this.checkBox5.TabIndex = 2;
-            this.checkBox5.Text = "All Uppercase";
+            this.checkBox5.Text = "Uppercase All Words";
             this.checkBox5.UseVisualStyleBackColor = true;
             this.checkBox5.Click += new System.EventHandler(this.sqlcheckboxbehaviour3);
             // 
@@ -1595,7 +1689,7 @@
             // 
             this.checkBox4.AutoSize = true;
             this.checkBox4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.checkBox4.Location = new System.Drawing.Point(187, 16);
+            this.checkBox4.Location = new System.Drawing.Point(9, 39);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(172, 19);
             this.checkBox4.TabIndex = 1;
@@ -1621,7 +1715,7 @@
             this.groupBox17.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.groupBox17.Location = new System.Drawing.Point(4, 4);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(815, 283);
+            this.groupBox17.Size = new System.Drawing.Size(815, 263);
             this.groupBox17.TabIndex = 1;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Input SQL Here";
@@ -1632,7 +1726,7 @@
             this.richTextBox3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.richTextBox3.Location = new System.Drawing.Point(6, 22);
             this.richTextBox3.Name = "richTextBox3";
-            this.richTextBox3.Size = new System.Drawing.Size(803, 245);
+            this.richTextBox3.Size = new System.Drawing.Size(803, 235);
             this.richTextBox3.TabIndex = 0;
             this.richTextBox3.Text = "";
             // 
@@ -1825,7 +1919,7 @@
             this.lb.ForeColor = System.Drawing.SystemColors.Desktop;
             this.lb.Location = new System.Drawing.Point(0, 0);
             this.lb.Name = "lb";
-            this.lb.Size = new System.Drawing.Size(250, 39);
+            this.lb.Size = new System.Drawing.Size(250, 26);
             this.lb.Sorted = true;
             this.lb.TabIndex = 0;
             this.lb.Visible = false;
@@ -1900,7 +1994,7 @@
             this.listBox2.ForeColor = System.Drawing.SystemColors.Desktop;
             this.listBox2.Location = new System.Drawing.Point(0, 0);
             this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(250, 39);
+            this.listBox2.Size = new System.Drawing.Size(250, 26);
             this.listBox2.Sorted = true;
             this.listBox2.TabIndex = 3;
             this.listBox2.Visible = false;
@@ -1941,7 +2035,7 @@
             this.listBox1.ForeColor = System.Drawing.SystemColors.Desktop;
             this.listBox1.Location = new System.Drawing.Point(0, 0);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(250, 39);
+            this.listBox1.Size = new System.Drawing.Size(250, 26);
             this.listBox1.Sorted = true;
             this.listBox1.TabIndex = 2;
             this.listBox1.Visible = false;
@@ -2220,14 +2314,14 @@
             // 
             this.label1.AutoSize = true;
             this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label1.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Font = new System.Drawing.Font("Rubik", 47F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label1.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.label1.Location = new System.Drawing.Point(11, 7);
             this.label1.Margin = new System.Windows.Forms.Padding(0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(349, 88);
+            this.label1.Size = new System.Drawing.Size(429, 77);
             this.label1.TabIndex = 1;
-            this.label1.Text = "SQL Tools ";
+            this.label1.Text = "MSSQL Tools";
             this.label1.UseMnemonic = false;
             // 
             // form1BindingSource1
@@ -2240,11 +2334,11 @@
             this.groupBox6.Controls.Add(this.label15);
             this.groupBox6.Controls.Add(this.radioButton7);
             this.groupBox6.Controls.Add(this.radioButton6);
-            this.groupBox6.Location = new System.Drawing.Point(546, 119);
+            this.groupBox6.Location = new System.Drawing.Point(534, 118);
             this.groupBox6.Margin = new System.Windows.Forms.Padding(0);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Padding = new System.Windows.Forms.Padding(0);
-            this.groupBox6.Size = new System.Drawing.Size(298, 31);
+            this.groupBox6.Size = new System.Drawing.Size(309, 31);
             this.groupBox6.TabIndex = 16;
             this.groupBox6.TabStop = false;
             // 
@@ -2252,7 +2346,7 @@
             // 
             this.label21.AutoSize = true;
             this.label21.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label21.Location = new System.Drawing.Point(4, 12);
+            this.label21.Location = new System.Drawing.Point(3, 11);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(68, 15);
             this.label21.TabIndex = 3;
@@ -2261,7 +2355,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(178, 11);
+            this.label15.Location = new System.Drawing.Point(194, 11);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(10, 15);
             this.label15.TabIndex = 2;
@@ -2271,7 +2365,7 @@
             // 
             this.radioButton7.AutoSize = true;
             this.radioButton7.Checked = true;
-            this.radioButton7.Location = new System.Drawing.Point(195, 10);
+            this.radioButton7.Location = new System.Drawing.Point(210, 9);
             this.radioButton7.Name = "radioButton7";
             this.radioButton7.Size = new System.Drawing.Size(95, 19);
             this.radioButton7.TabIndex = 1;
@@ -2284,7 +2378,7 @@
             // 
             this.radioButton6.AutoSize = true;
             this.radioButton6.Checked = true;
-            this.radioButton6.Location = new System.Drawing.Point(81, 10);
+            this.radioButton6.Location = new System.Drawing.Point(98, 9);
             this.radioButton6.Name = "radioButton6";
             this.radioButton6.Size = new System.Drawing.Size(90, 19);
             this.radioButton6.TabIndex = 0;
@@ -2293,13 +2387,23 @@
             this.radioButton6.UseVisualStyleBackColor = true;
             this.radioButton6.Click += new System.EventHandler(this.searchingCheckedChanged);
             // 
+            // groupBox19
+            // 
+            this.groupBox19.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox19.Controls.Add(this.label17);
+            this.groupBox19.Location = new System.Drawing.Point(259, 85);
+            this.groupBox19.Name = "groupBox19";
+            this.groupBox19.Size = new System.Drawing.Size(93, 32);
+            this.groupBox19.TabIndex = 17;
+            this.groupBox19.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(858, 500);
+            this.Controls.Add(this.groupBox19);
             this.Controls.Add(this.label10);
-            this.Controls.Add(this.label17);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.groupBox6);
@@ -2314,10 +2418,11 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "Form1";
             this.RightToLeftLayout = true;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "SQL Tools";
+            this.Text = "MSSQL Tools : OPTIMISED FOR USE AT 1080P";
             this.Load += new System.EventHandler(this.Form1_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.tabPageBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pageBindingSource)).EndInit();
@@ -2391,6 +2496,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource1)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
+            this.groupBox19.ResumeLayout(false);
+            this.groupBox19.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2544,6 +2651,8 @@
         private GroupBox groupBox16;
         private CheckBox checkBox1;
         private System.ComponentModel.BackgroundWorker backgroundWorker8;
+        private System.ComponentModel.BackgroundWorker backgroundWorker9;
+        private System.ComponentModel.BackgroundWorker backgroundWorker10;
         private ComboBox comboBox1;
         private ToolStripMenuItem toolStripMenuItem13;
         private ToolStripMenuItem toolStripMenuItem14;
@@ -2564,6 +2673,12 @@
         private Button button11;
         private CheckBox checkBox6;
         private CheckBox checkBox7;
+        private Label label9;
+        private RadioButton radioButton20;
+        private GroupBox groupBox19;
+        private Button button12;
+        private Button button13;
+        private Button button14;
     }
 
 
