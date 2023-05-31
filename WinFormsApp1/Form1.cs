@@ -2184,7 +2184,7 @@ LIKE '%";
                     {
                         dataGridView3.Rows[0].Selected = true;
                         int rowind = dataGridView3.SelectedRows[0].Index;
-                        if (builtjoinpath == null && (textBox6.Text != null && textBox6.Text != "[No Search Term Entered]"))
+                        if (builtjoinpath == null && (textBox6.Text != null && textBox6.Text != "[No Search Term Entered]") && searchedfromgrid == true)
                         {
                             builtjoinpath = "--START OF SQL STATEMENT--" + Environment.NewLine + "select * from [" + dataGridView3.Rows[rowind].Cells[oppositecolindex].Value + "] [" + builtjoinsequence + "]";
                             builtjoinsequence = builtjoinsequence + 1;
@@ -2606,11 +2606,13 @@ LIKE '%";
                 {
                     dataGridView3.ColumnHeadersVisible = false;
                     button3.Enabled = false;
-
-
-
                 }
                 searchedfromgrid = false;
+
+                if (textBox6.Text == "" || textBox6.Text == null)
+                {
+                    checkBox2.Enabled = false;
+                }
 
             }
             busy = false;
@@ -2940,7 +2942,7 @@ LIKE '%";
                         }
                     }
                     button3.Enabled = false;
-                    button3.Text = "Results Copied";
+                    button3.Text = "Copied To Clipboard";
 
 
                     if (clipboard_string != null)
@@ -3004,7 +3006,7 @@ LIKE '%";
 
 
                     button3.Enabled = false;
-                    button3.Text = "Results Copied";
+                    button3.Text = "Copied To Clipboard";
 
 
                     if (clipboard_string != null)
@@ -3061,7 +3063,7 @@ LIKE '%";
                     }
 
                     button3.Enabled = false;
-                    button3.Text = "Results Copied";
+                    button3.Text = "Copied To Clipboard";
 
                     if (clipboard_string == null)
                     {
@@ -3110,7 +3112,7 @@ LIKE '%";
                     }
 
                     button3.Enabled = false;
-                    button3.Text = "Results Copied";
+                    button3.Text = "Copied To Clipboard";
 
                     if (clipboard_string == null)
                     {
@@ -3308,6 +3310,9 @@ LIKE '%";
             builtjoinpath = null;
             ClearClipboard(sender, e);
             startAsyncButton_Click3(sender, e);
+
+          
+
         }
 
 
@@ -11896,6 +11901,9 @@ LIKE '%";
             if (textBox6.Text == "[No Search Term Entered]")
             {
                 textBox6.Clear();
+                checkBox2.Enabled = false;
+                checkBox2.BackColor = Color.Transparent;
+                builtjoinsequence = 1;
             }
         }
 
