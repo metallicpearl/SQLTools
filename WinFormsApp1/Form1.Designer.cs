@@ -287,7 +287,7 @@
             // textBox1
             // 
             this.textBox1.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.textBox1.Location = new System.Drawing.Point(534, 9);
+            this.textBox1.Location = new System.Drawing.Point(534, 7);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(309, 23);
             this.textBox1.TabIndex = 2;
@@ -295,7 +295,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(534, 38);
+            this.textBox2.Location = new System.Drawing.Point(534, 37);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(309, 23);
             this.textBox2.TabIndex = 3;
@@ -303,7 +303,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(534, 68);
+            this.textBox3.Location = new System.Drawing.Point(534, 67);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(309, 23);
@@ -311,7 +311,7 @@
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(534, 98);
+            this.textBox4.Location = new System.Drawing.Point(534, 97);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
             this.textBox4.ShortcutsEnabled = false;
@@ -322,7 +322,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(464, 13);
+            this.label2.Location = new System.Drawing.Point(464, 11);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 15);
             this.label2.TabIndex = 6;
@@ -340,20 +340,20 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(444, 72);
+            this.label4.Location = new System.Drawing.Point(467, 72);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(84, 15);
+            this.label4.Size = new System.Drawing.Size(60, 15);
             this.label4.TabIndex = 8;
-            this.label4.Text = "SQL Username";
+            this.label4.Text = "Username";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(447, 102);
+            this.label5.Location = new System.Drawing.Point(470, 102);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(81, 15);
+            this.label5.Size = new System.Drawing.Size(57, 15);
             this.label5.TabIndex = 9;
-            this.label5.Text = "SQL Password";
+            this.label5.Text = "Password";
             // 
             // groupBox1
             // 
@@ -2420,7 +2420,6 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(858, 500);
             this.Controls.Add(this.groupBox19);
@@ -2443,7 +2442,7 @@
             this.Name = "Form1";
             this.RightToLeftLayout = true;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MSSQL Tools : OPTIMISED FOR USE AT 1080P";
+            this.Text = "MSSQL Tools : OPTIMISED FOR 1080p";
             this.Load += new System.EventHandler(this.Form1_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.tabPageBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pageBindingSource)).EndInit();

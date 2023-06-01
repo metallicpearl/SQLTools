@@ -1526,7 +1526,7 @@ LIKE '%";
 
                 BeginInvoke((MethodInvoker)delegate
                 {
-                    Text = "MSSQL Tools: OPTIMISED FOR USE AT 1080P";
+                    Text = "MSSQL Tools: OPTIMISED FOR 1080p";
                 });
 
                 {
@@ -1959,7 +1959,7 @@ LIKE '%";
             {
                 BeginInvoke((MethodInvoker)delegate
                 {
-                    Text = "MSSQL Tools: OPTIMISED FOR USE AT 1080P";
+                    Text = "MSSQL Tools: OPTIMISED FOR 1080p";
                 });
 
 
@@ -2530,7 +2530,7 @@ LIKE '%";
             {
                 BeginInvoke((MethodInvoker)delegate
                 {
-                    Text = "MSSQL Tools: OPTIMISED FOR USE AT 1080P";
+                    Text = "MSSQL Tools: OPTIMISED FOR 1080p";
                 });
 
 
@@ -4759,7 +4759,7 @@ LIKE '%";
                 {
                     BeginInvoke((MethodInvoker)delegate
                     {
-                        Text = "MSSQL Tools: OPTIMISED FOR USE AT 1080P";
+                        Text = "MSSQL Tools: OPTIMISED FOR 1080p";
                     });
 
                     if (lowmemorymode == true)
@@ -6532,7 +6532,7 @@ LIKE '%";
                 {
                     BeginInvoke((MethodInvoker)delegate
                     {
-                        Text = "MSSQL Tools: OPTIMISED FOR USE AT 1080P";
+                        Text = "MSSQL Tools: OPTIMISED FOR 1080p";
                     });
 
 
@@ -8520,7 +8520,7 @@ LIKE '%";
 
                     BeginInvoke((MethodInvoker)delegate
                     {
-                        Text = "MSSQL Tools: OPTIMISED FOR USE AT 1080P";
+                        Text = "MSSQL Tools: OPTIMISED FOR 1080p";
                     });
 
                     if (lowmemorymode == true)
@@ -11153,7 +11153,7 @@ LIKE '%";
                 {
                     BeginInvoke((MethodInvoker)delegate
                     {
-                        Text = "MSSQL Tools: OPTIMISED FOR USE AT 1080P";
+                        Text = "MSSQL Tools: OPTIMISED FOR 1080p";
                     });
 
 
@@ -11659,7 +11659,7 @@ LIKE '%";
             {
                 BeginInvoke((MethodInvoker)delegate
                 {
-                    Text = "MSSQL Tools: OPTIMISED FOR USE AT 1080P";
+                    Text = "MSSQL Tools: OPTIMISED FOR 1080p";
                 });
 
 
